@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands, tasks
 from itertools import cycle
 from commandslist import *
-from secret.py import Bot_token
+from secret import Bot_token
 
 Prefix = 'm-'
 client = commands.Bot(command_prefix=Prefix)
