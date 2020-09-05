@@ -31,12 +31,12 @@ async def clear(ctx, amount=10):
 
 
 @client.command()
-async def print_data(ctx):
+async def (ctx):
     database = pd.read_csv(PATH, header=None )
 
     for i in range(1,3):# numero de linhas do csv
         if database.iat[i,3] == 'assign':
-            database.iat[i,3] = 'Tarefa para entregar'
+            database.iat[i,3] = 'Tarefa para entregar via Moodle'
         elif database.iat[i,3] == 'bigbluebutton':
             database.iat[i,3] = 'Aula ao vivo - BigBlueButton'
             
@@ -56,20 +56,6 @@ async def print_data(ctx):
         embed.add_field(name="Link", value=link, inline=False)
         embed.set_footer(text="Feito com ❤ por alunos do Mackenzie.")
         await ctx.send(embed=embed)
-    # for i in range(1,3):# numero de linhas do csv
-    #     msg = '>>> '
-    #     for j in range(6): # numero de colunas do csv
-            
-    #         if database.iat[i,3] == 'assign':
-    #             database.iat[i,3] = 'Tarefa'
-    #         elif database.iat[i,3] == 'bigbluebutton':
-    #             database.iat[i,3] = 'Aula - BigBlueButton'
-
-    #         msg += str(database.iat[i,j]) + "\n"
-    #     print(database.iat[i,3])
-    #     await ctx.channel.send(msg)
-    #     await ctx.channel.send(embed=colors)
-
 
 """
 @client.event
