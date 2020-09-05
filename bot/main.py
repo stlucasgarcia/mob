@@ -26,7 +26,7 @@ async def change_status():
 
 
 @client.command()
-async def clear(ctx, amount=10):
+async def clear(ctx, amount=3):
     print("clear command")
     await ctx.channel.purge(limit=amount)
 
