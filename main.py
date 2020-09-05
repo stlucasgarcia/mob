@@ -1,12 +1,12 @@
 import discord
 from discord.ext import commands, tasks
-from intertools import cycle
+from itertools import cycle
 from commandslist import *
+from secret.py import Bot_token
 
-Bot_token = 'NzQ1ODAzOTMxMDk5MzMyNjM4.Xz3GCQ.uUA2Eck1PK1-9pRizBt-gfuRaUQ'
 Prefix = 'm-'
 client = commands.Bot(command_prefix=Prefix)
-status = cycle(['Procurando atualizações...', 'Olhando para o Moodle', 'Descobrindo tarefas'])
+status = cycle(['Procurando atualizações...', 'Olhando para o Moodle', 'Descobrindo tarefas', 'Destruindo a casa do Jamil'])
 
 @client.command()
 async def clear(ctx, amount=10):
@@ -15,11 +15,13 @@ async def clear(ctx, amount=10):
 
 @client.event
 async def on_ready():
+    change_status.start()
     print('We have logged in as {0.user}'.format(client))
 
 
+
 @tasks.loop(seconds=10)
-async def status():
+async def change_status():
     await client.change_presence(activity=discord.Game(next(status)))
 
 
