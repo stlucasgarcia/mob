@@ -10,7 +10,7 @@ import pandas as pd
 Prefix = 'm-'
 client = commands.Bot(command_prefix=Prefix)
 status = cycle(['Estudando...', 'Navegando no Moodle', 'Descobrindo tarefas', 'Dominando o mundo', 'Reduzindo as suas faltas', 'Calculando as suas médias'])
-PATH = r'C:\Users\lukep\Documents\Projects\Discord Bot\DiscordMackBot\template.csv'
+PATH = r'C:\Users\lukep\Documents\Projects\Discord Bot\DiscordMackBot\csvfiles\events.csv'
 
 
 @client.event
@@ -37,8 +37,7 @@ async def tarefas(ctx):
     
     # urls = pd.DataFrame(database, columns=['deadline'])
     # print(urls, type(urls))
-    for i in range(database.size - 1):# numero de linhas do csv
-            
+    for i in range(len(database)):# numero de linhas do csv
         fullname = database.iat[i,0]
         name = database.iat[i,1]
         description = database.iat[i,2]
