@@ -2,6 +2,10 @@ __pycache__
 
 bot-env
 
+venv
+
 secret.py
 
 .vscode
+
+.idea
