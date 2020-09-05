@@ -21,7 +21,7 @@ class Export(Request, Token):
     def writeFunc(self, name=None, data=None, *args, **kwargs):
         if name and data:
             df = DataFrame(data)
-            df.to_csv(self.path, encoding='utf-8')
+            df.to_csv(self.path, encoding='utf-8', index=False, header=False)
 
         else:
             return 'File name or data list not passed.'
