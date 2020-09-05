@@ -2,10 +2,11 @@ import discord
 from discord.ext import commands, tasks
 from itertools import cycle
 from commandslist import *
-from secret import Bot_token
+from secret import Bot_token, bitly_token
 import pandas as pd
+# import bitlyshortener
 
-
+#short = bitlyshortener.Shortener(tokens=bitly_token, vanitize=True)
 Prefix = 'm-'
 client = commands.Bot(command_prefix=Prefix)
 status = cycle(['Procurando atualizações...', 'Olhando para o Moodle', 'Descobrindo tarefas', 'Destruindo a casa do Jamil'])
@@ -31,38 +32,40 @@ async def clear(ctx, amount=10):
 
 
 @client.command()
-async def (ctx):
+async def tarefas(ctx):
     database = pd.read_csv(PATH, header=None )
-
+    modulename = ''
+    
+    # urls = pd.DataFrame(database, columns=['deadline'])
+    # print(urls, type(urls))
     for i in range(1,3):# numero de linhas do csv
         if database.iat[i,3] == 'assign':
-            database.iat[i,3] = 'Tarefa para entregar via Moodle'
+            modulename = 'Tarefa para entregar via Moodle'
         elif database.iat[i,3] == 'bigbluebutton':
-            database.iat[i,3] = 'Aula ao vivo - BigBlueButton'
+            modulename = 'Aula ao vivo - BigBlueButton'
             
         fullname = database.iat[i,0]
         name = database.iat[i,1]
         description = database.iat[i,2]
-        modulename = database.iat[i,3]
         deadline = database.iat[i,4] + ' às ' + database.iat[i,5]
         link = database.iat[i, 6]
+        # url = urls[i]
+        # print(link, url)
+        # print(database)
+
         embed=discord.Embed(title=modulename, color=0xcc0000)
         embed.set_thumbnail(url="https://logodownload.org/wp-content/uploads/2017/09/mackenzie-logo-3.png")
         embed.add_field(name="Matéria", value=fullname, inline=True)
         embed.add_field(name="Nome da tarefa", value=name, inline=True)
-        embed.add_field(name="Descrição", value=description, inline=True)
+        embed.add_field(name="Descrição", value=description, inline=False)
         embed.add_field(name="Tipo de tarefa", value=modulename, inline=True)
         embed.add_field(name="Data de entrega", value=deadline, inline=True)
         embed.add_field(name="Link", value=link, inline=False)
         embed.set_footer(text="Feito com ❤ por alunos do Mackenzie.")
+        
+        
         await ctx.send(embed=embed)
 
-"""
-@client.event
-async def on_message(message):
-    if message.author == client.user:
-        return
-"""
 
 
 client.run(Bot_token)
