@@ -9,7 +9,7 @@ import pandas as pd
 #short = bitlyshortener.Shortener(tokens=bitly_token, vanitize=True)
 Prefix = 'm-'
 client = commands.Bot(command_prefix=Prefix)
-status = cycle(['Procurando atualizações...', 'Olhando para o Moodle', 'Descobrindo tarefas', 'Destruindo a casa do Jamil'])
+status = cycle(['Estudando...', 'Navegando no Moodle', 'Descobrindo tarefas', 'Dominando o mundo', 'Reduzindo as suas faltas', 'Calculando as suas médias'])
 PATH = r'C:\Users\lukep\Documents\Projects\Discord Bot\DiscordMackBot\template.csv'
 
 
@@ -19,9 +19,9 @@ async def on_ready():
     print('We have logged in as {0.user}'.format(client))
 
 
-@tasks.loop(seconds=10)
+@tasks.loop(seconds=300)
 async def change_status():
-    # print("next status")
+    print("next status")
     await client.change_presence(activity=discord.Game(next(status)))
 
 
@@ -34,19 +34,15 @@ async def clear(ctx, amount=10):
 @client.command()
 async def tarefas(ctx):
     database = pd.read_csv(PATH, header=None )
-    modulename = ''
     
     # urls = pd.DataFrame(database, columns=['deadline'])
     # print(urls, type(urls))
-    for i in range(1,3):# numero de linhas do csv
-        if database.iat[i,3] == 'assign':
-            modulename = 'Tarefa para entregar via Moodle'
-        elif database.iat[i,3] == 'bigbluebutton':
-            modulename = 'Aula ao vivo - BigBlueButton'
+    for i in range(database.size - 1):# numero de linhas do csv
             
         fullname = database.iat[i,0]
         name = database.iat[i,1]
         description = database.iat[i,2]
+        modulename = database.iat[i,3]
         deadline = database.iat[i,4] + ' às ' + database.iat[i,5]
         link = database.iat[i, 6]
         # url = urls[i]
