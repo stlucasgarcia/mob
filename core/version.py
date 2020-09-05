@@ -14,5 +14,5 @@ def get_version(version=None):
         return 'Invalid call from version.'
 
     else:
-        sufix = 'FINAL' if version[3] == 'f' else 'ALPHA'
+        sufix = 'FINAL' if version[2] == 'f' else 'ALPHA'
         return f'Core version {version[0]}.{version[1]} {sufix} - last time checked: {datetime.utcnow()}'
