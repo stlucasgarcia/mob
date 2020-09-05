@@ -1,2 +1,4 @@
-﻿fullname,name,description,modulename,deadline,formattedtime
-Jamilera,Entrega Tarefa 1,Entregar os ex da lista,assign,"sexta, 4 de setembro",11:00
+﻿fullname,name,description,modulename,deadline,formattedtime, link
+Jamilera,Entrega Tarefa 1,Entregar os ex da lista,assign,"sexta, 4 de setembro",11:00, https://eadmoodle.mackenzie.br/mod/bigbluebuttonbn/view.php?id=885736
+Pogramacao II,Entregar lista Reservas,Entregar  as listas em arquivo .py,bigbluebutton,"quarta, 14 de setembro",9:15, https://eadmoodle.mackenzie.br/mod/bigbluebuttonbn/view.php?id=885736
+
