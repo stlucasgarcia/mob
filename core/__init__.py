@@ -20,4 +20,6 @@ __all__ = [
     'request',
     'token',
     'version',
+
+    'data',
 ]
