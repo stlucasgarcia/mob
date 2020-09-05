@@ -15,7 +15,7 @@ class Export(Request, Token):
 
     def __init__(self, token):
         super().__init__(token)
-        self.path = abspath('template.csv')
+        self.path = abspath('events.csv')
 
 
     def writeFunc(self, name=None, data=None, *args, **kwargs):
@@ -58,4 +58,4 @@ class Export(Request, Token):
                             ]
                         )
 
-        Export.writeFunc(self, name='template.csv', data=data)
+        Export.writeFunc(self, name='events.csv', data=data)
