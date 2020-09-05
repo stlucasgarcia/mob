@@ -44,10 +44,10 @@ class Export(Request, Token):
                             [
                                 events['course']['fullname'],
                                 events['name'],
-                                events['description'],
+                                events['description'] if events['description'] != '' else 'Descrição não disponível',
 
-                                events['modulename'][:len(events['modulename'])-2]
-                                if events['modulename'] == 'bigbluebuttonbn' else events['modulename'],
+                                'Aula ao vivo - BigBlueButton' if events['modulename'] == 'bigbluebuttonbn' else
+                                'Tarefa para entregar via Moodle',
 
                                 day['popovertitle'][:len(day['popovertitle']) - 8],
 
