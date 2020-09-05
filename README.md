@@ -10,6 +10,7 @@ It was coded 100% in python and using the following libraries: Pandas, Discord, 
 ### Image feature
 ### Fun commands
 
+
 We plan to release all these functionalities and beyond! Thanks for your support!
 
 ###### Created by Daniel Kauffmann, Lucas Garcia and Matheus Chang with ❤
