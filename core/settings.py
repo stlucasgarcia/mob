@@ -15,8 +15,16 @@ TOKEN = '&wstoken='                              # Create prefix to token to be 
 REQUEST = f'{BASEURL}{SERVICE}{API}{CONNECTION}{FORMAT}{TOKEN}'
 
 
-# Core Functions dict for functions suported
+# Core Functions dictionary for suportted functions
 
 func = {
     'calendar_monthly': 'core_calendar_get_calendar_monthly_view',
+}
+
+# Discipline dictionary
+
+
+
+disc = {
+    'ALGEBRA BOOLEANA E CIRC DIGITAIS [turma 02D] - 2020/2': 'Jamil Kalil NAUFAL JUNIOR'
 }

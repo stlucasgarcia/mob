@@ -21,22 +21,6 @@ class Export(Token):
         return f'Export object for file in path {self.path}'
 
 
-    def filter(self, value=None, data=None, *args, **kwargs):
-        filtering = 'Aula ao vivo - BigBlueButton' if value == 'bbb' else 'Tarefa para entregar via Moodle'
-
-        if value and data:
-            filtered = []
-
-            for row in data:
-                if row[3] == filtering:
-                    filtered.append(row)
-
-            return filtered
-
-        else:
-            raise ValueError('Value or data parameter not passed correctly.')
-
-
     def to_csv(self, data=None, *args, **kwargs):
         if data:
             df = DataFrame(data)
