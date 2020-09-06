@@ -20,7 +20,6 @@ status = cycle(["Estudando...", "Navegando no Moodle", "Descobrindo tarefas", "D
 PATH_EVENTS = r"C:\\Users\\lukep\\Documents\\Projects\\Discord Bot\\DiscordMackBot\\csvfiles\\events.csv"
 #PATH_ASSIGNMENTS = path.join(path.abspath("bot")[:-3], path.abspath("csvfiles\assignments.csv"))
 #PATH_CLASSES = path.join(path.abspath("bot")[:-3], path.abspath("csvfiles\liveclasses.csv"))
-darkred = 0x9f000c
 allowed_channels = [750313490455068722]
 
 
