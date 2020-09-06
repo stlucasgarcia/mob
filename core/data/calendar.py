@@ -4,35 +4,28 @@ Calendar module especifically for calendar funcitons
 Last Update: 05/09/2020 - support for calendar_monthly
 """
 
-from os.path import abspath
-from pandas import DataFrame
-
 from core.request import Request
-from core.token import Token
+
+from datetime import datetime as dt
+from re import compile, sub
 
 
-class Export(Request, Token):
+class Calendar(Request):
 
     def __init__(self, token):
         super().__init__(token)
-        self.path = abspath('events.csv')
 
 
-    def writeFunc(self, name=None, data=None, *args, **kwargs):
-        if name and data:
-            df = DataFrame(data)
-            df.to_csv(self.path, encoding='utf-8', index=False, header=False)
-
-        else:
-            return 'File name or data list not passed.'
+    def __str__(self):
+        return 'Calendar object'
 
 
-    def getToken(self, *args, **kwargs):
-        token = Token.post(self, username='', password='')
+    def _clean(self, value):
+         return sub(compile('<.*?>'), '', value)
 
 
-    def getCalendarMonthly(self, *args, **kwargs):
-        month = Request.get(self, function='core_calendar_get_calendar_monthly_view', year='2020', month='9')['weeks']
+    def monthly(self, month=str(dt.today().month), year=str(dt.today().year), *args, **kwargs):
+        month = Request.get(self, function='core_calendar_get_calendar_monthly_view', year=year, month=month)['weeks']
 
         data = []
 
@@ -44,7 +37,9 @@ class Export(Request, Token):
                             [
                                 events['course']['fullname'],
                                 events['name'],
-                                events['description'] if events['description'] != '' else 'Descrição não disponível',
+
+                                Calendar._clean(self, events['description']) if events['description'] != ''
+                                else 'Descrição não disponível',
 
                                 'Aula ao vivo - BigBlueButton' if events['modulename'] == 'bigbluebuttonbn' else
                                 'Tarefa para entregar via Moodle',
@@ -58,4 +53,4 @@ class Export(Request, Token):
                             ]
                         )
 
-        Export.writeFunc(self, name='events.csv', data=data)
+        return data
