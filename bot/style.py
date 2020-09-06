@@ -4,8 +4,8 @@ darkred = 0x9f000c
 # def assignments_style(modulename, fullname, name, description, deadline, link):
 
 
-def assignments_style(dict):
-    embed=discord.Embed(title=dict["modulename"], color=darkred)
+def assignments_style(dict, color=""):
+    embed=discord.Embed(title=dict["modulename"], color= color if color else darkred)
     embed.set_thumbnail(url="https://logodownload.org/wp-content/uploads/2017/09/mackenzie-logo-3.png")
     embed.add_field(name="Matéria", value=dict["fullname"], inline=True)
     embed.add_field(name="Nome da tarefa", value=dict["name"], inline=True)
