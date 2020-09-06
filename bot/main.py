@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands, tasks
 from itertools import cycle
 from commandslist import *
-from secret import Bot_token, bitly_token
+##from secret import Bot_token, bitly_token
 import pandas as pd
 from style import *
 from os import path
@@ -17,7 +17,9 @@ client = commands.Bot(command_prefix=Prefix)
 status = cycle(["Estudando...", "Navegando no Moodle", "Descobrindo tarefas", "Dominando o mundo", "Reduzindo as suas faltas", "Calculando as suas médias"])
 
 #PATH_EVENTS = path.join(path.abspath("bot")[:-3], path.abspath("csvfiles\events.csv"))
-PATH_EVENTS = r"C:\\Users\\lukep\\Documents\\Projects\\Discord Bot\\DiscordMackBot\\csvfiles\\events.csv"
+PATH_EVENTS = r"C:\Users\lukep\Documents\Projects\Discord Bot\DiscordMackBot\csvfiles\events.csv"
+PATH_LIVECLASSES = r"C:\Users\lukep\Documents\Projects\Discord Bot\DiscordMackBot\csvfiles\liveclasses.csv"
+PATH_ASSIGNMENTS = r"C:\Users\lukep\Documents\Projects\Discord Bot\DiscordMackBot\csvfiles\assignments.csv"
 #PATH_ASSIGNMENTS = path.join(path.abspath("bot")[:-3], path.abspath("csvfiles\assignments.csv"))
 #PATH_CLASSES = path.join(path.abspath("bot")[:-3], path.abspath("csvfiles\liveclasses.csv"))
 allowed_channels = [750313490455068722]
@@ -73,12 +75,22 @@ async def clear(ctx, amount=3):
 
 #Command to get the assignments from the csv and send it embeded to the text chat
 @client.command()
-async def assignments(ctx):
-    database = pd.read_csv(PATH_EVENTS, header=None ) # This should equals PATH for assignments.csv
+async def check(ctx, option):
+    ##database = pd.read_csv(PATH_EVENTS, header=None ) # This should equals PATH for assignments.csv
     
     # urls = pd.DataFrame(database, columns=["deadline"])
     # print(urls, type(urls))
     if ctx.channel.id in allowed_channels:
+
+        if option == "assignments":
+            database = pd.read_csv(PATH_ASSIGNMENTS, header=None )
+        elif option == "liveclasses":
+            database = pd.read_csv(PATH_LIVECLASSES, header=None )
+        elif option == "events":
+            database = pd.read_csv(PATH_EVENTS, header=None )
+
+
+
         for i in range(len(database)):# amount of rows of the csv
             assignmentsdata = { 
             "fullname" : database.iat[i,0],
@@ -87,7 +99,7 @@ async def assignments(ctx):
             "modulename" : database.iat[i,3],
             "deadline" : database.iat[i,4] + " às " + database.iat[i,5],
             "link" : database.iat[i, 6]
-            # author = database.iat[i, 7]
+            # "author" : database.iat[i, 7]
             }
             # url = urls[i]
             # print(link, url)
@@ -100,3 +112,4 @@ async def assignments(ctx):
 
 
 client.run(Bot_token)
+
