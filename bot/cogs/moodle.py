@@ -22,7 +22,7 @@ class Moodle(commands.Cog):
 
             if option == "assignments":
                 database = pd.read_csv(PATH_ASSIGNMENTS, header=None )
-            elif option == "liveclasses":
+            elif option == "classes":
                 database = pd.read_csv(PATH_LIVECLASSES, header=None )
             elif option == "events":
                 database = pd.read_csv(PATH_EVENTS, header=None )

@@ -6,6 +6,10 @@ venv
 
 secret.py
 
+csvfiles/assignments.csv
+csvfiles/events.csv
+csvfiles/liveclasses.csv
+
 .vscode
 
 .idea
