@@ -7,7 +7,7 @@ from style import *
 
 #status = cycle(["Estudando...", "Navegando no Moodle", "Descobrindo tarefas", "Dominando o mundo", "Reduzindo as suas faltas", "Calculando as suas médias"])
 
-# General proposes bot commands 
+# General use bot commands 
 class General(commands.Cog):
 
     def __init__(self, client):
