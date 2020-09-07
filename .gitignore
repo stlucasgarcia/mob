@@ -9,6 +9,7 @@ secret.py
 csvfiles/assignments.csv
 csvfiles/events.csv
 csvfiles/liveclasses.csv
+csvfiles/*
 
 .vscode
 
