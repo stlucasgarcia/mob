@@ -2,8 +2,9 @@
 Requests module responsable to get data from Moodle Platform.
 """
 
+from moodleapi.settings import REQUEST
+
 import requests
-from core.settings import REQUEST
 
 
 class Request:
@@ -14,8 +15,10 @@ class Request:
         self.url = REQUEST + token
         self.request = requests
 
+
     def __str__(self):
-        return f'Request class for {self.url}'
+        return f'Request object for {self.url}'
+
 
     def get(self, function, *args, **kwargs):
         """GET method recive the function according to func dict in settings.
@@ -30,7 +33,7 @@ class Request:
             r = self.request.get(self.url)
             r.raise_for_status()
 
-        except requests.exceptions.HTTPError as httperror:
+        except self.request.exceptions.HTTPError as httperror:
             return f'HTTP error occured: {httperror}'
 
         except Exception as err:
