@@ -1,9 +1,6 @@
 import discord
 darkred = 0x9f000c
 
-# def assignments_style(modulename, fullname, name, description, deadline, link):
-
-
 def assignments_style(dict, color=""):
     embed=discord.Embed(title=dict["modulename"], color= color if color else darkred)
     embed.set_thumbnail(url="https://logodownload.org/wp-content/uploads/2017/09/mackenzie-logo-3.png")
@@ -13,18 +10,20 @@ def assignments_style(dict, color=""):
     if dict["modulename"] != "Aula ao vivo - BigBlueButton":
         embed.add_field(name="Descrição", value=dict["description"], inline=False)
         embed.add_field(name="Tipo de tarefa", value=dict["modulename"], inline=True)
+        embed.add_field(name="Data de entrega", value=dict["deadline"], inline=True)
     else:
         embed.add_field(name="Tipo de tarefa", value=dict["modulename"], inline=False)
+        embed.add_field(name="Data de entrega", value=dict["deadline"], inline=True)
 
-    embed.add_field(name="Data de entrega", value=dict["deadline"], inline=True)
+    
     embed.add_field(name="Link", value=dict["link"], inline=False)
     #embed.add_field(name="Professor", value=dict["author"], inline=False)
-    embed.set_footer(text="Feito com 💖 por alunos do Mackenzie.")
+    embed.set_footer(text="Created with 💖 by Mackenzie Students.")
     return embed
 
 
 def main_messages_style(message, emote="", color=""):
     
     embed=discord.Embed(description=f"**{message}** {emote if emote != '' else emote}", color= color if color else darkred)
-    embed.set_footer(text="Feito com 💖 por alunos do Mackenzie.")
+    embed.set_footer(text="Created with 💖 by Mackenzie Students.")
     return embed
