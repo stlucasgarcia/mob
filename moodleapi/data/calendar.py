@@ -42,6 +42,7 @@ class Calendar(Request):
 
     def monthly(self, month=str(dt.today().month), year=str(dt.today().year), *args, **kwargs):
         month = Request.get(self, function='core_calendar_get_calendar_monthly_view', year=year, month=month)['weeks']
+        d = dt.today().day
 
         data = []
 
@@ -49,7 +50,8 @@ class Calendar(Request):
             for day in week['days']:
                 for events in day['events']:
                     if (events['modulename'] == 'assign' or events['modulename'] == 'bigbluebuttonbn')\
-                            and events['course']['fullname'] != 'ALGORITMOS E PROGRAMACAO I [turma 01G] - 2020/2':
+                            and events['course']['fullname'] != 'ALGORITMOS E PROGRAMACAO I [turma 01G] - 2020/2'\
+                            and d <= int(day['mday']) < d+15:
                         data.append(
                             [
                                 events['course']['fullname'],

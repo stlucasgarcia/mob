@@ -8,6 +8,8 @@ secret.py
 
 *.csv
 
+encryption.key
+
 .vscode
 
 .idea

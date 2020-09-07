@@ -3,6 +3,8 @@ Token module responsable to get user token (work only once).
 """
 
 from moodleapi.settings import BASEURL
+from moodleapi.security import Cryptography
+from moodleapi.data.export import Export
 
 from requests import post
 
@@ -26,6 +28,7 @@ class Token:
         password = f'&password={password}'
 
         url = f'{self.BASEURL}{self.SERVICE}{self.CONNECTION}{self.PLATFORM}{username}{password}'
-        data = self.post(url).json()
+        data = self.post(url).json()['token']
 
-        return [data['token'],]
+
+        return Export('tokens.csv').to_csv(data=[[Cryptography().encrypt_message(data)],], addstyle=True)
