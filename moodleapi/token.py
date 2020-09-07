@@ -2,7 +2,7 @@
 Token module responsable to get user token (work only once).
 """
 
-from core.settings import BASEURL
+from moodleapi.settings import BASEURL
 
 from requests import post
 

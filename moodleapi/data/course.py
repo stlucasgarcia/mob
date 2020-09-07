@@ -2,7 +2,7 @@
 Course module ...
 """
 
-from core.request import Request
+from moodleapi.request import Request
 
 
 class Course(Request):

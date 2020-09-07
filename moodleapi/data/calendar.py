@@ -4,7 +4,7 @@ Calendar module especifically for calendar funcitons
 Last Update: 05/09/2020 - support for calendar_monthly
 """
 
-from core.request import Request
+from moodleapi.request import Request
 
 from datetime import datetime as dt
 from re import compile, sub

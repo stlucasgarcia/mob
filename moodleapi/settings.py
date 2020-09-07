@@ -21,10 +21,14 @@ func = {
     'calendar_monthly': 'core_calendar_get_calendar_monthly_view',
 }
 
-# Discipline dictionary
+# Discipline teacher dictionary
 
+teacher = {
+    'ALGEBRA BOOLEANA E CIRC DIGITAIS [turma 02D] - 2020/2': 'JAMIL KALIL NAUFAL JUNIOR',
+}
 
+# Discipline ID dictionary
 
-disc = {
-    'ALGEBRA BOOLEANA E CIRC DIGITAIS [turma 02D] - 2020/2': 'Jamil Kalil NAUFAL JUNIOR'
+disc_id = {
+    '': ''
 }

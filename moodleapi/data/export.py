@@ -3,7 +3,7 @@ Export Module contains only Export class to export any data for an
 csv file passed.
 """
 
-from core.token import Token
+from moodleapi.token import Token
 
 from os import path
 from pandas import DataFrame

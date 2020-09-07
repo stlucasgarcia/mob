@@ -2,7 +2,7 @@
 Requests module responsable to get data from Moodle Platform.
 """
 
-from core.settings import REQUEST
+from moodleapi.settings import REQUEST
 
 import requests
 
