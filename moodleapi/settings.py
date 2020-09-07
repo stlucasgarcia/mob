@@ -28,9 +28,14 @@ func = {
 
 # Discipline teacher dictionary
 
-teacher = {
-    'ALGEBRA BOOLEANA E CIRC DIGITAIS [turma 02D] - 2020/2': 'JAMIL KALIL NAUFAL JUNIOR',
-}
+data = []
+with open(path.join(path.abspath('bot')[:-3], path.abspath('csvfiles\professors.csv')), 'r') as arq:
+    for line in arq:
+        line = line.split(',')
+        line[1] = line[1][:-1]
+        data.append(line)
+
+professor = {k: v for k, v in data}
 
 
 # Discipline ID dictionary

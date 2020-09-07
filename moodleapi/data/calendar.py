@@ -5,6 +5,7 @@ Last Update: 05/09/2020 - support for calendar_monthly
 """
 
 from moodleapi.request import Request
+from moodleapi.settings import professor
 
 from datetime import datetime as dt
 from re import compile, sub
@@ -42,16 +43,30 @@ class Calendar(Request):
 
     def monthly(self, month=str(dt.today().month), year=str(dt.today().year), *args, **kwargs):
         month = Request.get(self, function='core_calendar_get_calendar_monthly_view', year=year, month=month)['weeks']
-        d = dt.today().day
+
+        d, h, m = dt.today().day, dt.today().hour, dt.today().minute
+
+
+        allowed_modules = ('assign', 'bigbluebuttonbn')
+        courses_notallowed = ('ALGORITMOS E PROGRAMACAO I [turma 01G] - 2020/2',)
+
 
         data = []
 
         for week in month:
             for day in week['days']:
                 for events in day['events']:
-                    if (events['modulename'] == 'assign' or events['modulename'] == 'bigbluebuttonbn')\
-                            and events['course']['fullname'] != 'ALGORITMOS E PROGRAMACAO I [turma 01G] - 2020/2'\
-                            and d <= int(day['mday']) < d+15:
+                    period = True if d <= int(day['mday']) < d + 15 else False
+                    today = True if day['mday'] == d else False
+                    deadline = Calendar._clean(self, events['formattedtime']) if events['modulename'] in allowed_modules else -1
+                    print(deadline)
+                    print(h < (int(deadline[:2]) if int(deadline[:2]) != 0 else 24))
+                    hourlimit = False if (h < (int(deadline[:2]) if int(deadline[:2]) != 0 else 24)) else True
+                    minutelimit = m < int(deadline[4:6]) if hourlimit else False
+
+                    if events['modulename'] in allowed_modules and events['course']['fullname'] not in courses_notallowed \
+                            and period and (today and (not hourlimit and minutelimit)):
+                        print(not hourlimit, minutelimit)
                         data.append(
                             [
                                 events['course']['fullname'],
@@ -63,13 +78,13 @@ class Calendar(Request):
                                 'Aula ao vivo - BigBlueButton' if events['modulename'] == 'bigbluebuttonbn' else
                                 'Tarefa para entregar via Moodle',
 
-                                day['popovertitle'][:len(day['popovertitle']) - 8],
+                                day['popovertitle'].split(' eventos')[0],
 
-                                events['formattedtime'].split(':')[0][::-1][0:2][::-1] + ':'
-                                + events['formattedtime'].split(':')[1][0:2],
+                                deadline[:-2],
 
                                 events['url'],
 
+                                professor[f'{events["course"]["fullname"]}'],
 
                             ]
                         )

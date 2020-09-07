@@ -39,7 +39,7 @@ class Cryptography:
             f = Fernet(key)
             encrypted_message = f.encrypt(encoded_message)
 
-            return [[encrypted_message],]
+            return encrypted_message
 
         else:
             raise ValueError('Message not provided.')
@@ -55,7 +55,7 @@ class Cryptography:
 
             decrypted_message = f.decrypt(encrypted_message).decode()
 
-            return [[decrypted_message],]
+            return decrypted_message
 
         else:
             raise ValueError('Encrypted message not provided.')
