@@ -6,7 +6,8 @@ import os
 PATH_EVENTS = os.path.abspath('bot').split('bot')[0] + "csvfiles\events.csv"
 PATH_ASSIGNMENTS = os.path.abspath('bot').split('bot')[0] + "csvfiles\\assignments.csv"
 PATH_LIVECLASSES = os.path.abspath('bot').split('bot')[0] + "csvfiles\liveclasses.csv"
+PATH_TOKENS = os.path.abspath('bot').split('bot')[0] + "csvfiles\\tokens.csv"
 
 # Global allowed_channels list
 allowed_channels = [750313490455068722]        
-tokens = [123]
+tokens = []
