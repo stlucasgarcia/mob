@@ -6,9 +6,7 @@ venv
 
 secret.py
 
-assignments.csv
-events.csv
-liveclasses.csv
+*.csv
 
 .vscode
 
