@@ -23,7 +23,7 @@ class Token:
         return 'Token object creation'
 
 
-    def create(self, username=None, password=None, *args, **kwargs):
+    def create(self, username=None, password=None, discordid=None, *args, **kwargs):
         username = f'&username={username}'
         password = f'&password={password}'
 
@@ -31,4 +31,4 @@ class Token:
         data = self.post(url).json()['token']
 
 
-        return Export('tokens.csv').to_csv(data=[[Cryptography().encrypt_message(data)],], addstyle=True)
+        return Export('tokens.csv').to_csv(data=[[Cryptography().encrypt_message(data), discordid],], addstyle=True)
