@@ -1,7 +1,19 @@
 import discord
-darkred = 0x9f000c
+from itertools import cycle
 
-def assignments_style(dict, color=""):
+
+positive_emojis_list = cycle(["👍", "🆗", "🤙", "👌", "👊", "🆒", "✅"]) 
+negative_emojis_list = cycle(["🚫", "🛑", "❌", "⛔"])
+status_list = cycle(["Estudando...", "Navegando no Moodle", "Descobrindo tarefas", "Dominando o mundo", "Reduzindo as suas faltas", "Calculando as suas médias"])
+posemoji = next(positive_emojis_list)
+
+
+darkred = 0x9f000c
+footer = "Created with 💖 by Mackenzie Students."
+
+# This file is created to style the bot messages
+# Styling the check command from moodle.py
+def check_command_style(dict, color=""):
     embed=discord.Embed(title=dict["modulename"], color= color if color else darkred)
     embed.set_thumbnail(url="https://logodownload.org/wp-content/uploads/2017/09/mackenzie-logo-3.png")
     embed.add_field(name="Matéria", value=dict["fullname"], inline=True)
@@ -15,15 +27,20 @@ def assignments_style(dict, color=""):
         embed.add_field(name="Tipo de tarefa", value=dict["modulename"], inline=False)
         embed.add_field(name="Data de entrega", value=dict["deadline"], inline=True)
 
-    
     embed.add_field(name="Link", value=dict["link"], inline=False)
     #embed.add_field(name="Professor", value=dict["author"], inline=False)
-    embed.set_footer(text="Created with 💖 by Mackenzie Students.")
+    embed.set_footer(text=footer)
     return embed
 
+# Creating a template for messages
+def main_messages_style(name="", message="", emote="", color=""):
+    message = f"**{message}**" if message != "" else message
 
-def main_messages_style(message, emote="", color=""):
+    embed=discord.Embed(title=name, description=f"{message} {emote if emote != '' else emote}",
+    color= color if color else darkred)
+    embed.set_author(name="")
+    embed.set_footer(text=footer)
     
-    embed=discord.Embed(description=f"**{message}** {emote if emote != '' else emote}", color= color if color else darkred)
-    embed.set_footer(text="Created with 💖 by Mackenzie Students.")
+
     return embed
+
