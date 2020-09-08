@@ -41,8 +41,8 @@ class Moodle(commands.Cog):
                     "description" : database.iat[i,2],
                     "modulename" : database.iat[i,3],
                     "deadline" : database.iat[i,4] + " às " + database.iat[i,5],
-                    "link" : database.iat[i, 6]
-                    # "author" : database.iat[i, 7]
+                    "link" : database.iat[i, 6],
+                    "author" : database.iat[i, 7]
                     }
                     # url = urls[i]
                     # print(link, url)

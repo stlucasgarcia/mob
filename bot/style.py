@@ -28,7 +28,7 @@ def check_command_style(dict, color=""):
         embed.add_field(name="Data de entrega", value=dict["deadline"], inline=True)
 
     embed.add_field(name="Link", value=dict["link"], inline=False)
-    #embed.add_field(name="Professor", value=dict["author"], inline=False)
+    embed.add_field(name="Professor", value=dict["author"], inline=False)
     embed.set_footer(text=footer)
     return embed
 
