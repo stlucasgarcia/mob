@@ -59,7 +59,7 @@ class Calendar(Request):
                     period = True if d <= int(day['mday']) < d + 15 else False
                     today = True if day['mday'] == d else False
                     deadline = Calendar._clean(self, events['formattedtime']) if events['modulename'] in allowed_modules else -1
-                    print(deadline)
+                    #print(deadline)
                     print(h < (int(deadline[:2]) if int(deadline[:2]) != 0 else 24))
                     hourlimit = False if (h < (int(deadline[:2]) if int(deadline[:2]) != 0 else 24)) else True
                     minutelimit = m < int(deadline[4:6]) if hourlimit else False
