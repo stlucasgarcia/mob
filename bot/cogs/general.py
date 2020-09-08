@@ -98,24 +98,12 @@ class General(commands.Cog):
         before = time.monotonic()
         embed = main_messages_style("Checking ping...")
         msg = await ctx.send(embed=embed)
-        await ctx.message.add_reaction(next(negative_emojis_list))
+        await ctx.message.add_reaction(next(positive_emojis_list))
         ping = (time.monotonic() - before) * 1000
         await ctx.channel.purge(limit=1)
         embed = main_messages_style(f"Pong!  `{int(ping)}ms`")
         await ctx.send(embed=embed)
         print(f'Ping {int(ping)}ms')
-
-    @commands.command()
-    async def select_color(self, ctx):
-        embed = main_messages_style("Type the bots main color in hex")
-        await ctx.send(embed=embed)
-        await ctx.message.add_reaction(next(positive_emojis_list))
-        nwe_color = await self.client.wait_for('message')
-        maincolor = nwe_color.content.replace("#", "0x", 1)
-        print(maincolor)
-        embed = main_messages_style("New color picked sucessfully")
-        await ctx.send(embed=embed)
-
 
 
     # @commands.Cog.listener()

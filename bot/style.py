@@ -1,6 +1,6 @@
 import discord
 from itertools import cycle
-
+from cogs.general import *
 
 positive_emojis_list = cycle(["👍", "🆗", "🤙", "👌", "👊", "🆒", "✅"]) 
 negative_emojis_list = cycle(["🚫", "🛑", "❌", "⛔"])
@@ -9,13 +9,6 @@ status_list = cycle(["Estudando...", "Navegando no Moodle", "Descobrindo tarefas
 footer = "Created with 💖 by Mackenzie Students."
 
 defaultcolor = 0x9f000c
-
-
-# def color(maincolor, defaultcolor):
-#     if maincolor != defaultcolor:
-#         return maincolor
-#     else:
-#         defaultcolor
 
 # color(maincolor, defaultcolor)
 # This file is created to style the bot messages
@@ -41,12 +34,9 @@ def check_command_style(dict, color=""):
 # Creating a template for messages
 def main_messages_style(name="", message="", emote="", color=""):
     message = f"**{message}**" if message != "" else message
-
     embed=discord.Embed(title=name, description=f"{message} {emote if emote != '' else emote}",
     color= color if color else defaultcolor)
     embed.set_author(name="")
     embed.set_footer(text=footer)
-    
-
     return embed
 
