@@ -16,11 +16,11 @@ class Moodle(commands.Cog):
     # Command to get the assignments from the csv and send it embeded to the text chat    
     @commands.command()
     async def check(self, ctx, option=""):        
+        await ctx.message.add_reaction(next(positive_emojis_list))
         # urls = pd.DataFrame(database, columns=["deadline"])
         # print(urls, type(urls))
-        
+        bool = True
         if ctx.channel.id in allowed_channels:
-
             if option == "assignments":
                 database = pd.read_csv(PATH_ASSIGNMENTS, header=None )
             elif option == "classes":
@@ -32,28 +32,27 @@ class Moodle(commands.Cog):
                 "Option not available, you must use Assignments, Classes or Events ", " 😕")
                 await ctx.message.add_reaction(next(negative_emojis_list))
                 await ctx.send(embed=embed)   
-                             
-
-            #if database:
-            await ctx.message.add_reaction(next(positive_emojis_list))
-            for i in range(len(database)):# amount of rows of the csv
-                assignmentsdata = { 
-                "fullname" : database.iat[i,0],
-                "name" : database.iat[i,1],
-                "description" : database.iat[i,2],
-                "modulename" : database.iat[i,3],
-                "deadline" : database.iat[i,4] + " às " + database.iat[i,5],
-                "link" : database.iat[i, 6],
-                "author" : str(database.iat[i, 7]).capitalize()
-                }
-                # url = urls[i]
-                # print(link, url)
-                # print(database)
-                
-                #Styling the message 
-                embed = check_command_style(assignmentsdata)
-                await ctx.send(embed=embed)
-                await asyncio.sleep(2)
+                bool = False
+            
+            if bool:
+                for i in range(len(database)):# amount of rows of the csv
+                    assignmentsdata = { 
+                    "fullname" : database.iat[i,0],
+                    "name" : database.iat[i,1],
+                    "description" : database.iat[i,2],
+                    "modulename" : database.iat[i,3],
+                    "deadline" : database.iat[i,4] + " às " + database.iat[i,5],
+                    "link" : database.iat[i, 6],
+                    "author" : str(database.iat[i, 7]).capitalize()
+                    }
+                    # url = urls[i]
+                    # print(link, url)
+                    # print(database)
+                    
+                    #Styling the message 
+                    embed = check_command_style(assignmentsdata)
+                    await ctx.send(embed=embed)
+                    await asyncio.sleep(2)
 
 
     # Command to create or access your moodle API        
@@ -66,15 +65,15 @@ class Moodle(commands.Cog):
         def check(ctx, m):
             return m.author == ctx.author
 
-        flag = False
+        bool = True
 
         j = 0
         for i in range(len(tokens_data)):
             if userid in str(tokens_data.iat[i,1]):
                 j = i
-                flag = True
+                bool = False
 
-        if not flag:
+        if bool:
             embed = main_messages_style("Apparently you don't have a Moodle API Token, do you want to create one? Yes/No", "Your login and password won't be saved in the "
             "system, it'll be used to create your Token and the Crypted Token will be stored")
             await ctx.author.send(embed=embed)
@@ -93,6 +92,7 @@ class Moodle(commands.Cog):
                 await ctx.author.send(embed=embed)
                 await ctx.message.add_reaction(next(positive_emojis_list))
                 password = await self.client.wait_for('message')
+
                 # Call your
                 Token().create(username.content, password.content, userid)
 
@@ -103,7 +103,7 @@ class Moodle(commands.Cog):
                 embed = main_messages_style("Okay, use the **GetToken** command when you're ready to create one")
                 await ctx.author.send(embed=embed)
 
-        if flag:
+        else:
             embed = main_messages_style("Your Moodle API Token is encripted and safe, to keep the institution and your data safe I will send the Token in your DM")
             await ctx.send(embed=embed)
             decrypted_token = Cryptography().decrypt_message(bytes(tokens_data.iat[j,0], encoding='utf-8'))
