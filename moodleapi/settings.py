@@ -29,7 +29,7 @@ func = {
 # Discipline teacher dictionary
 
 data = []
-with open(path.join(path.abspath('bot')[:-3], path.abspath('csvfiles\professors.csv')), 'r') as arq:
+with open(path.abspath('bot').split('bot')[0] + "csvfiles\professors.csv", 'r') as arq:
     for line in arq:
         line = line.split(',')
         line[1] = line[1][:-1]
@@ -41,7 +41,7 @@ professor = {k: v for k, v in data}
 # Discipline ID dictionary
 
 data = []
-with open(path.join(path.abspath('bot')[:-3], path.abspath('csvfiles\subjectsid.csv')), 'r') as arq:
+with open(path.abspath('bot').split('bot')[0] + "csvfiles\subjectsid.csv", 'r') as arq:
     for line in arq:
         line = line.split(',')
         line[1] = line[1][:-1]

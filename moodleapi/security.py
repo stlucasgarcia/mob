@@ -4,6 +4,8 @@ Security module responsable to all kind of encrypt and decrypt.
 
 from cryptography.fernet import Fernet
 
+from os import path
+
 
 class Cryptography:
 
@@ -17,7 +19,7 @@ class Cryptography:
 
         key = Fernet.generate_key()
 
-        with open('encryption.key', 'wb') as key_file:
+        with open(path.abspath('bot').split('bot')[0] + "encryption.key", 'wb') as key_file:
             key_file.write(key)
 
 
@@ -25,7 +27,7 @@ class Cryptography:
         """Load de previous key created and storaged in 'encryption.key'
         in binary."""
 
-        return open('encryption.key', 'rb').read()
+        return open(path.abspath('bot').split('bot')[0] + "encryption.key", 'rb').read()
 
 
     def encrypt_message(self, message=None, *args, **kwargs):
@@ -39,7 +41,7 @@ class Cryptography:
             f = Fernet(key)
             encrypted_message = f.encrypt(encoded_message)
 
-            return encrypted_message
+            return encrypted_message.decode('utf-8')
 
         else:
             raise ValueError('Message not provided.')
