@@ -16,6 +16,7 @@ class General(commands.Cog):
         print('Ready!')
         print('Logged in as ', self.client.user)
         print('ID:', self.client.user.id)
+        self.change_status.start()
         
     #Discord live status that rotate from the list each 600 seconds
     @tasks.loop(seconds=600)
@@ -85,6 +86,20 @@ class General(commands.Cog):
             await ctx.message.add_reaction(next(positive_emojis_list))
             print("clear command")
 
+    @commands.command()
+    async def print(self,ctx,name, message, emote):
+        embed = main_messages_style(name, message, emote)
+        await ctx.send(embed=embed)
+
+    @commands.command()
+    async def ping(self,ctx):
+        before = time.monotonic()
+        embed = main_messages_style("Pong!")
+        msg = await ctx.send(embed=embed)
+        ping = (time.monotonic() - before) * 1000
+        embed = main_messages_style(f"Pong!  {int(ping)}ms`")
+        await ctx.send(embed=embed)
+        print(f'Ping {int(ping)}ms')
     # @commands.Cog.listener()
     # async def on_message(self,ctx):
     #     # if ctx.author == self.client.user:

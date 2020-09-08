@@ -54,7 +54,6 @@ class Moodle(commands.Cog):
                     await ctx.send(embed=embed)
                     await asyncio.sleep(2)
 
-
     # Command to create or access your moodle API        
     @commands.command()
     async def GetToken(self, ctx):
@@ -93,7 +92,7 @@ class Moodle(commands.Cog):
                 await ctx.message.add_reaction(next(positive_emojis_list))
                 password = await self.client.wait_for('message')
 
-                # Call your
+                # Call a function from moodleAPI to create a Token and save it encrypted on the file tokens.csv, it saves the discord author.id as well
                 Token().create(username.content, password.content, userid)
 
                 embed = main_messages_style("Your Token was created sucessfully")
