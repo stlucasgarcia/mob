@@ -28,7 +28,9 @@ class Token:
         password = f'&password={password}'
 
         url = f'{self.BASEURL}{self.SERVICE}{self.CONNECTION}{self.PLATFORM}{username}{password}'
-        data = self.post(url).json()['token']
+        data = self.post(url).json()
+        print(data)
+
 
 
         return Export('tokens.csv').to_csv(data=[[Cryptography().encrypt_message(data), discordid],], addstyle=True)
