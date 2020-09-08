@@ -12,7 +12,7 @@ class Export:
 
     def __init__(self, name=None):
         super().__init__()
-        self.path = path.join(path.abspath('bot')[:-3], path.abspath(f'csvfiles\{name}'))
+        self.path = path.abspath('bot').split('bot')[0] + f"csvfiles\{name}.csv"
 
 
     def __str__(self):
