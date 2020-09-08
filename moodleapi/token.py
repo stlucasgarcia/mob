@@ -16,7 +16,7 @@ class Token:
         self.BASEURL = BASEURL
         self.SERVICE = 'login/'
         self.CONNECTION = 'token.php?'
-        self.PLATFORM = 'service=moodle_mobile_app'
+        self.PLATFORM = '&service=moodle_mobile_app'
 
 
     def __str__(self):
@@ -24,7 +24,7 @@ class Token:
 
 
     def create(self, username=None, password=None, discordid=None, *args, **kwargs):
-        username = f'&username={username}'
+        username = f'username={username}'
         password = f'&password={password}'
 
         url = f'{self.BASEURL}{self.SERVICE}{self.CONNECTION}{username}{password}{self.PLATFORM}'
