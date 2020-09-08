@@ -1,5 +1,4 @@
 import discord
-from moodleapi.token import Token
 from moodleapi.security import Cryptography
 
 from discord.ext import commands, tasks
@@ -23,6 +22,7 @@ class General2(commands.Cog):
             if userid in str(tokens_data.iat[i,1]):
                 embed = main_messages_style("Your Moodle API Token is encripted and safe, to keep the institution and your data safe I will send the Token in your DM")
                 await ctx.send(embed=embed)
+                decrypted_token = Cryptography().decrypt_message(str(tokens_data.iat[i,0]))
                 embed = main_messages_style(f"Your decrypted Moodle API Token is, {decrypted_token}", "Note: You won't need to use it anywhere in this bot")
 
             else:
