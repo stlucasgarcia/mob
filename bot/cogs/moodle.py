@@ -1,4 +1,4 @@
-import discord
+import discord, asyncio
 from moodleapi.security import Cryptography
 from moodleapi.token import Token
 
@@ -15,9 +15,10 @@ class Moodle(commands.Cog):
 
     # Command to get the assignments from the csv and send it embeded to the text chat    
     @commands.command()
-    async def check(self, ctx, option):        
+    async def check(self, ctx, option=""):        
         # urls = pd.DataFrame(database, columns=["deadline"])
         # print(urls, type(urls))
+        
         if ctx.channel.id in allowed_channels:
 
             if option == "assignments":
@@ -30,32 +31,30 @@ class Moodle(commands.Cog):
                 embed = main_messages_style("Command **check** plus one of the following options will get assignments, classes or events from your Moodle calendar ",
                 "Option not available, you must use Assignments, Classes or Events ", " 😕")
                 await ctx.message.add_reaction(next(negative_emojis_list))
-                await ctx.send(embed=embed)                
-                database = None
+                await ctx.send(embed=embed)   
+                             
 
-            if database:
-                for i in range(len(database)):# amount of rows of the csv
-                    assignmentsdata = { 
-                    "fullname" : database.iat[i,0],
-                    "name" : database.iat[i,1],
-                    "description" : database.iat[i,2],
-                    "modulename" : database.iat[i,3],
-                    "deadline" : database.iat[i,4] + " às " + database.iat[i,5],
-                    "link" : database.iat[i, 6],
-                    "author" : database.iat[i, 7]
-                    }
-                    # url = urls[i]
-                    # print(link, url)
-                    # print(database)
-                    
-                    #Styling the message 
-                    embed = check_command_style(assignmentsdata)
-                    await ctx.message.add_reaction(next(positive_emojis_list))
-                    await ctx.send(embed=embed)
-                    await asyncio.sleep(2)
+            #if database:
+            await ctx.message.add_reaction(next(positive_emojis_list))
+            for i in range(len(database)):# amount of rows of the csv
+                assignmentsdata = { 
+                "fullname" : database.iat[i,0],
+                "name" : database.iat[i,1],
+                "description" : database.iat[i,2],
+                "modulename" : database.iat[i,3],
+                "deadline" : database.iat[i,4] + " às " + database.iat[i,5],
+                "link" : database.iat[i, 6],
+                "author" : str(database.iat[i, 7]).capitalize()
+                }
+                # url = urls[i]
+                # print(link, url)
+                # print(database)
+                
+                #Styling the message 
+                embed = check_command_style(assignmentsdata)
+                await ctx.send(embed=embed)
+                await asyncio.sleep(2)
 
-            else:
-                pass
 
     # Command to create or access your moodle API        
     @commands.command()
