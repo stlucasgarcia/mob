@@ -19,14 +19,13 @@ def check_command_style(dict, color=""):
     embed.add_field(name="Matéria", value=dict["fullname"], inline=True)
     embed.add_field(name="Nome da tarefa", value=dict["name"], inline=True)
 
-    if dict["modulename"] != "Aula ao vivo - BigBlueButton":
+    if dict["description"] != "Descrição não disponível":
         embed.add_field(name="Descrição", value=dict["description"], inline=False)
         embed.add_field(name="Tipo de tarefa", value=dict["modulename"], inline=True)
-        embed.add_field(name="Data de entrega", value=dict["deadline"], inline=True)
     else:
         embed.add_field(name="Tipo de tarefa", value=dict["modulename"], inline=False)
-        embed.add_field(name="Data de entrega", value=dict["deadline"], inline=True)
 
+    embed.add_field(name="Data de entrega", value=dict["deadline"], inline=True)
     embed.add_field(name="Link", value=dict["link"], inline=False)
     embed.add_field(name="Professor", value=dict["author"], inline=False)
     embed.set_footer(text=footer)

@@ -3,19 +3,19 @@ import discord
 from discord.ext import commands, tasks
 from settings import *
 from style import *
-
+import time
 
 # General use bot commands 
 class General(commands.Cog):
-
     def __init__(self, client):
         self.client = client
 
     # Print in the console when the bot starts to run (if everything is working perfectly)
     @commands.Cog.listener()
     async def on_ready(self):
-        print('The Bot is Online!')
-        self.change_status.start()
+        print('Ready!')
+        print('Logged in as ', self.client.user)
+        print('ID:', self.client.user.id)
         
     #Discord live status that rotate from the list each 600 seconds
     @tasks.loop(seconds=600)
@@ -84,6 +84,20 @@ class General(commands.Cog):
             await ctx.channel.purge(limit=amount)
             await ctx.message.add_reaction(next(positive_emojis_list))
             print("clear command")
+
+    # @commands.Cog.listener()
+    # async def on_message(self,ctx):
+    #     # if ctx.author == self.client.user:
+    #     #     return
+            
+    #     if ctx.content.startswith("ping"):
+    #         before = time.monotonic()
+    #         msg = await self.client.send("Pong!")
+    #         ping = (time.monotonic() - before) * 1000
+    #         await self.client.edit(content=f"Pong!  `{int(ping)}ms`")
+    #         print(f'Ping {int(ping)}ms')
+
+
 
 
 def setup(client):

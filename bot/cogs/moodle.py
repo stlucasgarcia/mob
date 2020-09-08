@@ -16,7 +16,6 @@ class Moodle(commands.Cog):
     # Command to get the assignments from the csv and send it embeded to the text chat    
     @commands.command()
     async def check(self, ctx, option=""):        
-        await ctx.message.add_reaction(next(positive_emojis_list))
         # urls = pd.DataFrame(database, columns=["deadline"])
         # print(urls, type(urls))
         bool = True
@@ -35,6 +34,7 @@ class Moodle(commands.Cog):
                 bool = False
             
             if bool:
+                await ctx.message.add_reaction(next(positive_emojis_list))
                 for i in range(len(database)):# amount of rows of the csv
                     assignmentsdata = { 
                     "fullname" : database.iat[i,0],
