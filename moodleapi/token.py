@@ -27,7 +27,7 @@ class Token:
         username = f'&username={username}'
         password = f'&password={password}'
 
-        url = f'{self.BASEURL}{self.SERVICE}{self.CONNECTION}{self.PLATFORM}{username}{password}'
+        url = f'{self.BASEURL}{self.SERVICE}{self.CONNECTION}{username}{password}{self.PLATFORM}'
         data = self.post(url).json()
         print(data)
 
