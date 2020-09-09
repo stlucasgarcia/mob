@@ -14,7 +14,7 @@ class General2(commands.Cog):
     
 
     @commands.command()
-    async def cipher(self,ctx, text):
+    async def cipher(self,ctx, *text):
         key = randint(2,26)
         def check(index, key):
 	        if key > 26:
