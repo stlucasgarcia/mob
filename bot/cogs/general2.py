@@ -15,7 +15,9 @@ class General2(commands.Cog):
 
     @commands.command()
     async def cipher(self,ctx, *text):
+        print(text)
         key = randint(2,26)
+        print(key)
         def check(index, key):
 	        if key > 26:
 		        key = key%26
@@ -30,6 +32,7 @@ class General2(commands.Cog):
         alphabet = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']
         
         listText = list(text)
+        print(listText)
 
         cipherText = ''
 
