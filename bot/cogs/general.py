@@ -5,6 +5,7 @@ from settings import *
 from style import *
 import time
 
+maincolor = None
 # General use bot commands 
 class General(commands.Cog):
     def __init__(self, client):
@@ -92,31 +93,37 @@ class General(commands.Cog):
         await ctx.send(embed=embed)
         await ctx.message.add_reaction(next(negative_emojis_list))
 
+    @commands.Cog.listener()
+    async def on_message(self,ctx):
+        if ctx.channel.id in allowed_channels:
+            if ctx.author == self.client.user:
+                return
+                
+            if ctx.content.startswith("ping"):
+                before = time.monotonic()
+                embed = main_messages_style("Checking ping...")
+                msg = await ctx.channel.send(embed=embed)
+                ping = (time.monotonic() - before) * 1000
+                await ctx.channel.purge(limit=1)
+                embed = main_messages_style(f"Pong!  `{int(ping)}ms`")
+                await ctx.channel.send(embed=embed)
+                print(f'Ping {int(ping)}ms')
 
     @commands.command()
-    async def ping(self,ctx):
-        before = time.monotonic()
-        embed = main_messages_style("Checking ping...")
-        msg = await ctx.send(embed=embed)
-        await ctx.message.add_reaction(next(positive_emojis_list))
-        ping = (time.monotonic() - before) * 1000
-        await ctx.channel.purge(limit=1)
-        embed = main_messages_style(f"Pong!  `{int(ping)}ms`")
-        await ctx.send(embed=embed)
-        print(f'Ping {int(ping)}ms')
+    async def select_color(self, ctx, color):
+        if ctx.channel.id in allowed_channels:
+            embed = main_messages_style("New color picked sucessfully")
+            await ctx.send(embed=embed)
+            await ctx.message.add_reaction(next(positive_emojis_list))
+            color = color.replace("#", "0x", 1)
+            print(color, type(color))
 
+            global maincolor
+            colortohex = int(color,16)
+            print(colortohex,type(colortohex))
 
-    # @commands.Cog.listener()
-    # async def on_message(self,ctx):
-    #     # if ctx.author == self.client.user:
-    #     #     return
-            
-    #     if ctx.content.startswith("ping"):
-    #         before = time.monotonic()
-    #         msg = await self.client.send("Pong!")
-    #         ping = (time.monotonic() - before) * 1000
-    #         await self.client.edit(content=f"Pong!  `{int(ping)}ms`")
-    #         print(f'Ping {int(ping)}ms')
+            maincolor = hex(colortohex)
+            print(maincolor,type(maincolor))
 
 
 
