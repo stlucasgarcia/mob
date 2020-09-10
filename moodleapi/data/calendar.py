@@ -60,13 +60,13 @@ class Calendar(Request):
                     today = True if day['mday'] == d else False
                     deadline = Calendar._clean(self, events['formattedtime']) if events['modulename'] in allowed_modules else -1
                     #print(deadline)
-                    print(h < (int(deadline[:2]) if int(deadline[:2]) != 0 else 24))
-                    hourlimit = False if (h < (int(deadline[:2]) if int(deadline[:2]) != 0 else 24)) else True
-                    minutelimit = m < int(deadline[4:6]) if hourlimit else False
+                    #print(h < (int(deadline[:2]) if int(deadline[:2]) != 0 else 24))
+                    #hourlimit = False if (h < (int(deadline[:2]) if int(deadline[:2]) != 0 else 24)) else True
+                    #minutelimit = m < int(deadline[4:6]) if hourlimit else False
 
                     if events['modulename'] in allowed_modules and events['course']['fullname'] not in courses_notallowed \
-                            and period and (today and (not hourlimit and minutelimit)):
-                        print(not hourlimit, minutelimit)
+                            and period: #and (today and (not hourlimit and minutelimit)):
+                        #print(not hourlimit, minutelimit)
                         data.append(
                             [
                                 events['course']['fullname'],
