@@ -109,23 +109,6 @@ class General(commands.Cog):
                 await ctx.channel.send(embed=embed)
                 print(f'Ping {int(ping)}ms')
 
-    @commands.command()
-    async def select_color(self, ctx, color):
-        if ctx.channel.id in allowed_channels:
-            embed = main_messages_style("New color picked sucessfully")
-            await ctx.send(embed=embed)
-            await ctx.message.add_reaction(next(positive_emojis_list))
-            color = color.replace("#", "0x", 1)
-            print(color, type(color))
-
-            global maincolor
-            colortohex = int(color,16)
-            print("Color to hex", colortohex,type(colortohex))
-
-            maincolor = hex(int(colortohex))
-            print("Maincolor", maincolor,type(maincolor))
-
-    
 
 
 def setup(client):
