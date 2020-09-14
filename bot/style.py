@@ -6,7 +6,7 @@ negative_emojis_list = cycle(["🚫", "🛑", "❌", "⛔"])
 status_list = cycle(["Estudando...", "Navegando no Moodle", "Descobrindo tarefas", "Dominando o mundo", "Reduzindo as suas faltas", "Calculando as suas médias"])
 
 footer = "Created with 💖 by Mackenzie Students."
-maincolor = None
+maincolor = 0x00fdff
 defaultcolor = 0x9f000c
 print(type(defaultcolor))
 if maincolor != defaultcolor:

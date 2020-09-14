@@ -120,12 +120,12 @@ class General(commands.Cog):
 
             global maincolor
             colortohex = int(color,16)
-            print(colortohex,type(colortohex))
+            print("Color to hex", colortohex,type(colortohex))
 
-            maincolor = hex(colortohex)
-            print(maincolor,type(maincolor))
+            maincolor = hex(int(colortohex))
+            print("Maincolor", maincolor,type(maincolor))
 
-
+    
 
 
 def setup(client):

@@ -20,8 +20,6 @@ class Moodle(commands.Cog):
     # Command to get the assignments from the csv and send it embeded to the text chat    
     @commands.command()
     async def check(self, ctx, option=""):        
-        # urls = pd.DataFrame(database, columns=["deadline"])
-        # print(urls, type(urls))
         bool = True
         if ctx.channel.id in allowed_channels:
             if option == "assignments":
@@ -49,9 +47,7 @@ class Moodle(commands.Cog):
                     "link" : database.iat[i, 6],
                     "author" : str(database.iat[i, 7]).capitalize()
                     }
-                    # url = urls[i]
-                    # print(link, url)
-                    # print(database)
+
                     
                     #Styling the message 
                     embed = check_command_style(assignmentsdata)
@@ -114,11 +110,13 @@ class Moodle(commands.Cog):
             await ctx.author.send(embed=embed)
 
 
-    @tasks.loop(seconds=30)
+    @tasks.loop(seconds=15)
     async def getData(self):
         tokens_data = pd.read_csv(PATH_TOKENS, header=None )
         decrypted_token = Cryptography().decrypt_message(bytes(tokens_data.iat[0,0], encoding='utf-8'))
-        
+        database = pd.read_csv(PATH_EVENTS, header=None )
+
+        ctx = 750313490455068722
         ca = Calendar(decrypted_token)
         data = ca.monthly()
         
@@ -133,7 +131,24 @@ class Moodle(commands.Cog):
 
         export_events = Export('events.csv')
         export_events.to_csv(data=data, addstyle=False)
+        Moodle.check(self,ctx,"Assignments")
 
+        for i in range(len(database)):# amount of rows of the csv
+            assignmentsdata = { 
+            "fullname" : database.iat[i,0],
+            "name" : database.iat[i,1],
+            "description" : database.iat[i,2],
+            "modulename" : database.iat[i,3],
+            "deadline" : database.iat[i,4] + " às " + database.iat[i,5],
+            "link" : database.iat[i, 6],
+            "author" : str(database.iat[i, 7]).capitalize()
+            }
+
+            
+            #Styling the message 
+            embed = check_command_style(assignmentsdata)
+            await ctx.send(embed=embed)
+            await asyncio.sleep(2)
 
 def setup(client):
     client.add_cog(Moodle(client))
