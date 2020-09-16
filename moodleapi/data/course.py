@@ -19,14 +19,18 @@ class Course(Request):
         filtering = ''
 
         if value and data:
-            pass
+
+            for component in data:
+                    if component[0] == value:
+
+                        return component[1], component[2]
 
         else:
             raise ValueError('Value or data parameter not passed correctly. (type: str and list)')
 
 
 
-    def contents(self, courseid=None, *args, **kwargs):
+    def contents(self, courseid=None, assign=False, *args, **kwargs):
         if courseid:
             component = Request.get(self, function='core_course_get_contents', courseid=courseid)
 
@@ -36,9 +40,9 @@ class Course(Request):
 
             for week in component:
                 for modules in week['modules']:
-                    if modules['modname'] not in types_notallowed:
+                    if modules['modname'] not in types_notallowed and not assign:
                         data.append([
-                            component[0]['modules'][0]['contents'][0]['author'],
+                            component[1]['modules'][0]['contents'][0]['author'],
 
                             week['name'],
 
@@ -54,6 +58,15 @@ class Course(Request):
 
                         ])
 
+
+                    elif modules['modname'] == 'assign' and assign:
+                        data.append([
+                            modules['id'],
+
+                            modules['completiondata']['state'],
+
+                            modules['completiondata']['timecompleted'],
+                        ])
 
             return data
 

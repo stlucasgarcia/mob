@@ -5,7 +5,8 @@ Last Update: 05/09/2020 - support for calendar_monthly
 """
 
 from moodleapi.request import Request
-from moodleapi.settings import professor
+from moodleapi.settings import professor, week, month
+from moodleapi.data.course import Course
 
 from datetime import datetime as dt
 from re import compile, sub
@@ -14,6 +15,7 @@ from re import compile, sub
 class Calendar(Request):
 
     def __init__(self, token):
+        self.token = token
         super().__init__(token)
 
 
@@ -23,6 +25,22 @@ class Calendar(Request):
 
     def _clean(self, value):
          return sub(compile('<.*?>'), '', value)
+
+
+    def _time(self, epoch):
+        from time import ctime
+
+        date = ctime(epoch).split()
+
+        return f'{week[date[0]]}, {date[2]} de {month[date[1]]} às {date[3][:-3]}'
+
+
+    def _verify(self, courseid, instance):
+        co = Course(self.token)
+        data =  co.contents(courseid=courseid, assign=True)
+        filtered = co.filter(value=instance, data=data)
+
+        return filtered
 
 
     def filter(self, value=None, data=None, *args, **kwargs):
@@ -59,6 +77,7 @@ class Calendar(Request):
                     period = True if d <= int(day['mday']) < d + 15 else False
                     today = True if day['mday'] == d else False
                     deadline = Calendar._clean(self, events['formattedtime']) if events['modulename'] in allowed_modules else -1
+
                     #print(deadline)
                     #print(h < (int(deadline[:2]) if int(deadline[:2]) != 0 else 24))
                     #hourlimit = False if (h < (int(deadline[:2]) if int(deadline[:2]) != 0 else 24)) else True
@@ -67,10 +86,17 @@ class Calendar(Request):
                     if events['modulename'] in allowed_modules and events['course']['fullname'] not in courses_notallowed \
                             and period: #and (today and (not hourlimit and minutelimit)):
                         #print(not hourlimit, minutelimit)
+
+                        status, time = None, None
+                        if events['modulename'] == 'assign':
+                            status, time = Calendar._verify(self, events['course']['id'], events['instance'])
+
                         data.append(
                             [
                                 events['course']['fullname'],
-                                events['name'],
+
+                                events['name'].split(' is ')[0] if ' is ' in events['name']
+                                else events['name'].split(' está ')[0],
 
                                 Calendar._clean(self, events['description']) if events['description'] != ''
                                 else 'Descrição não disponível',
@@ -85,6 +111,10 @@ class Calendar(Request):
                                 events['url'],
 
                                 professor[f'{events["course"]["fullname"]}'],
+
+                                f'Tarefa {"não " if status == 0 else ""}entregue',
+
+                                Calendar._time(self, time) if time != 0 else ''
 
                             ]
                         )

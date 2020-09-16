@@ -48,3 +48,33 @@ with open(path.abspath('bot').split('bot')[0] + "csvfiles\subjectsid.csv", 'r') 
         data.append(line)
 
 dict_id = {k: v for k, v in data}
+
+
+
+# Month names to PT-BR
+month = {
+    'Jan': 'Janeiro',
+    'Feb': 'Fevereiro',
+    'Mar': 'Março',
+    'Apr': 'Abril',
+    'May': 'Maio',
+    'Jun': 'Junho',
+    'Jul': 'Julho',
+    'Aug': 'Agosto',
+    'Sep': 'Setembro',
+    'Oct': 'Outubro',
+    'Nov': 'Novembro',
+    'Dec': 'Dezembro'
+}
+
+
+# Week day names to PT-BR
+week = {
+    'Sun': 'Domingo',
+    'Mon': 'Segunda-feira',
+    'Tue': 'Terça-feira',
+    'Wed': 'Quarta-feira',
+    'Thu': 'Quinta-feira',
+    'Fri': 'Sexta-feira',
+    'Sat': 'Sábado'
+}
