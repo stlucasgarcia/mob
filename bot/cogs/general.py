@@ -87,12 +87,14 @@ class General(commands.Cog):
             await ctx.message.add_reaction(next(positive_emojis_list))
             print("clear command")
 
+    # Print an embed message on the chat
     @commands.command()
     async def print(self,ctx,name, message, emote):
         embed = main_messages_style(name, message, emote)
         await ctx.send(embed=embed)
         await ctx.message.add_reaction(next(negative_emojis_list))
-
+        
+    # Check latency and ping
     @commands.Cog.listener()
     async def on_message(self,ctx):
         if ctx.channel.id in allowed_channels:

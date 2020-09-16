@@ -8,6 +8,7 @@ from discord.ext import commands, tasks
 from settings import *
 from style import *
 import pandas as pd
+from datetime import datetime
 
 #list with commands/functionalities related to the Moodle API
 class Moodle(commands.Cog):
@@ -22,6 +23,7 @@ class Moodle(commands.Cog):
     async def check(self, ctx, option=""):        
         bool = True
         if ctx.channel.id in allowed_channels:
+            option = option.lower()
             if option == "assignments":
                 database = pd.read_csv(PATH_ASSIGNMENTS, header=None )
             elif option == "classes":
@@ -109,14 +111,25 @@ class Moodle(commands.Cog):
             embed = main_messages_style(f"Your decrypted Moodle API Token is, {decrypted_token}", "Note: You won't need to use it in this bot, your Token is already beeing used and is stores in our database")
             await ctx.author.send(embed=embed)
 
+    # @commands.command()
+    # async def RemindMe(self, ctx, message, day, month, time):
+    #     if ctx.channel.id in allowed_channels:
+    #         now = datetime.now()
+    #         dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
 
-    @tasks.loop(seconds=15)
+    #         await ctx.send(dt_string)
+
+    # Gets Moodle data through Moodle API and send it to the chat
+    @tasks.loop(hours=12)
     async def getData(self):
         tokens_data = pd.read_csv(PATH_TOKENS, header=None )
         decrypted_token = Cryptography().decrypt_message(bytes(tokens_data.iat[0,0], encoding='utf-8'))
         database = pd.read_csv(PATH_EVENTS, header=None )
 
-        ctx = 750313490455068722
+        embed = main_messages_style("========Sending the twice-daily Moodle events update========")
+        await asyncio.sleep(2)
+        await self.client.get_channel(int(750313490455068722)).send(embed=embed)
+
         ca = Calendar(decrypted_token)
         data = ca.monthly()
         
@@ -131,24 +144,27 @@ class Moodle(commands.Cog):
 
         export_events = Export('events.csv')
         export_events.to_csv(data=data, addstyle=False)
-        Moodle.check(self,ctx,"Assignments")
-
+        amount = 0
         for i in range(len(database)):# amount of rows of the csv
             assignmentsdata = { 
-            "fullname" : database.iat[i,0],
-            "name" : database.iat[i,1],
+            "fullname" : database.iat[i,0].title(),
+            "name" : database.iat[i,1].title(),
             "description" : database.iat[i,2],
             "modulename" : database.iat[i,3],
-            "deadline" : database.iat[i,4] + " às " + database.iat[i,5],
+            "deadline" : database.iat[i,4].title() + " às " + database.iat[i,5].title(),
             "link" : database.iat[i, 6],
-            "author" : str(database.iat[i, 7]).capitalize()
+            "author" : str(database.iat[i, 7]).title()
             }
 
-            
+            amount += 1
             #Styling the message 
             embed = check_command_style(assignmentsdata)
-            await ctx.send(embed=embed)
             await asyncio.sleep(2)
+            await self.client.get_channel(int(750313490455068722)).send(embed=embed)
+
+        embed = main_messages_style(f"======There were a total of {amount} events, see you in 12 hours!======")
+        await asyncio.sleep(2)
+        await self.client.get_channel(int(750313490455068722)).send(embed=embed)
 
 def setup(client):
     client.add_cog(Moodle(client))
