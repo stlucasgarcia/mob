@@ -38,23 +38,53 @@ class Moodle(commands.Cog):
                 bool = False
             
             if bool:
+                amount = 0
                 await ctx.message.add_reaction(next(positive_emojis_list))
                 for i in range(len(database)):# amount of rows of the csv
+                    amount += 1
+
                     assignmentsdata = { 
-                    "fullname" : database.iat[i,0],
-                    "name" : database.iat[i,1],
+                    "fullname" : database.iat[i,0].title(),
+                    "name" : database.iat[i,1].title(),
                     "description" : database.iat[i,2],
                     "modulename" : database.iat[i,3],
-                    "deadline" : database.iat[i,4] + " às " + database.iat[i,5],
+                    "deadline" : database.iat[i,4].title() + " às " + database.iat[i,5].title(),
                     "link" : database.iat[i, 6],
-                    "author" : str(database.iat[i, 7]).capitalize()
+                    "author" : str(database.iat[i, 7]).title()
+                    # "status" : database.iat[i, 8]
                     }
 
-                    
+
                     #Styling the message 
-                    embed = check_command_style(assignmentsdata)
+                    if option == "assignments":
+                        if i % 2 == 0: 
+                            color = 0x480006
+                        else:
+                            color = 0x9f000c
+                    elif option == "classes":
+                        if i % 2 == 0: 
+                            color = 0x29C8BA
+                        else:
+                            color = 0x155D56
+                    elif option == "events":
+                        if assignmentsdata["modulename"] == "Tarefa para entregar via Moodle":
+                            if i % 2 == 0: 
+                                color = 0x480006
+                            else:
+                                color = 0x9f000c
+                        else:
+                            if i % 2 == 0: 
+                                color = 0x29C8BA
+                            else:
+                                color = 0x155D56
+
+                    embed = check_command_style(assignmentsdata, str(amount),color)
                     await ctx.send(embed=embed)
                     await asyncio.sleep(2)
+
+            embed = main_messages_style(f"=========There were a total of {amount} {option.capitalize()}=========")
+            await asyncio.sleep(2)
+            await ctx.send(embed=embed)
 
     # Command to create or access your moodle API        
     @commands.command()
@@ -120,16 +150,21 @@ class Moodle(commands.Cog):
     #         await ctx.send(dt_string)
 
     # Gets Moodle data through Moodle API and send it to the chat
+
+
+
     @tasks.loop(hours=12)
     async def getData(self):
         tokens_data = pd.read_csv(PATH_TOKENS, header=None )
         decrypted_token = Cryptography().decrypt_message(bytes(tokens_data.iat[0,0], encoding='utf-8'))
         database = pd.read_csv(PATH_EVENTS, header=None )
 
-        embed = main_messages_style("========Sending the twice-daily Moodle events update========")
+        embed = main_messages_style("=========Sending the twice-daily Moodle events update=========")
         await asyncio.sleep(2)
         await self.client.get_channel(int(750313490455068722)).send(embed=embed)
-
+        # ctx = Moodle.before_getData(self)
+        # print(ctx)
+        # Moodle.check(self, ctx, option="events" )
         ca = Calendar(decrypted_token)
         data = ca.monthly()
         
@@ -146,6 +181,7 @@ class Moodle(commands.Cog):
         export_events.to_csv(data=data, addstyle=False)
         amount = 0
         for i in range(len(database)):# amount of rows of the csv
+            amount += 1
             assignmentsdata = { 
             "fullname" : database.iat[i,0].title(),
             "name" : database.iat[i,1].title(),
@@ -156,15 +192,31 @@ class Moodle(commands.Cog):
             "author" : str(database.iat[i, 7]).title()
             }
 
-            amount += 1
             #Styling the message 
-            embed = check_command_style(assignmentsdata)
+
+            if assignmentsdata["modulename"] == "Tarefa para entregar via Moodle":
+                if i % 2 == 0: 
+                    color = 0x480006
+                else:
+                    color = 0x9f000c
+            else:
+                if i % 2 == 0: 
+                    color = 0x29C8BA
+                else:
+                    color = 0x155D56
+
+            embed = check_command_style(assignmentsdata, str(amount),color)
             await asyncio.sleep(2)
             await self.client.get_channel(int(750313490455068722)).send(embed=embed)
 
-        embed = main_messages_style(f"======There were a total of {amount} events, see you in 12 hours!======")
+        embed = main_messages_style(f"======There were a total of {amount} events, see you in 12 hours 😊 =======")
         await asyncio.sleep(2)
         await self.client.get_channel(int(750313490455068722)).send(embed=embed)
+
+    # @getData.before_loop
+    # async def before_getData(self):
+    #     return self.client.get_channel(int(750313490455068722))
+        
 
 def setup(client):
     client.add_cog(Moodle(client))

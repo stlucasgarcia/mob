@@ -10,8 +10,8 @@ defaultcolor = 0x9f000c
 
 # This file is created to style the bot messages
 # Styling the check command from moodle.py
-def check_command_style(dict, color=""):
-    embed=discord.Embed(title=dict["modulename"], color= color if color else defaultcolor)
+def check_command_style(dict, amount, color=""):
+    embed=discord.Embed(title=dict["modulename"] + " - " + amount, color= color if color else defaultcolor)
     embed.set_thumbnail(url="https://logodownload.org/wp-content/uploads/2017/09/mackenzie-logo-3.png")
     embed.add_field(name="Matéria", value=dict["fullname"], inline=True)
     embed.add_field(name="Nome da tarefa", value=dict["name"], inline=True)
