@@ -79,8 +79,6 @@ class Moodle(commands.Cog):
     #Command to check if the assignments were done at the Moodle website
     @commands.command()
     async def Check(self, ctx):
-        embed = main_messages_style("Checking...")
-        await ctx.author.send(embed=embed)
         
         tokens_data = pd.read_csv(PATH_TOKENS, header=None)
         userid = str(ctx.author.id)
@@ -88,6 +86,9 @@ class Moodle(commands.Cog):
         for i in range(len(tokens_data)):
             if str(userid) == str(tokens_data.iat[i,1]):
                 token = tokens_data.iat[i,0]
+                
+        embed = main_messages_style("Checking...")
+        await ctx.author.send(embed=embed)
 
         decrypted_token = Cryptography().decrypt_message(bytes(token, encoding='utf-8'))
         ca = Calendar(decrypted_token)
