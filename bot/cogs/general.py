@@ -27,7 +27,7 @@ class General(commands.Cog):
 
     # Allow and disallow and show the list of the text channel in which the bot can send messages, the variable is stored in /bot/settings.py
     @commands.command()
-    async def chat_permission(self, ctx, option=""):
+    async def Chat_permission(self, ctx, option=""):
         channel_id = ctx.channel.id
         option = option.lower()
         if option != "allow" and option != "revoke" and option != "list" and option == "":
@@ -81,7 +81,7 @@ class General(commands.Cog):
 
     # Clear the previous line for x amout of times
     @commands.command()
-    async def clear(self, ctx, amount=2):
+    async def Clear(self, ctx, amount=2):
         if ctx.channel.id in allowed_channels:
             await ctx.channel.purge(limit=amount)
             await ctx.message.add_reaction(next(positive_emojis_list))

@@ -16,7 +16,7 @@ class Moodle(commands.Cog):
 
     def __init__(self, client):
         self.client = client
-        self.getData.start()
+        self.GetData.start()
 
      
     # Command to get the assignments from the csv and send it embeded to the text chat    
@@ -76,20 +76,27 @@ class Moodle(commands.Cog):
             await asyncio.sleep(2)
             await ctx.send(embed=embed)
 
-
+    #Command to check if the assignments were done at the Moodle website
     @commands.command()
-    async def check(self, ctx):
+    async def Check(self, ctx):
         tokens_data = pd.read_csv(PATH_TOKENS, header=None)
         userid = str(ctx.author.id)
-        
+        token = 0
         for i in range(len(tokens_data)):
-            print("entrou")
-            print(tokens_data.iat[i,1])
-            print(userid)
-            if userid == tokens_data.iat[i,1]:
-                decrypted_token = Cryptography().decrypt_message(bytes(tokens_data.iat[i,0], encoding='utf-8'))
-                print(userid,tokens_data.iat[i,1] )
-                
+            if str(userid) == str(tokens_data.iat[i,1]):
+                token = tokens_data.iat[i,0]
+
+        decrypted_token = Cryptography().decrypt_message(bytes(token, encoding='utf-8'))
+        ca = Calendar(decrypted_token)
+        data = ca.monthly()
+        
+        assign = ca.filter(value="assign", data=data)
+        liveclasses = ca.filter(value="bbb", data=data)
+
+        export_assign = Export('assignments.csv')
+        export_assign.to_csv(data=assign, addstyle=False)
+    
+          
         amount = 0
 
         database = pd.read_csv(PATH_ASSIGNMENTS, header=None)
@@ -177,7 +184,7 @@ class Moodle(commands.Cog):
 
 
     @tasks.loop(hours=12)
-    async def getData(self):
+    async def GetData(self):
         tokens_data = pd.read_csv(PATH_TOKENS, header=None )
         decrypted_token = Cryptography().decrypt_message(bytes(tokens_data.iat[0,0], encoding='utf-8'))
         database = pd.read_csv(PATH_EVENTS, header=None )

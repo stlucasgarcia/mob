@@ -18,7 +18,7 @@ def check_command_style(dict, amount, color="", status=None):
 
     if status == 1:
         if dict["hwstatus"] == "Tarefa entregue":
-            embed.set_author(name=dict["hwstatus"],icon_url="https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Checkmark_green.svg/1200px-Checkmark_green.svg.png")
+            embed.set_author(name=dict["hwstatus"] + " " + dict["hwstatus_time"],icon_url="https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Checkmark_green.svg/1200px-Checkmark_green.svg.png")
         else:
             embed.set_author(name=dict["hwstatus"],icon_url="https://i1.pngguru.com/preview/326/505/102/red-cross-emoji-discord-logo-line-soviet-union-material-property-symbol-png-clipart.jpg")
 
