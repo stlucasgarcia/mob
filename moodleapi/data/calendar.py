@@ -35,6 +35,15 @@ class Calendar(Request):
         return f'{week[date[0]]}, {date[2]} de {month[date[1]]} às {date[3][:-3]}'
 
 
+    def _check_time(self, current_h, current_m, assign_h, assign_m, today):
+        if current_h > assign_h and today:
+            return False
+        elif current_h == assign_h and today:
+            return False if current_m > assign_m else True
+        else:
+            return True
+
+
     def _verify(self, courseid, instance):
         co = Course(self.token)
         data =  co.contents(courseid=courseid, assign=True)
@@ -74,49 +83,51 @@ class Calendar(Request):
         for week in month:
             for day in week['days']:
                 for events in day['events']:
+
                     period = True if d <= int(day['mday']) < d + 15 else False
                     today = True if day['mday'] == d else False
-                    deadline = Calendar._clean(self, events['formattedtime']) if events['modulename'] in allowed_modules else -1
 
-                    #print(deadline)
-                    #print(h < (int(deadline[:2]) if int(deadline[:2]) != 0 else 24))
-                    #hourlimit = False if (h < (int(deadline[:2]) if int(deadline[:2]) != 0 else 24)) else True
-                    #minutelimit = m < int(deadline[4:6]) if hourlimit else False
+                    deadline = Calendar._clean(self, events['formattedtime'])[:-2] \
+                        if events['modulename'] in allowed_modules else None
 
-                    if events['modulename'] in allowed_modules and events['course']['fullname'] not in courses_notallowed \
-                            and period: #and (today and (not hourlimit and minutelimit)):
-                        #print(not hourlimit, minutelimit)
+                    up_to_date = Calendar._check_time(self, h, m, int(deadline[:2]), int(deadline[3:5]), today) \
+                        if deadline else True
+
+
+                    if events['modulename'] in allowed_modules and events['course']['fullname'] \
+                            not in courses_notallowed and period and up_to_date:
+
 
                         status, time = None, None
                         if events['modulename'] == 'assign':
                             status, time = Calendar._verify(self, events['course']['id'], events['instance'])
 
-                        data.append(
-                            [
-                                events['course']['fullname'],
 
-                                events['name'].split(' is ')[0] if ' is ' in events['name']
-                                else events['name'].split(' está ')[0],
+                        data.append([
 
-                                Calendar._clean(self, events['description']) if events['description'] != ''
-                                else 'Descrição não disponível',
+                            events['course']['fullname'],
 
-                                'Aula ao vivo - BigBlueButton' if events['modulename'] == 'bigbluebuttonbn' else
-                                'Tarefa para entregar via Moodle',
+                            events['name'].split(' is ')[0] if ' is ' in events['name']
+                            else events['name'].split(' está ')[0],
 
-                                day['popovertitle'].split(' eventos')[0],
+                            Calendar._clean(self, events['description']) if events['description'] != ''
+                            else 'Descrição não disponível',
 
-                                deadline[:-2],
+                            'Aula ao vivo - BigBlueButton' if events['modulename'] == 'bigbluebuttonbn' else
+                            'Tarefa para entregar via Moodle',
 
-                                events['url'],
+                            day['popovertitle'].split(' eventos')[0],
 
-                                professor[f'{events["course"]["fullname"]}'],
+                            deadline,
 
-                                f'Tarefa {"não " if status == 0 else ""}entregue',
+                            events['url'],
 
-                                Calendar._time(self, time) if time != 0 else ''
+                            professor[f'{events["course"]["fullname"]}'],
 
-                            ]
-                        )
+                            f'Tarefa {"não " if status == 0 or not status else ""}entregue',
+
+                            Calendar._time(self, time) if time != 0 and time else ''
+
+                        ])
 
         return data
