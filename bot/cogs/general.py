@@ -2,7 +2,7 @@ import discord
 
 from discord.ext import commands, tasks
 from settings import *
-from style import *
+from utilities import *
 import time
 
 maincolor = None

@@ -6,7 +6,8 @@ from moodleapi.data.export import Export
 
 from discord.ext import commands, tasks
 from settings import *
-from style import *
+from utilities import *
+from utilities_moodle import *
 import pandas as pd
 from datetime import datetime
 
@@ -17,11 +18,11 @@ class Moodle(commands.Cog):
         self.client = client
         self.getData.start()
 
-
+     
     # Command to get the assignments from the csv and send it embeded to the text chat    
     @commands.command()
-    async def check(self, ctx, option=""):        
-        bool = True
+    async def Get(self, ctx, option=""):        
+        isbool = True
         if ctx.channel.id in allowed_channels:
             option = option.lower()
             if option == "assignments":
@@ -35,25 +36,14 @@ class Moodle(commands.Cog):
                 "Option not available, you must use Assignments, Classes or Events ", " 😕")
                 await ctx.message.add_reaction(next(negative_emojis_list))
                 await ctx.send(embed=embed)   
-                bool = False
+                isbool = False
             
-            if bool:
+            if isbool:
                 amount = 0
                 await ctx.message.add_reaction(next(positive_emojis_list))
                 for i in range(len(database)):# amount of rows of the csv
                     amount += 1
-
-                    assignmentsdata = { 
-                    "fullname" : database.iat[i,0].title(),
-                    "name" : database.iat[i,1].title(),
-                    "description" : database.iat[i,2],
-                    "modulename" : database.iat[i,3],
-                    "deadline" : database.iat[i,4].title() + " às " + database.iat[i,5].title(),
-                    "link" : database.iat[i, 6],
-                    "author" : str(database.iat[i, 7]).title()
-                    # "status" : database.iat[i, 8]
-                    }
-
+                    data_dict(i, database)
 
                     #Styling the message 
                     if option == "assignments":
@@ -86,6 +76,39 @@ class Moodle(commands.Cog):
             await asyncio.sleep(2)
             await ctx.send(embed=embed)
 
+
+    @commands.command()
+    async def check(self, ctx):
+        tokens_data = pd.read_csv(PATH_TOKENS, header=None)
+        userid = str(ctx.author.id)
+        
+        for i in range(len(tokens_data)):
+            print("entrou")
+            print(tokens_data.iat[i,1])
+            print(userid)
+            if userid == tokens_data.iat[i,1]:
+                decrypted_token = Cryptography().decrypt_message(bytes(tokens_data.iat[i,0], encoding='utf-8'))
+                print(userid,tokens_data.iat[i,1] )
+                
+        amount = 0
+
+        database = pd.read_csv(PATH_ASSIGNMENTS, header=None)
+        for i in range(len(database)):
+            amount += 1
+            assignmentsdata = data_dict(i, database)
+            if i % 2 == 0: 
+                color = 0x480006
+            else:
+                color = 0x9f000c
+
+            embed = check_command_style(assignmentsdata, str(amount), color, 1)
+            await ctx.author.send(embed=embed)
+            await asyncio.sleep(2)        
+
+        await ctx.message.add_reaction(next(positive_emojis_list))
+        await ctx.send(embed=embed)   
+
+
     # Command to create or access your moodle API        
     @commands.command()
     async def GetToken(self, ctx):
@@ -96,15 +119,15 @@ class Moodle(commands.Cog):
         def check(ctx, m):
             return m.author == ctx.author
 
-        bool = True
+        isbool = True
 
         j = 0
         for i in range(len(tokens_data)):
             if userid in str(tokens_data.iat[i,1]):
                 j = i
-                bool = False
+                isbool = False
 
-        if bool:
+        if isbool:
             embed = main_messages_style("Apparently you don't have a Moodle API Token, do you want to create one? Yes/No", "Your login and password won't be saved in the "
             "system, it'll be used to create your Token and the Crypted Token will be stored")
             await ctx.author.send(embed=embed)
@@ -162,9 +185,7 @@ class Moodle(commands.Cog):
         embed = main_messages_style("=========Sending the twice-daily Moodle events update=========")
         await asyncio.sleep(2)
         await self.client.get_channel(int(750313490455068722)).send(embed=embed)
-        # ctx = Moodle.before_getData(self)
-        # print(ctx)
-        # Moodle.check(self, ctx, option="events" )
+
         ca = Calendar(decrypted_token)
         data = ca.monthly()
         
@@ -182,18 +203,9 @@ class Moodle(commands.Cog):
         amount = 0
         for i in range(len(database)):# amount of rows of the csv
             amount += 1
-            assignmentsdata = { 
-            "fullname" : database.iat[i,0].title(),
-            "name" : database.iat[i,1].title(),
-            "description" : database.iat[i,2],
-            "modulename" : database.iat[i,3],
-            "deadline" : database.iat[i,4].title() + " às " + database.iat[i,5].title(),
-            "link" : database.iat[i, 6],
-            "author" : str(database.iat[i, 7]).title()
-            }
+            assignmentsdata = data_dict(i, database)
 
             #Styling the message 
-
             if assignmentsdata["modulename"] == "Tarefa para entregar via Moodle":
                 if i % 2 == 0: 
                     color = 0x480006

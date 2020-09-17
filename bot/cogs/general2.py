@@ -4,7 +4,7 @@ from moodleapi.token import Token
 
 from discord.ext import commands, tasks
 from settings import *
-from style import *
+from utilities import *
 import pandas as pd
 from random import randint
 
