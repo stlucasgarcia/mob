@@ -43,7 +43,7 @@ class Moodle(commands.Cog):
                 await ctx.message.add_reaction(next(positive_emojis_list))
                 for i in range(len(database)):# amount of rows of the csv
                     amount += 1
-                    data_dict(i, database)
+                    assignmentsdata = data_dict(i, database)
 
                     #Styling the message 
                     if option == "assignments":
