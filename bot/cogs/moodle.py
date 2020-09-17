@@ -91,13 +91,13 @@ class Moodle(commands.Cog):
         data = ca.monthly()
         
         assign = ca.filter(value="assign", data=data)
-        liveclasses = ca.filter(value="bbb", data=data)
-
         export_assign = Export('assignments.csv')
         export_assign.to_csv(data=assign, addstyle=False)
     
           
         amount = 0
+        embed = main_messages_style("Checking...")
+        await ctx.author.send(embed=embed)
 
         database = pd.read_csv(PATH_ASSIGNMENTS, header=None)
         for i in range(len(database)):
@@ -113,7 +113,7 @@ class Moodle(commands.Cog):
             await asyncio.sleep(2)        
 
         await ctx.message.add_reaction(next(positive_emojis_list))
-        await ctx.send(embed=embed)   
+        
 
 
     # Command to create or access your moodle API        
@@ -228,7 +228,7 @@ class Moodle(commands.Cog):
             await asyncio.sleep(2)
             await self.client.get_channel(int(750313490455068722)).send(embed=embed)
 
-        embed = main_messages_style(f"======There were a total of {amount} events, see you in 12 hours 😊 =======")
+        embed = main_messages_style(f"====There were a total of {amount} events, see you in 12 hours 😊 =====")
         await asyncio.sleep(2)
         await self.client.get_channel(int(750313490455068722)).send(embed=embed)
 
