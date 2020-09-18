@@ -70,10 +70,10 @@ class Moodle(commands.Cog):
 
                     embed = check_command_style(assignmentsdata, str(amount),color)
                     await ctx.send(embed=embed)
-                    await asyncio.sleep(2)
+                    await asyncio.sleep(1)
 
             embed = main_messages_style(f"=========There were a total of {amount} {option.capitalize()}=========")
-            await asyncio.sleep(2)
+            await asyncio.sleep(1)
             await ctx.send(embed=embed)
 
     #Command to check if the assignments were done at the Moodle website
@@ -112,7 +112,7 @@ class Moodle(commands.Cog):
 
             embed = check_command_style(assignmentsdata, str(amount), color, 1)
             await ctx.author.send(embed=embed)
-            await asyncio.sleep(2)        
+            await asyncio.sleep(1)        
 
         await ctx.message.add_reaction(next(positive_emojis_list))
         
@@ -192,7 +192,7 @@ class Moodle(commands.Cog):
         database = pd.read_csv(PATH_EVENTS, header=None )
 
         embed = main_messages_style("=========Sending the twice-daily Moodle events update=========")
-        await asyncio.sleep(2)
+        await asyncio.sleep(1)
         await self.client.get_channel(int(750313490455068722)).send(embed=embed)
 
         ca = Calendar(decrypted_token)
@@ -227,11 +227,11 @@ class Moodle(commands.Cog):
                     color = 0x155D56
 
             embed = check_command_style(assignmentsdata, str(amount),color)
-            await asyncio.sleep(2)
+            await asyncio.sleep(1)
             await self.client.get_channel(int(750313490455068722)).send(embed=embed)
 
         embed = main_messages_style(f"====There were a total of {amount} events, see you in 12 hours 😊 =====")
-        await asyncio.sleep(2)
+        await asyncio.sleep(1)
         await self.client.get_channel(int(750313490455068722)).send(embed=embed)
 
     # @getData.before_loop
