@@ -89,7 +89,7 @@ class General(commands.Cog):
 
     # Print an embed message on the chat
     @commands.command()
-    async def print(self,ctx,name, message, emote):
+    async def Print(self,ctx,name, message, emote):
         embed = main_messages_style(name, message, emote)
         await ctx.send(embed=embed)
         await ctx.message.add_reaction(next(negative_emojis_list))
