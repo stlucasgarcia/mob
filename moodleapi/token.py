@@ -10,6 +10,8 @@ from requests import post
 
 
 class Token:
+    """Class Token generate an MoodleAPI token by username and password
+    login to automatically encrypt and storage in tokens.csv file."""
 
     def __init__(self):
         self.post = post
@@ -24,6 +26,9 @@ class Token:
 
 
     def create(self, username=None, password=None, discordid=None, *args, **kwargs):
+        """Create function recive username and password for token creation and additionaly
+        discordID from respective user to be added with the encrpyted token in csv file."""
+
         username = f'username={username}'
         password = f'&password={password}'
 

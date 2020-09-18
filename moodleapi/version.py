@@ -1,9 +1,9 @@
 """
-Version module contain functions to return stable and lastest version
+Version module contains functions to return stable and lastest version
 """
 
 
-from datetime import datetime
+from datetime import datetime as dt
 
 
 def get_version(version=None):
@@ -15,4 +15,4 @@ def get_version(version=None):
 
     else:
         sufix = 'FINAL' if version[2] == 'f' else 'ALPHA'
-        return f'Core version {version[0]}.{version[1]} {sufix} - last time checked: {datetime.utcnow()}'
+        return f'Core version {version[0]}.{version[1]}.{version[2]} {sufix} - last time checked: {dt.utcnow()}'

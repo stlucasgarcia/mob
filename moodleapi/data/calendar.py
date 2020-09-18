@@ -1,7 +1,7 @@
 """
-Calendar module especifically for calendar funcitons
+Calendar module especifically for calendar functions
 
-Last Update: 05/09/2020 - support for calendar_monthly
+Last Update: 09/18/2020 - added new filters for events
 """
 
 from moodleapi.request import Request
@@ -13,6 +13,8 @@ from re import compile, sub
 
 
 class Calendar(Request):
+    """Calendar Class support montlhy informations only and have
+    several functions to filter information and format date."""
 
     def __init__(self, token):
         self.token = token
