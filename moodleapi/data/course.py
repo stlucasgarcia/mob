@@ -1,11 +1,16 @@
 """
-Course module ...
+Course module especifically for course functions
+
+Last Update: 09/18/2020 - support for contents and subjectsid function
 """
 
 from moodleapi.request import Request
 
 
 class Course(Request):
+    """Course Class responsable to get all contents by courseid given
+    that can be filtered by assingments for the time beign. Also, can
+    get all subjects id by userid."""
 
     def __init__(self, token):
         super().__init__(token)
