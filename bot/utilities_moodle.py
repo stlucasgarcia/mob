@@ -2,6 +2,7 @@ import discord
 from itertools import cycle
 
 
+# Dictionary template that we use in most part of Moodle.py
 def data_dict(i, database):
     assignmentsdata = { 
     "fullname" : database.iat[i,0].title(),

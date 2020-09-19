@@ -12,7 +12,7 @@ class General2(commands.Cog):
     def __init__(self, client):
         self.client = client
     
-
+    #Creates a Caesar Cipher
     @commands.command()
     async def Cipher(self,ctx, *text):
         print(text)

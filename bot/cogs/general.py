@@ -23,9 +23,8 @@ class General(commands.Cog):
     @tasks.loop(seconds=600)
     async def change_status(self):
         await self.client.change_presence(activity=discord.Game(next(status_list)))
-        print("Next status")
 
-    # Allow and disallow and show the list of the text channel in which the bot can send messages, the variable is stored in /bot/settings.py
+    # Allow, disallow or show the list of the text channel in which the bot can send messages, the variable is stored in /bot/settings.py
     @commands.command()
     async def Chat_permission(self, ctx, option=""):
         channel_id = ctx.channel.id
@@ -84,17 +83,15 @@ class General(commands.Cog):
     async def Clear(self, ctx, amount=2):
         if ctx.channel.id in allowed_channels:
             await ctx.channel.purge(limit=amount)
-            await ctx.message.add_reaction(next(positive_emojis_list))
-            print("clear command")
 
     # Print an embed message on the chat
     @commands.command()
     async def Print(self,ctx,name, message, emote):
         embed = main_messages_style(name, message, emote)
         await ctx.send(embed=embed)
-        await ctx.message.add_reaction(next(negative_emojis_list))
+        await ctx.message.add_reaction(next(positive_emojis_list))
         
-    # Check latency and ping
+    # Check latency/ping
     @commands.Cog.listener()
     async def on_message(self,ctx):
         if ctx.channel.id in allowed_channels:

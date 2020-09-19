@@ -4,6 +4,7 @@ from moodleapi.token import Token
 from moodleapi.data.calendar import Calendar
 from moodleapi.data.export import Export
 
+
 from discord.ext import commands, tasks
 from settings import *
 from utilities import *
@@ -21,10 +22,12 @@ class Moodle(commands.Cog):
      
     # Command to get the assignments from the csv and send it embeded to the text chat    
     @commands.command()
-    async def Get(self, ctx, option=""):        
-        isbool = True
+    async def Get(self, ctx, option=""):
+        isBool = True
+        # Check if the bot has permission to send messages on the specified channel, used in most commands
         if ctx.channel.id in allowed_channels:
             option = option.lower()
+            # Get path for what the user desires 
             if option == "assignments":
                 database = pd.read_csv(PATH_ASSIGNMENTS, header=None )
             elif option == "classes":
@@ -36,16 +39,17 @@ class Moodle(commands.Cog):
                 "Option not available, you must use Assignments, Classes or Events ", " 😕")
                 await ctx.message.add_reaction(next(negative_emojis_list))
                 await ctx.send(embed=embed)   
-                isbool = False
+                isBool = False
             
-            if isbool:
+            
+            if isBool:
                 amount = 0
                 await ctx.message.add_reaction(next(positive_emojis_list))
                 for i in range(len(database)):# amount of rows of the csv
                     amount += 1
                     assignmentsdata = data_dict(i, database)
 
-                    #Styling the message 
+                    #Styling the message for better user experience
                     if option == "assignments":
                         if i % 2 == 0: 
                             color = 0x480006
@@ -79,64 +83,80 @@ class Moodle(commands.Cog):
     #Command to check if the assignments were done at the Moodle website
     @commands.command()
     async def Check(self, ctx):
-        
+        # Reads the csv file to check if the hw was done
         tokens_data = pd.read_csv(PATH_TOKENS, header=None)
         userid = str(ctx.author.id)
         token = 0
+
+        #Get user token from tokens.csv
         for i in range(len(tokens_data)):
             if str(userid) == str(tokens_data.iat[i,1]):
                 token = tokens_data.iat[i,0]
                 
-        embed = main_messages_style("Checking...")
+        embed = main_messages_style("Checking your assignments...")
         await ctx.author.send(embed=embed)
 
+        # Decrypt the token and get Calendar
         decrypted_token = Cryptography().decrypt_message(bytes(token, encoding='utf-8'))
         ca = Calendar(decrypted_token)
         data = ca.monthly()
         
+
         assign = ca.filter(value="assign", data=data)
-        export_assign = Export('assignments.csv')
-        export_assign.to_csv(data=assign, addstyle=False)
-    
-          
-        amount = 0
 
-        database = pd.read_csv(PATH_ASSIGNMENTS, header=None)
-        for i in range(len(database)):
-            amount += 1
-            assignmentsdata = data_dict(i, database)
-            if i % 2 == 0: 
-                color = 0x480006
-            else:
-                color = 0x9f000c
+        #Check if there's assigns
+        if assign:
+            export_assign = Export('assignments.csv')
+            export_assign.to_csv(data=assign, addstyle=False)
 
-            embed = check_command_style(assignmentsdata, str(amount), color, 1)
-            await ctx.author.send(embed=embed)
-            await asyncio.sleep(1)        
+            
+            amount = 0
 
-        await ctx.message.add_reaction(next(positive_emojis_list))
+            database = pd.read_csv(PATH_ASSIGNMENTS, header=None)
+            for i in range(len(database)):
+                amount += 1
+                assignmentsdata = data_dict(i, database)
+
+                # Style embed message
+                if i % 2 == 0: 
+                    color = 0x480006
+                else:
+                    color = 0x9f000c
+
+                embed = check_command_style(assignmentsdata, str(amount), color, 1)
+                await ctx.author.send(embed=embed)
+                await asyncio.sleep(1)        
+
+            await ctx.message.add_reaction(next(positive_emojis_list))
+        else:
+            embed = check_command_style("There weren't any scheduled assignments")
+            await asyncio.sleep(1)
+            await self.client.get_channel(int(750313490455068722)).send(embed=embed)
+            await ctx.message.add_reaction(next(negative_emojis_list))
         
 
 
-    # Command to create or access your moodle API        
+    # Command to create or access your moodle API token    
     @commands.command()
     async def GetToken(self, ctx):
         await ctx.message.add_reaction(next(positive_emojis_list))
         tokens_data = pd.read_csv(PATH_TOKENS, header=None )
+
         userid = str(ctx.author.id)
         
         def check(ctx, m):
             return m.author == ctx.author
 
-        isbool = True
+        isBool = True
 
+        # Check if a token for that user already exists
         j = 0
         for i in range(len(tokens_data)):
             if userid in str(tokens_data.iat[i,1]):
                 j = i
-                isbool = False
+                isBool = False
 
-        if isbool:
+        if isBool:
             embed = main_messages_style("Apparently you don't have a Moodle API Token, do you want to create one? Yes/No", "Your login and password won't be saved in the "
             "system, it'll be used to create your Token and the Crypted Token will be stored")
             await ctx.author.send(embed=embed)
@@ -181,10 +201,10 @@ class Moodle(commands.Cog):
 
     #         await ctx.send(dt_string)
 
+
+
     # Gets Moodle data through Moodle API and send it to the chat
-
-
-
+    #Loops the GetData function. 
     @tasks.loop(hours=12)
     async def GetData(self):
         tokens_data = pd.read_csv(PATH_TOKENS, header=None )
@@ -195,48 +215,56 @@ class Moodle(commands.Cog):
         await asyncio.sleep(1)
         await self.client.get_channel(int(750313490455068722)).send(embed=embed)
 
+        # Get data from the Calendar and filter it
         ca = Calendar(decrypted_token)
         data = ca.monthly()
-        
         assign = ca.filter(value="assign", data=data)
         liveclasses = ca.filter(value="bbb", data=data)
 
-        export_assign = Export('assignments.csv')
-        export_assign.to_csv(data=assign, addstyle=False)
+        # Check if there's assign, classes
+        if assign:
+            export_assign = Export('assignments.csv')
+            export_assign.to_csv(data=assign, addstyle=False)
 
-        export_liveclasses = Export('liveclasses.csv')
-        export_liveclasses.to_csv(data=liveclasses, addstyle=False)
+        if liveclasses:
+            export_liveclasses = Export('liveclasses.csv')
+            export_liveclasses.to_csv(data=liveclasses, addstyle=False)
 
-        export_events = Export('events.csv')
-        export_events.to_csv(data=data, addstyle=False)
+        if data:
+            export_events = Export('events.csv')
+            export_events.to_csv(data=data, addstyle=False)
+
+        if not data:
+            embed = check_command_style("There weren't any event scheduled")
+            await asyncio.sleep(1)
+            await self.client.get_channel(int(750313490455068722)).send(embed=embed)
         amount = 0
-        for i in range(len(database)):# amount of rows of the csv
-            amount += 1
-            assignmentsdata = data_dict(i, database)
 
-            #Styling the message 
-            if assignmentsdata["modulename"] == "Tarefa para entregar via Moodle":
-                if i % 2 == 0: 
-                    color = 0x480006
-                else:
-                    color = 0x9f000c
-            else:
-                if i % 2 == 0: 
-                    color = 0x29C8BA
-                else:
-                    color = 0x155D56
+        if data:
+            for i in range(len(database)): #amount of rows of the csv
+                amount += 1
+                assignmentsdata = data_dict(i, database)
 
-            embed = check_command_style(assignmentsdata, str(amount),color)
+                #Styling the message to improve user experience
+                if assignmentsdata["modulename"] == "Tarefa para entregar via Moodle":
+                    if i % 2 == 0: 
+                        color = 0x480006
+                    else:
+                        color = 0x9f000c
+                else:
+                    if i % 2 == 0: 
+                        color = 0x29C8BA
+                    else:
+                        color = 0x155D56
+
+                embed = check_command_style(assignmentsdata, str(amount),color)
+                await asyncio.sleep(1)
+                await self.client.get_channel(int(750313490455068722)).send(embed=embed)
+
+            embed = main_messages_style(f"====There were a total of {amount} events, see you in 12 hours 😊 =====")
             await asyncio.sleep(1)
             await self.client.get_channel(int(750313490455068722)).send(embed=embed)
 
-        embed = main_messages_style(f"====There were a total of {amount} events, see you in 12 hours 😊 =====")
-        await asyncio.sleep(1)
-        await self.client.get_channel(int(750313490455068722)).send(embed=embed)
-
-    # @getData.before_loop
-    # async def before_getData(self):
-    #     return self.client.get_channel(int(750313490455068722))
         
 
 def setup(client):
