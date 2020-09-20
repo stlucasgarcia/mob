@@ -12,7 +12,7 @@ SERVICE = 'webservice/'                         # Type of service to connect wit
 API = 'rest/'                                   # Rest was added in 2.2 version of Moodle API
 CONNECTION = 'server.php?'                      # Global prefix before any parameter
 FORMAT = 'moodlewsrestformat=json'              # Setting json as response (specifically for rest)
-TOKEN = '&wstoken='                              # Create prefix to token to be added when requested
+TOKEN = '&wstoken='                             # Create prefix to token to be added when requested
 
 REQUEST = f'{BASEURL}{SERVICE}{API}{CONNECTION}{FORMAT}{TOKEN}'
 
@@ -25,6 +25,7 @@ func = {
     'course_subjects' : 'core_enrol_get_users_courses',
 }
 
+# TODO: CREATE FUNCTION FOR DISCIPLINE TEACHER AND ID DICTS
 
 # Discipline teacher dictionary
 
