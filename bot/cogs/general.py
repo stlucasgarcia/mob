@@ -30,7 +30,7 @@ class General(commands.Cog):
         channel_id = ctx.channel.id
         option = option.lower()
         if option != "allow" and option != "revoke" and option != "list" and option == "":
-            embed = main_messages_style("Command **permission** allow or prohibit the bot messages in this chat","Option not available, you must use Allow, "
+            embed = main_messages_style("Command **permission** allow or prohibit the bot messages on this chat","Option not available, you must use Allow, "
             "Prohibit or List ", " 😕")
             await ctx.send(embed=embed)
             await ctx.message.add_reaction(next(negative_emojis_list))
@@ -39,22 +39,22 @@ class General(commands.Cog):
             if option == "allow":
                 if channel_id not in allowed_channels:
                     allowed_channels.append(ctx.channel.id)
-                    embed = main_messages_style(f"Now I will operate in #{self.client.get_channel(ctx.channel.id)}")
+                    embed = main_messages_style(f"Now I will operate on #{self.client.get_channel(ctx.channel.id)}")
                     await ctx.send(embed=embed)
                     await ctx.message.add_reaction(next(positive_emojis_list))
                 else:
-                    embed =main_messages_style("I already operate in this channel")
+                    embed =main_messages_style("I already operate on this channel")
                     await ctx.send(embed=embed)
                     await ctx.message.add_reaction(next(negative_emojis_list))
 
             elif option == "revoke":
                 if channel_id in allowed_channels:
                     allowed_channels.remove(ctx.channel.id)
-                    embed = main_messages_style(f"I will no longer operate in #{self.client.get_channel(ctx.channel.id)}")
+                    embed = main_messages_style(f"I will no longer operate on #{self.client.get_channel(ctx.channel.id)}")
                     await ctx.send(embed=embed)
                     await ctx.message.add_reaction(next(positive_emojis_list))
                 else:
-                    embed = main_messages_style("I already don't have permission to operate in this channel")
+                    embed = main_messages_style("I already don't have permission to operate on this channel")
                     await ctx.send(embed=embed)            
                     await ctx.message.add_reaction(next(negative_emojis_list))
 
