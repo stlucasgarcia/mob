@@ -73,7 +73,7 @@ class General(commands.Cog):
                         await ctx.send(embed=embed)
                         await ctx.message.add_reaction(next(positive_emojis_list))
                 else:
-                    embed = main_messages_style(f"I don't have permission to chat here, type **mack bot allow** to give me the authorization to send messages and read commands in"
+                    embed = main_messages_style(f"I don't have permission to chat here, type **mack Chat_permission allow** to give me the authorization to send messages and read commands in"
                     f" #{self.client.get_channel(ctx.channel.id)}")
                     await ctx.send(embed=embed)
                     await ctx.message.add_reaction(next(negative_emojis_list))
@@ -86,7 +86,7 @@ class General(commands.Cog):
 
     # Print an embed message on the chat
     @commands.command()
-    async def Print(self,ctx,name, message, emote):
+    async def Print(self,ctx,name, message, emote=""):
         embed = main_messages_style(name, message, emote)
         await ctx.send(embed=embed)
         await ctx.message.add_reaction(next(positive_emojis_list))

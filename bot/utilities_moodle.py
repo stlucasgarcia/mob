@@ -1,6 +1,7 @@
 import discord
 from itertools import cycle
 
+loop_channel = int(750313490455068722)
 
 # Dictionary template that we use in most part of Moodle.py
 def data_dict(i, database):
@@ -16,3 +17,5 @@ def data_dict(i, database):
     "hwstatus_time" : database.iat[i, 9]
     }
     return assignmentsdata
+
+    

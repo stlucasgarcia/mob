@@ -209,7 +209,6 @@ class Moodle(commands.Cog):
     async def GetData(self):
         tokens_data = pd.read_csv(PATH_TOKENS, header=None )
         decrypted_token = Cryptography().decrypt_message(bytes(tokens_data.iat[0,0], encoding='utf-8'))
-        database = pd.read_csv(PATH_EVENTS, header=None )
 
 
         # loop_channel = int(750313490455068722)
@@ -237,7 +236,7 @@ class Moodle(commands.Cog):
             export_events.to_csv(data=data, addstyle=False)
 
         if not data:
-            embed = check_command_style("There weren't any event scheduled")
+            embed = check_command_style("There weren't any events scheduled")
             await asyncio.sleep(1)
             await self.client.get_channel(loop_channel).send(embed=embed)
 
@@ -245,6 +244,7 @@ class Moodle(commands.Cog):
         amount = 0
 
         if data:
+            database = pd.read_csv(PATH_EVENTS, header=None )
             for i in range(len(database)): #amount of rows of the csv
                 amount += 1
                 assignmentsdata = data_dict(i, database)
