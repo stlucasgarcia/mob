@@ -15,4 +15,4 @@ def get_version(version=None):
 
     else:
         sufix = 'FINAL' if version[2] == 'f' else 'ALPHA'
-        return f'Core version {version[0]}.{version[1]}.{version[2]} {sufix} - last time checked: {dt.utcnow()}'
+        return f'MoodleAPI version {version[0]}.{version[1]}.{version[2]} {sufix} - last time checked: {dt.utcnow()}'
