@@ -29,7 +29,11 @@ def check_command_style(dict, amount, color="", status=None):
     else:
         embed.add_field(name="Tipo de tarefa", value=dict["modulename"], inline=False)
 
-    embed.add_field(name="Data de entrega", value=dict["deadline"], inline=True)
+    if dict["modulename"] == "Aula ao vivo - BigBlueButton":
+        embed.add_field(name="Data da aula", value=dict["deadline"], inline=True)
+    else:
+        embed.add_field(name="Data de entrega", value=dict["deadline"], inline=True)
+
     embed.add_field(name="Link", value=dict["link"], inline=False)
     embed.add_field(name="Professor", value=dict["author"], inline=False)
     embed.set_footer(text=footer)
