@@ -22,7 +22,7 @@ class Moodle(commands.Cog):
      
     # Command to get the assignments from the csv and send it embeded to the text chat    
     @commands.command()
-    async def Get(self, ctx, option=""):
+    async def get(self, ctx, option=""):
         isBool = True
         # Check if the bot has permission to send messages on the specified channel, used in most commands
         if ctx.channel.id in allowed_channels:
@@ -35,6 +35,7 @@ class Moodle(commands.Cog):
             elif option == "events":
                 database = pd.read_csv(PATH_EVENTS, header=None )
             else:
+                
                 embed = main_messages_style("Command **check** plus one of the following options will get assignments, classes or events from your Moodle calendar ",
                 "Option not available, you must use Assignments, Classes or Events ", " 😕")
                 await ctx.message.add_reaction(next(negative_emojis_list))
@@ -43,47 +44,29 @@ class Moodle(commands.Cog):
             
 
             if isBool:
-                amount = 0
+
+                amount = 0 #Amount of data
                 await ctx.message.add_reaction(next(positive_emojis_list))
                 for i in range(len(database)):# amount of rows of the csv
-                    amount += 1
                     assignmentsdata = data_dict(i, database)
 
                     #Styling the message for better user experience
-                    if option == "assignments":
-                        if i % 2 == 0: 
-                            color = 0x480006
-                        else:
-                            color = 0x9f000c
-                    elif option == "classes":
-                        if i % 2 == 0: 
-                            color = 0x29C8BA
-                        else:
-                            color = 0x155D56
-                    elif option == "events":
-                        if assignmentsdata["modulename"] == "Tarefa para entregar via Moodle":
-                            if i % 2 == 0: 
-                                color = 0x480006
-                            else:
-                                color = 0x9f000c
-                        else:
-                            if i % 2 == 0: 
-                                color = 0x29C8BA
-                            else:
-                                color = 0x155D56
+                    color = moodle_color(i, option, assignmentsdata)
 
-                    embed = check_command_style(assignmentsdata, str(amount),color)
+                    amount += 1
+
+                    embed = check_command_style(assignmentsdata, str(amount), color)
                     await ctx.send(embed=embed)
                     await asyncio.sleep(1)
 
             embed = main_messages_style(f"========= There were a total of {amount} {option.capitalize()} 📕 =========")
-            await asyncio.sleep(1)
+            await asyncio.sleep(0.5)
             await ctx.send(embed=embed)
 
 
     #Command to check if the assignments were done at the Moodle website
     @commands.command()
-    async def Check(self, ctx):
+    async def check(self, ctx):
         if ctx.channel.id in allowed_channels:
 
             # Reads the csv file to check if the hw was done
@@ -109,6 +92,7 @@ class Moodle(commands.Cog):
 
             #Check if there's assigns
             if assign:
+                await ctx.message.add_reaction(next(positive_emojis_list))
                 export_assign = Export('assignments.csv')
                 export_assign.to_csv(data=assign, addstyle=False)
 
@@ -116,21 +100,19 @@ class Moodle(commands.Cog):
                 amount = 0
 
                 database = pd.read_csv(PATH_ASSIGNMENTS, header=None)
+
                 for i in range(len(database)):
                     amount += 1
                     assignmentsdata = data_dict(i, database)
 
                     # Style embed message
-                    if i % 2 == 0: 
-                        color = 0x480006
-                    else:
-                        color = 0x9f000c
+                    color = moodle_color(i, "assignments", assignmentsdata)
+
 
                     embed = check_command_style(assignmentsdata, str(amount), color, 1)
                     await ctx.author.send(embed=embed)
                     await asyncio.sleep(1)        
 
-                await ctx.message.add_reaction(next(positive_emojis_list))
 
                 embed = main_messages_style(f"=========There were a total of {amount} assignments 📚 =========")
                 await ctx.author.send(embed=embed)
@@ -138,14 +120,14 @@ class Moodle(commands.Cog):
             else:
                 
                 embed = check_command_style("There weren't any scheduled assignments")
-                await asyncio.sleep(1)
+                await asyncio.sleep(0.5)
                 await ctx.author.send(embed=embed)
                 await ctx.message.add_reaction(next(negative_emojis_list))
         
 
     # Command to create or access your moodle API token    
     @commands.command()
-    async def GetToken(self, ctx):
+    async def getToken(self, ctx):
         if ctx.channel.id in allowed_channels:
 
             await ctx.message.add_reaction(next(positive_emojis_list))
@@ -206,7 +188,7 @@ class Moodle(commands.Cog):
     # Gets Moodle data through Moodle API and send it to the chat
     #Loops the GetData function. 
     @tasks.loop(hours=12)
-    async def GetData(self):
+    async def getData(self):
         tokens_data = pd.read_csv(PATH_TOKENS, header=None )
         decrypted_token = Cryptography().decrypt_message(bytes(tokens_data.iat[0,0], encoding='utf-8'))
 
@@ -250,23 +232,15 @@ class Moodle(commands.Cog):
                 assignmentsdata = data_dict(i, database)
 
                 #Styling the message to improve user experience
-                if assignmentsdata["modulename"] == "Tarefa para entregar via Moodle":
-                    if i % 2 == 0: 
-                        color = 0x480006
-                    else:
-                        color = 0x9f000c
-                else:
-                    if i % 2 == 0: 
-                        color = 0x29C8BA
-                    else:
-                        color = 0x155D56
+                color = moodle_color(i, "events", assignmentsdata)
 
-                embed = check_command_style(assignmentsdata, str(amount),color)
+
+                embed = check_command_style(assignmentsdata, str(amount), color)
                 await asyncio.sleep(1)
                 await self.client.get_channel(loop_channel).send(embed=embed)
 
             embed = main_messages_style(f"====There were a total of {amount} events, see you in 12 hours 😊 =====")
-            await asyncio.sleep(1)
+            await asyncio.sleep(0.5)
             await self.client.get_channel(loop_channel).send(embed=embed)
 
 

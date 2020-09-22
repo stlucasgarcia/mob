@@ -18,4 +18,39 @@ def data_dict(i, database):
     }
     return assignmentsdata
 
-    
+
+def moodle_color(i, option, assignmentsdata):
+    if option == "assignments":
+        if i % 2 == 0: 
+            color = 0x480006
+        else:
+            color = 0x9f000c
+
+        return color
+
+
+    elif option == "classes":
+        if i % 2 == 0: 
+            color = 0x29C8BA
+        else:
+            color = 0x155D56
+
+        return color
+
+
+    elif option == "events":
+        if assignmentsdata["modulename"] == "Tarefa para entregar via Moodle":
+
+            if i % 2 == 0: 
+                color = 0x480006
+            else:
+                color = 0x9f000c
+
+        else:
+
+            if i % 2 == 0: 
+                color = 0x29C8BA
+            else:
+                color = 0x155D56
+                
+        return color

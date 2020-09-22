@@ -14,7 +14,7 @@ class General2(commands.Cog):
     
     #Creates a Caesar Cipher
     @commands.command()
-    async def Cipher(self,ctx, *text):
+    async def cipher(self,ctx, *text):
         print(text)
         key = randint(2,26)
         print(key)

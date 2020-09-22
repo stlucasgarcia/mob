@@ -10,4 +10,3 @@ PATH_TOKENS = os.path.abspath('bot').split('bot')[0] + "csvfiles\\tokens.csv"
 
 # Global allowed_channels list
 allowed_channels = [750313490455068722]        
-
