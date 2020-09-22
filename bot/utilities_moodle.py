@@ -19,8 +19,9 @@ def data_dict(i, database):
     return assignmentsdata
 
 
-def moodle_color(i, option, assignmentsdata):
-    if option == "assignments":
+# Changing color for better student visualization
+def moodle_color(i, assignmentsdata):
+    if assignmentsdata["modulename"] == "Tarefa para entregar via Moodle":
         if i % 2 == 0: 
             color = 0x480006
         else:
@@ -28,8 +29,7 @@ def moodle_color(i, option, assignmentsdata):
 
         return color
 
-
-    elif option == "classes":
+    else:
         if i % 2 == 0: 
             color = 0x29C8BA
         else:
@@ -37,20 +37,3 @@ def moodle_color(i, option, assignmentsdata):
 
         return color
 
-
-    elif option == "events":
-        if assignmentsdata["modulename"] == "Tarefa para entregar via Moodle":
-
-            if i % 2 == 0: 
-                color = 0x480006
-            else:
-                color = 0x9f000c
-
-        else:
-
-            if i % 2 == 0: 
-                color = 0x29C8BA
-            else:
-                color = 0x155D56
-                
-        return color

@@ -17,7 +17,7 @@ class Moodle(commands.Cog):
 
     def __init__(self, client):
         self.client = client
-        self.GetData.start()
+        self.getData.start()
 
      
     # Command to get the assignments from the csv and send it embeded to the text chat    
@@ -35,7 +35,7 @@ class Moodle(commands.Cog):
             elif option == "events":
                 database = pd.read_csv(PATH_EVENTS, header=None )
             else:
-                
+
                 embed = main_messages_style("Command **check** plus one of the following options will get assignments, classes or events from your Moodle calendar ",
                 "Option not available, you must use Assignments, Classes or Events ", " 😕")
                 await ctx.message.add_reaction(next(negative_emojis_list))
@@ -51,7 +51,7 @@ class Moodle(commands.Cog):
                     assignmentsdata = data_dict(i, database)
 
                     #Styling the message for better user experience
-                    color = moodle_color(i, option, assignmentsdata)
+                    color = moodle_color(i, assignmentsdata)
 
                     amount += 1
 
@@ -106,7 +106,7 @@ class Moodle(commands.Cog):
                     assignmentsdata = data_dict(i, database)
 
                     # Style embed message
-                    color = moodle_color(i, "assignments", assignmentsdata)
+                    color = moodle_color(i, assignmentsdata)
 
 
                     embed = check_command_style(assignmentsdata, str(amount), color, 1)
@@ -165,6 +165,7 @@ class Moodle(commands.Cog):
                     embed = main_messages_style("Type and send your Moodle password")
                     await ctx.author.send(embed=embed)
                     await ctx.message.add_reaction(next(positive_emojis_list))
+
                     password = await self.client.wait_for('message')
 
                     # Call a function from moodleAPI to create a Token and save it encrypted on the file tokens.csv, it saves the discord author.id as well
@@ -186,7 +187,7 @@ class Moodle(commands.Cog):
 
 
     # Gets Moodle data through Moodle API and send it to the chat
-    #Loops the GetData function. 
+    # Loops the GetData function. 
     @tasks.loop(hours=12)
     async def getData(self):
         tokens_data = pd.read_csv(PATH_TOKENS, header=None )
@@ -232,7 +233,7 @@ class Moodle(commands.Cog):
                 assignmentsdata = data_dict(i, database)
 
                 #Styling the message to improve user experience
-                color = moodle_color(i, "events", assignmentsdata)
+                color = moodle_color(i, assignmentsdata)
 
 
                 embed = check_command_style(assignmentsdata, str(amount), color)
