@@ -62,10 +62,22 @@ class General2(commands.Cog):
         print(f"Text: {text}")
         print(f"Text: {listText}")
         print(f"Cipher Text: {cipherText}")
+        await ctx.channel.purge(limit=1)
 
         embed = main_messages_style("Cipher text",cipherText)
         await ctx.send(embed=embed)
 
+    @commands.command()
+    async def roll(self,ctx, number=6):
+        print("Dice!")
+        embed = main_messages_style("Rolling dice... 🎲")
+        await ctx.send(embed=embed)
+        await ctx.channel.purge(limit=1)
+        num = int(number)
+        embed = main_messages_style("🎲 Your results were", f"{randint(1,num)}")
+        await ctx.send(embed=embed)
+
+        
 
         
 
