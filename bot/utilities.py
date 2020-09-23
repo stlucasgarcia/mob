@@ -1,16 +1,20 @@
 import discord
 from itertools import cycle
 
+# Emojis lists to be used in the entire project 
 positive_emojis_list = cycle(["👍", "🆗", "🤙", "👌", "👊", "🆒", "✅"]) 
 negative_emojis_list = cycle(["🚫", "🛑", "❌", "⛔"])
 status_list = cycle(["Estudando...", "Navegando no Moodle", "Descobrindo tarefas", "Dominando o mundo", "Reduzindo as suas faltas", "Calculando as suas médias"])
+books_list = cycle(["📚", "📔", "📕", "📖", "📗", "📘", "📙", "📑", "🧾"])
+happy_faces = cycle(["😀", "😁", "😃", "😄", "😅", "😉", "😊", "😋", "😎", "🙂", "🤗", "😛"])
+
 
 footer = "Created with 💖 by Mackenzie Students."
 defaultcolor = 0x9f000c
 
 # This file is created to style the bot messages
 # Styling the check command from moodle.py
-def check_command_style(dict, amount, color="", status=None):
+def check_command_style(dict, amount="", color="", status=None):
     embed=discord.Embed(title=dict["modulename"] + " - " + amount, color= color if color else defaultcolor)
     embed.set_thumbnail(url="https://logodownload.org/wp-content/uploads/2017/09/mackenzie-logo-3.png")
     embed.add_field(name="Matéria", value=dict["fullname"], inline=True)

@@ -44,14 +44,17 @@ class Moodle(commands.Cog):
             
 
             if isBool:
+                embed = main_messages_style(f"Checking {option.lower()} {next(books_list)} ...")
+                await ctx.send(embed=embed)
+
 
                 amount = 0 #Amount of data
                 await ctx.message.add_reaction(next(positive_emojis_list))
-                for i in range(len(database)):# amount of rows of the csv
-                    assignmentsdata = data_dict(i, database)
+                for index in range(len(database)):# amount of rows of the csv
+                    assignmentsdata = data_dict(index, database)
 
                     #Styling the message for better user experience
-                    color = moodle_color(i, assignmentsdata)
+                    color = moodle_color(index, assignmentsdata)
 
                     amount += 1
 
@@ -59,7 +62,7 @@ class Moodle(commands.Cog):
                     await ctx.send(embed=embed)
                     await asyncio.sleep(1)
 
-            embed = main_messages_style(f"========= There were a total of {amount} {option.capitalize()} 📕 =========")
+            embed = main_messages_style(f"There were a total of {amount} {option.capitalize()} {next(books_list)}")
             await asyncio.sleep(0.5)
             await ctx.send(embed=embed)
 
@@ -79,7 +82,7 @@ class Moodle(commands.Cog):
                 if str(userid) == str(tokens_data.iat[i,1]):
                     token = tokens_data.iat[i,0]
                     
-            embed = main_messages_style("Checking your assignments...")
+            embed = main_messages_style(f"Checking your assignments {next(books_list)} ...")
             await ctx.author.send(embed=embed)
 
             # Decrypt the token and get Calendar
@@ -101,12 +104,12 @@ class Moodle(commands.Cog):
 
                 database = pd.read_csv(PATH_ASSIGNMENTS, header=None)
 
-                for i in range(len(database)):
+                for index in range(len(database)):
                     amount += 1
-                    assignmentsdata = data_dict(i, database)
+                    assignmentsdata = data_dict(index, database)
 
                     # Style embed message
-                    color = moodle_color(i, assignmentsdata)
+                    color = moodle_color(index, assignmentsdata)
 
 
                     embed = check_command_style(assignmentsdata, str(amount), color, 1)
@@ -114,15 +117,15 @@ class Moodle(commands.Cog):
                     await asyncio.sleep(1)        
 
 
-                embed = main_messages_style(f"=========There were a total of {amount} assignments 📚 =========")
+                embed = main_messages_style(f"There were a total of {amount} assignments {next(books_list)}")
                 await ctx.author.send(embed=embed)
 
             else:
                 
-                embed = check_command_style("There weren't any scheduled assignments")
+                await ctx.message.add_reaction(next(negative_emojis_list))
+                embed = check_command_style("There weren't any scheduled assignments 😑😮")
                 await asyncio.sleep(0.5)
                 await ctx.author.send(embed=embed)
-                await ctx.message.add_reaction(next(negative_emojis_list))
         
 
     # Command to create or access your moodle API token    
@@ -142,9 +145,9 @@ class Moodle(commands.Cog):
 
             # Check if a token for that user already exists
             j = 0
-            for i in range(len(tokens_data)):
-                if userid in str(tokens_data.iat[i,1]):
-                    j = i
+            for index in range(len(tokens_data)):
+                if userid in str(tokens_data.iat[index,1]):
+                    j = index
                     isBool = False
 
             if isBool:
@@ -190,12 +193,13 @@ class Moodle(commands.Cog):
     # Loops the GetData function. 
     @tasks.loop(hours=12)
     async def getData(self):
+        CSmain = 0
         tokens_data = pd.read_csv(PATH_TOKENS, header=None )
-        decrypted_token = Cryptography().decrypt_message(bytes(tokens_data.iat[0,0], encoding='utf-8'))
+        decrypted_token = Cryptography().decrypt_message(bytes(tokens_data.iat[CSmain,0], encoding='utf-8'))
 
 
         # loop_channel = int(750313490455068722)
-        embed = main_messages_style("=========Sending the twice-daily Moodle events update=========")
+        embed = main_messages_style(f"Sending the twice-daily Moodle events update {next(books_list)} {next(happy_faces)}")
         await asyncio.sleep(1)
         await self.client.get_channel(loop_channel).send(embed=embed)
 
@@ -219,7 +223,7 @@ class Moodle(commands.Cog):
             export_events.to_csv(data=data, addstyle=False)
 
         if not data:
-            embed = check_command_style("There weren't any events scheduled")
+            embed = check_command_style("There weren't any scheduled events 😑😮")
             await asyncio.sleep(1)
             await self.client.get_channel(loop_channel).send(embed=embed)
 
@@ -228,19 +232,19 @@ class Moodle(commands.Cog):
 
         if data:
             database = pd.read_csv(PATH_EVENTS, header=None )
-            for i in range(len(database)): #amount of rows of the csv
+            for index in range(len(database)): #amount of rows of the csv
                 amount += 1
-                assignmentsdata = data_dict(i, database)
+                assignmentsdata = data_dict(index, database)
 
                 #Styling the message to improve user experience
-                color = moodle_color(i, assignmentsdata)
+                color = moodle_color(index, assignmentsdata)
 
 
                 embed = check_command_style(assignmentsdata, str(amount), color)
                 await asyncio.sleep(1)
                 await self.client.get_channel(loop_channel).send(embed=embed)
 
-            embed = main_messages_style(f"====There were a total of {amount} events, see you in 12 hours 😊 =====")
+            embed = main_messages_style(f"There were a total of {amount} events {next(books_list)} see you in 12 hours {next(happy_faces)} ")
             await asyncio.sleep(0.5)
             await self.client.get_channel(loop_channel).send(embed=embed)
 

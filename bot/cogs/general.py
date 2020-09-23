@@ -104,7 +104,7 @@ class General(commands.Cog):
                 msg = await ctx.channel.send(embed=embed)
                 ping = (time.monotonic() - before) * 1000
                 await ctx.channel.purge(limit=1)
-                embed = main_messages_style(f"Pong!  `{int(ping)}ms`")
+                embed = main_messages_style(f"Pong!  🏓  `{int(ping)}ms`")
                 await ctx.channel.send(embed=embed)
                 print(f'Ping {int(ping)}ms')
 
