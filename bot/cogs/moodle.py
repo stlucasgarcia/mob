@@ -36,6 +36,7 @@ class Moodle(commands.Cog):
                 database = pd.read_csv(PATH_EVENTS, header=None )
             else:
 
+
                 embed = main_messages_style("Command **check** plus one of the following options will get assignments, classes or events from your Moodle calendar ",
                 "Option not available, you must use Assignments, Classes or Events ", " 😕")
                 await ctx.message.add_reaction(next(negative_emojis_list))
@@ -58,11 +59,12 @@ class Moodle(commands.Cog):
 
                     amount += 1
 
-                    embed = check_command_style(assignmentsdata, str(amount), color)
+                    embed = check_command_style(assignmentsdata, str(amount), color)[0]
                     await ctx.send(embed=embed)
                     await asyncio.sleep(1)
 
-            embed = main_messages_style(f"There were a total of {amount} {option.capitalize()} {next(books_list)}")
+
+            embed = main_messages_style(f"There were a total of {amount} {option.capitalize()} {next(books_list)}", f"Note: I am only showing {option.capitalize()} of 14 days ahead ")
             await asyncio.sleep(0.5)
             await ctx.send(embed=embed)
 
@@ -101,7 +103,7 @@ class Moodle(commands.Cog):
 
                 
                 amount = 0
-
+                done = 0
                 database = pd.read_csv(PATH_ASSIGNMENTS, header=None)
 
                 for index in range(len(database)):
@@ -112,12 +114,12 @@ class Moodle(commands.Cog):
                     color = moodle_color(index, assignmentsdata)
 
 
-                    embed = check_command_style(assignmentsdata, str(amount), color, 1)
+                    embed, done = check_command_style(assignmentsdata, str(amount), color, 1, done)
                     await ctx.author.send(embed=embed)
                     await asyncio.sleep(1)        
 
 
-                embed = main_messages_style(f"There were a total of {amount} assignments {next(books_list)}")
+                embed = main_messages_style(f"You did {done} out of {amount} assignments {next(books_list)}", "Note: I am only showing assignments of 14 days ahead")
                 await ctx.author.send(embed=embed)
 
             else:
@@ -240,11 +242,11 @@ class Moodle(commands.Cog):
                 color = moodle_color(index, assignmentsdata)
 
 
-                embed = check_command_style(assignmentsdata, str(amount), color)
+                embed = check_command_style(assignmentsdata, str(amount), color, None)[0]
                 await asyncio.sleep(1)
                 await self.client.get_channel(loop_channel).send(embed=embed)
 
-            embed = main_messages_style(f"There were a total of {amount} events {next(books_list)} see you in 12 hours {next(happy_faces)} ")
+            embed = main_messages_style(f"There were a total of {amount} events {next(books_list)} see you in 12 hours {next(happy_faces)} ", "Note: I am only showing events of 14 days ahead")
             await asyncio.sleep(0.5)
             await self.client.get_channel(loop_channel).send(embed=embed)
 
