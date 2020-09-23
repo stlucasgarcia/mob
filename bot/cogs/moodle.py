@@ -185,7 +185,7 @@ class Moodle(commands.Cog):
                 embed = main_messages_style("Your Moodle API Token is encripted and safe, to keep the institution and your data safe I will send the Token in your DM")
                 await ctx.send(embed=embed)
                 decrypted_token = Cryptography().decrypt_message(bytes(tokens_data.iat[j,0], encoding='utf-8'))
-                embed = main_messages_style(f"Your decrypted Moodle API Token is, {decrypted_token}", "Note: You won't need to use it in this bot, your Token is already being used and is stores in our database")
+                embed = main_messages_style(f"Your decrypted Moodle API Token is, {decrypted_token}", "Note: You won't need to use it in this bot, your Token is already being used and it's stored in our database")
                 await ctx.author.send(embed=embed)
 
 
