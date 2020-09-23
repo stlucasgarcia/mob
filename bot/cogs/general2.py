@@ -15,9 +15,9 @@ class General2(commands.Cog):
     #Creates a Caesar Cipher
     @commands.command()
     async def cipher(self,ctx, *text):
-        print(text)
-        key = randint(2,26)
-        print(key)
+        alphabet = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']
+        key = randint(2,25)
+        print(f"Key: {key}")
         def check(index, key):
 	        if key > 26:
 		        key = key%26
@@ -28,34 +28,41 @@ class General2(commands.Cog):
 	
 	        else:
 		        return index, key
-        
-        alphabet = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']
+        def cipher(listText, key):
+            global cipherText
+            cipherText= ''
+            aux = key
+            for i in range(len(listText)):
+                
+                key = aux
+
+                if not listText[i].isalpha():
+                    cipherText += listText[i]
+
+                if listText[i].islower():
+                    index = alphabet.index(listText[i].upper())
+                    index, key = check(index, key)
+                    result = alphabet[index+key]
+                    cipherText += result.lower()
+
+                elif listText[i].isupper():
+                    index = alphabet.index(listText[i])
+                    index, key = check(index, key)
+                    result = alphabet[index+key]
+                    cipherText += result
+    
         
         listText = list(text)
-        print(listText)
 
-        cipherText = ''
 
-        aux = key
         for i in range(len(listText)):
+            #print(list(listText[i]))
+            cipher(list(listText[i]), key)
             
-            key = aux
+        print(f"Text: {text}")
+        print(f"Text: {listText}")
+        print(f"Cipher Text: {cipherText}")
 
-            if not listText[i].isalpha():
-                cipherText += listText[i]
-
-            if listText[i].islower():
-                index = alphabet.index(listText[i].upper())
-                index, key = check(index, key)
-                result = alphabet[index+key]
-                cipherText += result.lower()
-
-            elif listText[i].isupper():
-                index = alphabet.index(listText[i])
-                index, key = check(index, key)
-                result = alphabet[index+key]
-                cipherText += result
-    
         embed = main_messages_style("Cipher text",cipherText)
         await ctx.send(embed=embed)
 
