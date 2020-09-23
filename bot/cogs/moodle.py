@@ -64,7 +64,7 @@ class Moodle(commands.Cog):
                     await asyncio.sleep(1)
 
 
-            embed = main_messages_style(f"There were a total of {amount} {option.capitalize()} {next(books_list)}")
+            embed = main_messages_style(f"There were a total of {amount} {option.capitalize()} {next(books_list)}", f"Note: I am only showing {option.capitalize()} of 14 days ahead ")
             await asyncio.sleep(0.5)
             await ctx.send(embed=embed)
 
@@ -119,7 +119,7 @@ class Moodle(commands.Cog):
                     await asyncio.sleep(1)        
 
 
-                embed = main_messages_style(f"You did {done} out of {amount} assignments {next(books_list)}")
+                embed = main_messages_style(f"You did {done} out of {amount} assignments {next(books_list)}", "Note: I am only showing assignments of 14 days ahead")
                 await ctx.author.send(embed=embed)
 
             else:
@@ -246,7 +246,7 @@ class Moodle(commands.Cog):
                 await asyncio.sleep(1)
                 await self.client.get_channel(loop_channel).send(embed=embed)
 
-            embed = main_messages_style(f"There were a total of {amount} events {next(books_list)} see you in 12 hours {next(happy_faces)} ")
+            embed = main_messages_style(f"There were a total of {amount} events {next(books_list)} see you in 12 hours {next(happy_faces)} ", "Note: I am only showing events of 14 days ahead")
             await asyncio.sleep(0.5)
             await self.client.get_channel(loop_channel).send(embed=embed)
 

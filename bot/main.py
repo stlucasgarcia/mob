@@ -26,7 +26,7 @@ async def unload(ctx, extension):
 async def reload(ctx, extension):
   client.unload_extension(f'cogs.{extension}')
   client.load_extension(f'cogs.{extension}')
-  print(f'{extension} successfully re-loaded')
+  print(f'{extension.capitalize()} successfully re-loaded')
 
 
 for filename in os.listdir("./cogs"):
