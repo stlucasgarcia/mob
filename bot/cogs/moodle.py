@@ -5,23 +5,24 @@ from moodleapi.data.calendar import Calendar
 from moodleapi.data.export import Export
 
 
-from discord.ext import commands, tasks
-from settings import *
-from utilities import *
-from utilities_moodle import *
+from discord.ext import tasks
+from discord.ext.commands import command, Cog
+from bot.settings import *
+from bot.utilities import *
+from bot.utilities_moodle import *
 import pandas as pd
 from datetime import datetime
 
 #list with commands/functionalities related to the Moodle API
-class Moodle(commands.Cog):
+class Moodle(Cog):
 
     def __init__(self, client):
         self.client = client
         self.getData.start()
 
-     
+
     # Command to get the assignments from the csv and send it embeded to the text chat    
-    @commands.command()
+    @command(name='get', aliases=['Get', 'GET'])
     async def get(self, ctx, option=""):
         isBool = True
         # Check if the bot has permission to send messages on the specified channel, used in most commands
@@ -70,7 +71,7 @@ class Moodle(commands.Cog):
 
 
     #Command to check if the assignments were done at the Moodle website
-    @commands.command()
+    @command(name='check', aliases=['Check', 'CHECK'])
     async def check(self, ctx):
         if ctx.channel.id in allowed_channels:
 
@@ -131,7 +132,7 @@ class Moodle(commands.Cog):
         
 
     # Command to create or access your moodle API token    
-    @commands.command()
+    @command(name='getToken', aliases=['GetToken', 'gettoken', 'GETTOKEN', 'GETtoken', 'getTOKEN'])
     async def getToken(self, ctx):
         if ctx.channel.id in allowed_channels:
 

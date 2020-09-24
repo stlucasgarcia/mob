@@ -10,13 +10,14 @@ happy_faces = cycle(["😀", "😁", "😃", "😄", "😅", "😉", "😊", "�
 
 
 footer = "Created with 💖 by Mackenzie Students."
+thumbnail_url = "https://logodownload.org/wp-content/uploads/2017/09/mackenzie-logo-3.png"
 defaultcolor = 0x9f000c
 
 # This file is created to style the bot messages
 # Styling the check command from moodle.py
 def check_command_style(dict, amount="", color="", status=None, done=None):
     embed=discord.Embed(title=dict["modulename"] + " - " + amount, color= color if color else defaultcolor)
-    embed.set_thumbnail(url="https://logodownload.org/wp-content/uploads/2017/09/mackenzie-logo-3.png")
+    embed.set_thumbnail(url=thumbnail_url)
     embed.add_field(name="Matéria", value=dict["fullname"], inline=True)
     embed.add_field(name="Nome da tarefa", value=dict["name"], inline=True)
 
@@ -48,11 +49,15 @@ def check_command_style(dict, amount="", color="", status=None, done=None):
 
 
 # Creating a template for messages
-def main_messages_style(name="", message="", emote="", color=""):
+def main_messages_style(name="", message="", emote="", color="", fot="", thumb=False):
     message = f"**{message}**" if message != "" else message
     embed=discord.Embed(title=name, description=f"{message} {emote if emote != '' else emote}",
     color= color if color else defaultcolor)
+
+    if thumb:
+        embed.set_thumbnail(url=thumbnail_url)
+
     embed.set_author(name="")
-    embed.set_footer(text=footer)
+    embed.set_footer(text=fot + footer)
     return embed
 

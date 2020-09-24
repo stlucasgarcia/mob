@@ -8,6 +8,7 @@ cffi==1.14.3
 chardet==3.0.4
 cryptography==3.1.1
 discord==1.0.1
+discord-ext-menus==1.0.0a26+g84caae8
 discord.py==1.4.1
 idna==2.10
 multidict==4.7.6

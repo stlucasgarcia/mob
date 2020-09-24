@@ -1,18 +1,19 @@
 import discord
-
-from discord.ext import commands, tasks
+from discord.ext import tasks
+from discord.ext.commands import command, Cog
 from settings import *
 from utilities import *
 import time
+from typing import Optional
 
 maincolor = None
 # General use bot commands 
-class General(commands.Cog):
+class General(Cog):
     def __init__(self, client):
         self.client = client
 
     # Print in the console when the bot starts to run (if everything is working perfectly)
-    @commands.Cog.listener()
+    @Cog.listener()
     async def on_ready(self):
         print('Ready!')
         print('Logged in as ', self.client.user)
@@ -25,7 +26,7 @@ class General(commands.Cog):
         await self.client.change_presence(activity=discord.Game(next(status_list)))
 
     # Allow, disallow or show the list of the text channel in which the bot can send messages, the variable is stored in /bot/settings.py
-    @commands.command()
+    @command()
     async def chat_permission(self, ctx, option=""):
         channel_id = ctx.channel.id
         option = option.lower()
@@ -79,20 +80,20 @@ class General(commands.Cog):
                     await ctx.message.add_reaction(next(negative_emojis_list))
 
     # Clear the previous line for x amout of times
-    @commands.command()
-    async def clear(self, ctx, amount=2):
+    @command(name='clear', aliases=["purge"])
+    async def clear(self, ctx, amount: Optional[int] = 2):
         if ctx.channel.id in allowed_channels:
             await ctx.channel.purge(limit=amount)
 
     # Print an embed message on the chat
-    @commands.command()
+    @command()
     async def printm(self,ctx,name, message, emote=""):
         embed = main_messages_style(name, message, emote)
         await ctx.send(embed=embed)
         await ctx.message.add_reaction(next(positive_emojis_list))
         
     # Check latency/ping
-    @commands.Cog.listener()
+    @Cog.listener()
     async def on_message(self,ctx):
         if ctx.channel.id in allowed_channels:
             if ctx.author == self.client.user:
