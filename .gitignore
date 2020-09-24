@@ -1,17 +1,22 @@
+# Cache
 __pycache__
 
+# Virtual environments
 bot-env
-
 venv
 
+# Local archives
 secret.py
-
+encryption.key
 *.csv
 
-encryption.key
-
+# IDEs
 .vscode
-
 .idea
 
+# Tests files
 test.py
+
+# EGG
+moodleapi.egg-info
+build
