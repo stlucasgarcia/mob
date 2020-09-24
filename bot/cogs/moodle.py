@@ -7,9 +7,9 @@ from moodleapi.data.export import Export
 
 from discord.ext import tasks
 from discord.ext.commands import command, Cog
-from bot.settings import *
-from bot.utilities import *
-from bot.utilities_moodle import *
+from settings import *
+from utilities import *
+from utilities_moodle import *
 import pandas as pd
 from datetime import datetime
 

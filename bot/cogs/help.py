@@ -4,7 +4,7 @@ from discord.ext.commands import Cog, command
 from discord.ext.menus import MenuPages, ListPageSource
 from discord.utils import get
 
-from bot.utilities import main_messages_style
+from utilities import main_messages_style
 
 
 def syntax(command):
