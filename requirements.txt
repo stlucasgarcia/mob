@@ -11,7 +11,6 @@ cryptography==3.1.1
 discord==1.0.1
 discord.py==1.4.1
 idna==2.10
-moodleapi==1.0.2
 multidict==4.7.6
 numpy==1.19.2
 pandas==1.1.2
