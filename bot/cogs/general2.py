@@ -1,8 +1,6 @@
-import discord
-from moodleapi.security import Cryptography
-from moodleapi.token import Token
+from discord.ext import tasks
+from discord.ext.commands import command, Cog
 
-from discord.ext import commands, tasks
 from settings import *
 from utilities import *
 import pandas as pd
@@ -27,7 +25,7 @@ class General2(Cog):
 	        else:
 		        return index, key
 
-        # Cipher text
+        # Cipher the message
         def cipher(listText, key):
             global cipherText
             cipherText= ''
