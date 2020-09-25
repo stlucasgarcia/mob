@@ -1,8 +1,6 @@
-import discord
-from moodleapi.security import Cryptography
-from moodleapi.token import Token
+from discord.ext import tasks
+from discord.ext.commands import command, Cog
 
-from discord.ext import commands, tasks
 from settings import *
 from utilities import *
 import pandas as pd
@@ -66,6 +64,7 @@ class General2(Cog):
 
         embed = main_messages_style("Cipher text",cipherText)
         await ctx.send(embed=embed)
+
 
     @command(name='roll', aliases=['ROLL', 'Roll'])
     async def roll(self,ctx, number=6):
