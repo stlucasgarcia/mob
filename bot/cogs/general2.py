@@ -8,12 +8,12 @@ from utilities import *
 import pandas as pd
 from random import randint
 
-class General2(commands.Cog):
+class General2(Cog):
     def __init__(self, client):
         self.client = client
     
     #Creates a Caesar Cipher
-    @commands.command()
+    @command(name='cipher', aliases=['CIPHER', 'Cipher'])
     async def cipher(self,ctx, *text):
         alphabet = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']
         key = randint(2,25)
@@ -67,7 +67,7 @@ class General2(commands.Cog):
         embed = main_messages_style("Cipher text",cipherText)
         await ctx.send(embed=embed)
 
-    @commands.command()
+    @command(name='roll', aliases=['ROLL', 'Roll'])
     async def roll(self,ctx, number=6):
         print("Dice!")
         embed = main_messages_style("Rolling dice... 🎲")
