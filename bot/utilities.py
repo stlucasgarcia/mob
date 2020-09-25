@@ -1,4 +1,4 @@
-import discord
+from discord import Embed
 from itertools import cycle
 
 # Emojis lists to be used in the entire project 
@@ -11,12 +11,14 @@ happy_faces = cycle(["😀", "😁", "😃", "😄", "😅", "😉", "😊", "�
 
 footer = "Created with 💖 by Mackenzie Students."
 thumbnail_url = "https://logodownload.org/wp-content/uploads/2017/09/mackenzie-logo-3.png"
+url = 'https://eadmoodle.mackenzie.br/'
+trans = '\n<:name:758840767786516520>'
 defaultcolor = 0x9f000c
 
 # This file is created to style the bot messages
 # Styling the check command from moodle.py
 def check_command_style(dict, amount="", color="", status=None, done=None):
-    embed=discord.Embed(title=dict["modulename"] + " - " + amount, color= color if color else defaultcolor)
+    embed=Embed(title=dict["modulename"] + " - " + amount, color= color if color else defaultcolor)
     embed.set_thumbnail(url=thumbnail_url)
     embed.add_field(name="Matéria", value=dict["fullname"], inline=True)
     embed.add_field(name="Nome da tarefa", value=dict["name"], inline=True)
@@ -51,7 +53,7 @@ def check_command_style(dict, amount="", color="", status=None, done=None):
 # Creating a template for messages
 def main_messages_style(name="", message="", emote="", color="", fot="", thumb=False):
     message = f"**{message}**" if message != "" else message
-    embed=discord.Embed(title=name, description=f"{message} {emote if emote != '' else emote}",
+    embed=Embed(title=name, description=f"{message} {emote if emote != '' else emote}",
     color= color if color else defaultcolor)
 
     if thumb:
@@ -61,3 +63,20 @@ def main_messages_style(name="", message="", emote="", color="", fot="", thumb=F
     embed.set_footer(text=fot + footer)
     return embed
 
+# Template message for help
+def help_message(contents):
+    embed = Embed(title='Standard Commands',
+                  description='Type `mack help [command]` for more help eg. `mack help get`',
+                  color=defaultcolor)
+    embed.set_thumbnail(url=thumbnail_url)
+    embed.set_footer(text=footer)
+
+    for row in range(len(contents)):
+        name, value = contents[row][0], ''
+
+        for elem in contents[row][1:]:
+            value += f'[`{elem[0]}`{trans if row == 0 and contents[row].index(elem) == 3 else ""}]({url} "{elem[1]}")  '
+
+        embed.add_field(name=name, value=value, inline=True)
+
+    return embed

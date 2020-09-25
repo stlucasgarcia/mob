@@ -27,3 +27,5 @@ class Export:
 
         else:
             raise ValueError('Data not passed correctly. (type: list)')
+
+    # TODO: EXPORT FUNC TO DATABASE AND SIMPLEFY EXPORT COMMANDS

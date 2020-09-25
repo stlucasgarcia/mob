@@ -1,10 +1,9 @@
 from typing import Optional
 
 from discord.ext.commands import Cog, command
-from discord.ext.menus import MenuPages, ListPageSource
 from discord.utils import get
 
-from utilities import main_messages_style
+from utilities import help_message, main_messages_style
 
 
 def syntax(command):
@@ -18,37 +17,6 @@ def syntax(command):
     params = ' '.join(params)
 
     return f'```{cmd_and_aliases} {params}```'
-
-
-class HelpMenu(ListPageSource):
-
-    def __init__(self, ctx, data):
-        self.ctx = ctx
-
-        super().__init__(data, per_page=6)
-
-    async def write_page(self, menu, fields=[]):
-        offset = (menu.current_page*self.per_page) + 1
-        len_data = len(self.entries)
-
-        embed = main_messages_style('Help',
-                                    'Welcome to Mack help!',
-                                    fot=f'{offset:,} - {min(len_data, offset+self.per_page-1):,}'
-                                        f' of {len_data:,} commands.' + ' '*140,
-                                    thumb=True)
-
-        for name, value in fields:
-            embed.add_field(name=name, value=value, inline=False)
-
-        return embed
-
-    async def format_page(self, menu, entries):
-        fields = []
-
-        for entry in entries:
-            fields.append((entry.brief or "No description", syntax(entry)))
-
-        return await self.write_page(menu, fields)
 
 
 class Help(Cog):
@@ -66,11 +34,19 @@ class Help(Cog):
     @command(name='help')
     async def show_help(self, ctx, cmd: Optional[str]):
         if not cmd:
-            menu = MenuPages(source=HelpMenu(ctx, list(self.client.commands)),
-                             delete_message_after=True,
-                             timeout=60.0)
+            contents = [
+                ['Moodle', ['get', 'Get all events, assignments or classes informations.'],
+                           ['check', 'Recive privetly more informations about assignments.'],
+                           ['getToken', 'Create or get your MoodleAPI Token decrypted.']],
+                ['General', ['clear', 'Clear chat messages.'],
+                            ['help', 'All commands informations.']],
+                ['Games', ['cipher', 'Encypt an message with Caesar Cipher.'],
+                          ['roll', 'Roll a dice.']],
+            ]
 
-            await menu.start(ctx)
+            embed = help_message(contents)
+
+            await ctx.send(embed=embed)
 
         else:
             if command := get(self.client.commands, name=cmd):
