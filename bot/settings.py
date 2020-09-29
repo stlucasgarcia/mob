@@ -8,5 +8,4 @@ PATH_ASSIGNMENTS = os.path.abspath('bot').split('bot')[0] + "csvfiles\\assignmen
 PATH_CLASSES = os.path.abspath('bot').split('bot')[0] + "csvfiles\liveclasses.csv"
 PATH_TOKENS = os.path.abspath('bot').split('bot')[0] + "csvfiles\\tokens.csv"
 
-# Global allowed_channels list
-allowed_channels = [750313490455068722]        
+allowed_channels = []

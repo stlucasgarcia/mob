@@ -1,11 +1,13 @@
 import discord
-from discord.ext.commands import Cog, command
-
+from discord.ext.commands import Cog, command, has_permissions
+from settings import allowed_channels
+from utilities import positive_emojis_list
 
 class Levels(Cog):
     def __init__(self, client):
         self.client = client
-    
+
+
     @Cog.listener()
     async def level_up(self, user):
         c_xp = user["experience"]
@@ -39,25 +41,32 @@ class Levels(Cog):
             await message.channel.send(f"{message.author.mention} is now level {user['level'] + 1}")
         
 
-    @command()
+    @command(name="level", aliases=["lvl", "LEVEL", "Level", "LVL"])
     async def level(self, ctx, member: discord.Member = None):
         member = ctx.author if not member else member
+
         member_id = str(member.id)
+
         guild_id = str(ctx.guild.id)
 
-        user = await self.client.pg_con.fetch("SELECT * FROM bot_users WHERE user_id = $1 AND guild_id = $2", member_id, guild_id)
+        channel_id = str(ctx.channel.id)
 
 
-        if not user:
-            await ctx.send("Member doens't have a level")
-        else:
-            embed = discord.Embed(color=member.color, timestamp=ctx.message.created_at)
+        if channel_id in allowed_channels:  
+            await ctx.message.add_reaction(next(positive_emojis_list))
 
-            embed.set_author(name=f"Level - {member}", icon_url=member.avatar_url)
+            user = await self.client.pg_con.fetch("SELECT * FROM bot_users WHERE user_id = $1 AND guild_id = $2", member_id, guild_id)
 
-            embed.add_field(name="Level", value=user[0]["level"])
-            embed.add_field(name="XP", value=user[0]["experience"])
-            await ctx.send(embed=embed)
+            if not user:
+                await ctx.send("Member doens't have a level")
+            else:
+                embed = discord.Embed(color=member.color, timestamp=ctx.message.created_at)
+
+                embed.set_author(name=f"Level - {member}", icon_url=member.avatar_url)
+
+                embed.add_field(name="Level", value=user[0]["level"])
+                embed.add_field(name="XP", value=user[0]["experience"])
+                await ctx.send(embed=embed)
 
 
 def setup(client):

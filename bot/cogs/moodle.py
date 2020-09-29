@@ -6,10 +6,10 @@ from moodleapi.data.export import Export
 
 
 from discord.ext import tasks
-from discord.ext.commands import command, Cog
-from settings import *
-from utilities import *
-from utilities_moodle import *
+from discord.ext.commands import command, Cog, has_permissions
+from settings import PATH_ASSIGNMENTS, PATH_CLASSES, PATH_EVENTS, PATH_TOKENS, allowed_channels
+from utilities import main_messages_style, check_command_style, happy_faces, negative_emojis_list, books_list, positive_emojis_list 
+from utilities_moodle import data_dict, moodle_color, loop_channel
 import pandas as pd
 from datetime import datetime
 
@@ -19,14 +19,17 @@ class Moodle(Cog):
     def __init__(self, client):
         self.client = client
         self.getData.start()
-
+        
 
     # Command to get the assignments from the csv and send it embeded to the text chat    
     @command(name='get', aliases=['Get', 'GET'])
     async def get(self, ctx, option=""):
+        channel_id = str(ctx.channel.id)
         isBool = True
+
         # Check if the bot has permission to send messages on the specified channel, used in most commands
-        if ctx.channel.id in allowed_channels:
+
+        if channel_id in allowed_channels:
             option = option.lower()
             # Get path for what the user desires 
             if option == "assignments":
@@ -37,8 +40,7 @@ class Moodle(Cog):
                 database = pd.read_csv(PATH_EVENTS, header=None )
             else:
 
-
-                embed = main_messages_style("Command **check** plus one of the following options will get assignments, classes or events from your Moodle calendar ",
+                embed = main_messages_style("Command **get** plus one of the following options will get assignments, classes or events from your Moodle calendar ",
                 "Option not available, you must use Assignments, Classes or Events ", " 😕")
                 await ctx.message.add_reaction(next(negative_emojis_list))
                 await ctx.send(embed=embed)   
@@ -73,7 +75,9 @@ class Moodle(Cog):
     #Command to check if the assignments were done at the Moodle website
     @command(name='check', aliases=['Check', 'CHECK'])
     async def check(self, ctx):
-        if ctx.channel.id in allowed_channels:
+        channel_id = str(ctx.channel.id)
+
+        if channel_id in allowed_channels:
 
             # Reads the csv file to check if the hw was done
             tokens_data = pd.read_csv(PATH_TOKENS, header=None)
@@ -132,9 +136,11 @@ class Moodle(Cog):
         
 
     # Command to create or access your moodle API token    
-    @command(name='getToken', aliases=['GetToken', 'gettoken', 'GETTOKEN', 'GETtoken', 'getTOKEN'])
+    @command(name='getToken', aliases=['GetToken', 'gettoken', 'GETTOKEN', 'GETtoken', 'getTOKEN', 'GetT'])
     async def getToken(self, ctx):
-        if ctx.channel.id in allowed_channels:
+        channel_id = str(ctx.channel.id)
+
+        if channel_id in allowed_channels:
 
             await ctx.message.add_reaction(next(positive_emojis_list))
             tokens_data = pd.read_csv(PATH_TOKENS, header=None )
