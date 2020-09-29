@@ -2,7 +2,11 @@
 Settings module with variables already set
 """
 
+import asyncpg, asyncio
 from os import path
+
+
+from moodleapi.data.secret import DATABASE
 
 
 # Base config for connection with Moodle API
@@ -21,12 +25,15 @@ REQUEST = f'{BASEURL}{SERVICE}{API}{CONNECTION}{FORMAT}{TOKEN}'
 
 func = {
     'calendar_monthly': 'core_calendar_get_calendar_monthly_view',
+    'calendar_upcoming': 'core_calendar_get_calendar_upcoming_view',
+    'calendar_day': 'core_calendar_get_calendar_day_view',
+
     'course_contents': 'core_course_get_contents',
     'course_subjects' : 'core_enrol_get_users_courses',
 }
 
-# TODO: CREATE FUNCTION FOR DISCIPLINE TEACHER AND ID DICTS
 
+# TODO: CREATE FUNCTION FOR DISCIPLINE TEACHER AND ID DICTS
 # Discipline teacher dictionary
 
 data = []
@@ -37,6 +44,32 @@ with open(path.abspath('bot').split('bot')[0] + "csvfiles\professors.csv", 'r') 
         data.append(line)
 
 professor = {k: v for k, v in data}
+
+loop = asyncio.get_event_loop()
+
+def professors(*args, **kwargs):
+
+    async def names():
+        conn = await asyncpg.create_pool(database=DATABASE['db'], user=DATABASE['user'],
+                                         password=DATABASE['password'])
+
+        exist = await conn.fetch("SELECT subject FROM moodle_professors "
+                                 "WHERE subject=$1 AND guild_id=$2", data[0][3], data[0][5])
+
+        if not exist:
+            pass#Export('moode_professors').to_db(data=Course(kwargs['token']).get_subjects())
+
+        query = "SELECT professor FROM moodle_professors WHERE course=$1 AND semester=$2 AND class=$3" \
+                " AND subject=$4 AND guild_id=$5"
+
+        values = kwargs['info']['course'], kwargs['info']['semester'], kwargs['info']['class'], \
+                 kwargs['info']['subject'], kwargs['info']['guild_id']
+
+        prof = [name for name in conn.execute(query, *values)]
+
+        return prof
+
+    return loop.run_until_complete(names())
 
 
 # Discipline ID dictionary

@@ -21,23 +21,20 @@ class Course(Request):
 
 
     def filter(self, value=None, data=None, *args, **kwargs):
+        """Disabled"""
+
         filtering = ''
 
         if value and data:
-
-            for component in data:
-                    if component[0] == value:
-
-                        return component[1], component[2]
+            pass
 
         else:
-            raise ValueError('Value or data parameter not passed correctly. (type: str and list)')
+            raise ValueError('Value or data parameter not passed correctly. (type: str, list)')
 
 
-
-    def contents(self, courseid=None, assign=False, *args, **kwargs):
+    def contents(self, courseid=None, *args, **kwargs):
         if courseid:
-            component = Request.get(self, function='core_course_get_contents', courseid=courseid)
+            component = Request.get(self, wsfunction='core_course_get_contents', courseid=courseid)
 
             types_notallowed = ('assign', 'bigbluebuttonbn', 'forum', 'chat', 'label')
 
@@ -45,7 +42,7 @@ class Course(Request):
 
             for week in component:
                 for modules in week['modules']:
-                    if modules['modname'] not in types_notallowed and not assign:
+                    if modules['modname'] not in types_notallowed:
                         data.append([
                             component[1]['modules'][0]['contents'][0]['author'],
 
@@ -63,25 +60,31 @@ class Course(Request):
 
                         ])
 
-
-                    elif modules['modname'] == 'assign' and assign:
-                        data.append([
-                            modules['id'],
-
-                            modules['completiondata']['state'],
-
-                            modules['completiondata']['timecompleted'],
-                        ])
-
             return data
+
 
         else:
             raise ValueError('Courseid not provided.')
 
 
+    def simple_contents(self, courseid=None, instance=None, *args, **kwargs):
+        if courseid and instance:
+            events = Request.get(self, *args, wsfunction='core_course_get_contents', courseid=courseid)
+
+            for modules in events:
+                if modules['modules']:
+                    for module in modules['modules']:
+                        if module['id'] == instance:
+                            return module['completiondata']['state'], module['completiondata']['timecompleted']
+
+
+        else:
+            raise ValueError('Courseid or Instance not provided. (type: int)')
+
+
     def get_subjects(self, userid=None, *args, **kwargs):
         if userid:
-            subjects = Request.get(self, function='core_enrol_get_users_courses', userid=userid)
+            subjects = Request.get(self, wsfunction='core_enrol_get_users_courses', userid=userid)
 
             subjects_notallowed = (5368, 9, 6854, 6937, 6801, 15331, 15338, 6858, 7885)
 

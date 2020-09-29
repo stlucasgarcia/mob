@@ -25,15 +25,15 @@ class Token:
         return 'Token object creation'
 
 
-    def create(self, username=None, password=None, discordid=None, *args, **kwargs):
+    def create(self, *args, **kwargs):
         """Create function recive username and password for token creation and additionaly
         discordID from respective user to be added with the encrpyted token in csv file."""
 
-        username = f'username={username}'
-        password = f'&password={password}'
+        username = f'username={kwargs["username"]}'
+        password = f'&password={kwargs["password"]}'
 
         url = f'{self.BASEURL}{self.SERVICE}{self.CONNECTION}{username}{password}{self.PLATFORM}'
         data = self.post(url).json()
 
 
-        return Export('tokens.csv').to_csv(data=[[Cryptography().encrypt_message(data['token']), discordid],], addstyle=True)
+        return Export('moodle_profile').to_db(data=[*args[0].values(), Cryptography().encrypt_message(data['token'])])
