@@ -6,7 +6,7 @@ import asyncpg, asyncio
 from os import path
 
 
-from moodleapi.data.secret import DATABASE
+from secret import DATABASE
 
 
 # Base config for connection with Moodle API
