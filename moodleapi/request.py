@@ -40,6 +40,7 @@ class Request:
         try:
             loop = asyncio.get_event_loop()
             r = json.loads(loop.run_until_complete(get(self.url)))
+            loop.close()
 
         except Exception as err:
             return f'HTTP error occured: {err}. Check the parameters.'

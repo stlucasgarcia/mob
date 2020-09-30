@@ -77,9 +77,11 @@ class Export:
                                "professor varchar,"
                                "guild_id numeric(18));")
 
+            conn.close()
 
         loop = asyncio.get_event_loop()
         loop.run_until_complete(create())
+        loop.close()
 
 
     def to_csv(self, data=None, addstyle=True, *args, **kwargs):
@@ -161,6 +163,7 @@ class Export:
 
                             await conn.execute(query, *values)
 
+                conn.close()
 
             loop = asyncio.get_event_loop()
             created = loop.run_until_complete(export())
@@ -168,6 +171,8 @@ class Export:
             if created:
                 Export._create_table(self)
                 loop.run_until_complete(export())
+
+            loop.close()
 
 
         else:

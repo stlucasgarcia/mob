@@ -45,7 +45,7 @@ with open(path.abspath('bot').split('bot')[0] + "csvfiles\professors.csv", 'r') 
 
 professor = {k: v for k, v in data}
 
-loop = asyncio.get_event_loop()
+#loop = asyncio.get_event_loop()
 
 def professors(*args, **kwargs):
 
@@ -69,7 +69,7 @@ def professors(*args, **kwargs):
 
         return prof
 
-    return loop.run_until_complete(names())
+    return #loop.run_until_complete(names())
 
 
 # Discipline ID dictionary
