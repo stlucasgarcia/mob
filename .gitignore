@@ -16,7 +16,7 @@ encryption.key
 
 # Tests files
 test.py
-
+secret1.py
 # EGG
 moodleapi.egg-info
 build

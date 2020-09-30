@@ -203,6 +203,22 @@ class Moodle(Cog):
     @tasks.loop(hours=12)
     async def getData(self):
         CSmain = 0
+
+        # params = {
+        #     'discord_id': 169890240708870144,
+        #     'tia' : "32023006",
+        #     'course' : 'CC',
+        #     'semester' : '02',
+        #     'class' : 'D',
+        #     'guild_id' : 748168924465594419,
+        # }
+
+        #Token().create(params, username="32023006", password='a')
+
+
+        # tokens_data = await self.client.pg_con.fetch("SELECT token FROM moodle_profile WHERE discord_id = $1", 169890240708870144)
+        # print(tokens_data)
+        # print(tokens_data[0][0])
         tokens_data = pd.read_csv(PATH_TOKENS, header=None )
         decrypted_token = Cryptography().decrypt_message(bytes(tokens_data.iat[CSmain,0], encoding='utf-8'))
 
