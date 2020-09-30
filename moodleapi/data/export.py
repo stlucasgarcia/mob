@@ -8,7 +8,7 @@ import asyncpg, asyncio
 from os import path
 from pandas import DataFrame
 
-from secret import DATABASE
+from moodleapi.secret import DATABASE
 
 
 class Export:
