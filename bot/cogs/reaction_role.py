@@ -9,11 +9,13 @@ class reactionRole(Cog):
     def __init__(self,client):
         self.client = client
 
+    # On reaction to the menu, the user will be given the respective Discord role
     @Cog.listener()
     async def on_raw_reaction_add(self, payload):
         role = None
         guild_id = str(payload.guild_id)
 
+        # Get Menu IDs from database
         ids_data = await self.client.pg_con.fetch("SELECT menu_id FROM bot_roles WHERE guild_id = $1", guild_id)
         ids_list = [item for i in ids_data for item in i]
 
@@ -26,21 +28,23 @@ class reactionRole(Cog):
             role_data = await self.client.pg_con.fetch("SELECT role_name FROM bot_roles WHERE guild_id = $1", guild_id)
             role_list = [item for i in role_data for item in i]
 
-            for i in range(len(emojis_list)):
-                if ":" in emojis_list[i]:
-                    emoji = str(emojis_list[i])
+            for index in range(len(emojis_list)):
+                if ":" in emojis_list[index]:
+                    emoji = emojis_list[index]
                     pattern = ":(.*?):"
                     emoji_name_db = re.search(pattern, emoji).group(1)
+                else:
+                    emoji_name_db = emojis_list[index]
 
                 if payload.emoji.name == emoji_name_db:
-                    role = discord.utils.get(guild.roles, name=role_list[i])
+                    role = discord.utils.get(guild.roles, name=role_list[index])
                 
             if role:
                 member = discord.utils.find(lambda m : m.id == payload.user_id, guild.members)
                 await member.add_roles(role)
 
 
-
+    # On reaction to the menu, the users respective Discord role will be removed
     @Cog.listener()
     async def on_raw_reaction_remove(self, payload):
         role = None
@@ -60,10 +64,11 @@ class reactionRole(Cog):
             
             for index in range(len(emojis_list)):
                 if ":" in emojis_list[index]:
-                    emoji = str(emojis_list[index])
+                    emoji = emojis_list[index]
                     pattern = ":(.*?):"
                     emoji_name_db = re.search(pattern, emoji).group(1)
-                    
+                else:
+                    emoji_name_db = emojis_list[index]    
 
                 if payload.emoji.name == emoji_name_db:
                     role = discord.utils.get(guild.roles, name=role_list[index])
@@ -73,7 +78,8 @@ class reactionRole(Cog):
                 await member.remove_roles(role)
             
 
-    @command(name="CreateRoles", aliases=["ReactionRoles", "CreateRole", "ReactionRole", "RoleCreate", "MenuRole", "createrole"])
+    # Creates a Menu with Roles and Description that will be used to give/remove roles to users
+    @command(name="CreateRoles", aliases=["ReactionRoles", "CreateRole", "ReactionRole", "RoleCreate", "MenuRole", "createrole", "c_role", "rolesetup"])
     async def CreateRoles(self, ctx, amount):
 
         roles_list = []
@@ -81,7 +87,7 @@ class reactionRole(Cog):
         
         def check(ctx, m):
             return m.author == ctx.author
-
+    
         embed = main_messages_style("Reaction Role Tool", "Type the Title for the embed message")
         await ctx.send(embed=embed)
 
@@ -99,6 +105,7 @@ class reactionRole(Cog):
         await asyncio.sleep(1)
         await ctx.channel.purge(limit=2)
 
+        # Get roles name, description and emoji to create the menu
         for i in range(int(amount)):
 
             embed = main_messages_style("Reaction Role Tool", "Type the roles name")
@@ -151,6 +158,7 @@ class reactionRole(Cog):
 
             await menu.add_reaction(emoji)
 
+            # Stores guild_id, emoji_name, role_name, menu_id on the DicordDB
             await self.client.pg_con.execute("INSERT INTO bot_roles (guild_id, emoji_name, role_name, menu_id) VALUES ($1, $2, $3, $4)", 
                                               guild_id, roles_list[item]["Emoji"], roles_list[item]["Role"], menu_id)
 
