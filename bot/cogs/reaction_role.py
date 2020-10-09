@@ -81,7 +81,8 @@ class reactionRole(Cog):
     # Creates a Menu with Roles and Description that will be used to give/remove roles to users
     @command(name="CreateRoles", aliases=["ReactionRoles", "CreateRole", "ReactionRole", "RoleCreate", "MenuRole", "createrole", "c_role", "rolesetup"])
     async def CreateRoles(self, ctx, amount):
-
+        """Creates a reaction role menu"""
+        
         roles_list = []
         guild_id = str(ctx.guild.id)
         

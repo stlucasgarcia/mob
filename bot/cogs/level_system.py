@@ -18,7 +18,8 @@ class Levels(Cog):
             return True
         else:
             return False
-    
+
+        
     @Cog.listener()
     async def on_message(self, message):
         if message.author == self.client.user:
@@ -41,7 +42,7 @@ class Levels(Cog):
             await message.channel.send(f"{message.author.mention} is now level {user['level'] + 1}")
         
 
-    @command(name="level", aliases=["lvl", "LEVEL", "Level", "LVL"])
+    @command(name="level", aliases=["lvl", "LEVEL", "Level", "LVL"], description="Level command is used to show someones channel")
     async def level(self, ctx, member: discord.Member = None):
         member = ctx.author if not member else member
 
@@ -57,15 +58,23 @@ class Levels(Cog):
 
             user = await self.client.pg_con.fetch("SELECT * FROM bot_users WHERE user_id = $1 AND guild_id = $2", member_id, guild_id)
 
+            user_level = user[0]["level"]
+            user_experience = user[0]["experience"]
+            xp_nextlvl = round((4 * (user_level ** 3)) / 5)
+
             if not user:
                 await ctx.send("Member doens't have a level")
             else:
                 embed = discord.Embed(color=member.color, timestamp=ctx.message.created_at)
+                embed.set_thumbnail(url=member.avatar_url)
 
-                embed.set_author(name=f"Level - {member}", icon_url=member.avatar_url)
+                embed.set_author(name=f"Profile - {member.display_name}")
 
-                embed.add_field(name="Level", value=user[0]["level"])
-                embed.add_field(name="XP", value=user[0]["experience"])
+                embed.add_field(name="Level", value=f"`{user_level}`")
+                embed.add_field(name="Total XP", value=f"`{user_experience}/{xp_nextlvl}`")
+                embed.add_field(name=f"Messages Needed for level {user_level + 1}", value=f"`{xp_nextlvl - user_experience}`", inline=False)
+                embed.set_footer(text=f"{member}", icon_url=member.avatar_url)
+
                 await ctx.send(embed=embed)
 
 

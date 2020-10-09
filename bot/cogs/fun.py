@@ -8,9 +8,10 @@ class Fun(Cog):
     def __init__(self, client):
         self.client = client
 
-    # Command to show someones avatar on the chat
+
     @command()
     async def avatar(self, ctx, member: discord.Member = None):
+        """Command to show someones avatar on the chat"""
         
         member = ctx.author if not member else member
 

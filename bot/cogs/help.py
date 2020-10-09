@@ -2,7 +2,7 @@ from typing import Optional
 
 from discord.ext.commands import Cog, command
 from discord.utils import get
-
+from settings import allowed_channels
 from utilities import help_message, main_messages_style
 
 
@@ -33,27 +33,29 @@ class Help(Cog):
 
     @command(name='help')
     async def show_help(self, ctx, cmd: Optional[str]):
-        if not cmd:
-            contents = [
-                ['Moodle', ['get', 'Get all events, assignments or classes informations.'],
-                           ['check', 'Recive privetly more informations about assignments.'],
-                           ['getToken', 'Create or get your MoodleAPI Token decrypted.']],
-                ['General', ['clear', 'Clear chat messages.'],
-                            ['help', 'All commands informations.']],
-                ['Games', ['cipher', 'Encypt an message with Caesar Cipher.'],
-                          ['roll', 'Roll a dice.']],
-            ]
+        channel_id = str(ctx.channel.id)
+        if channel_id in allowed_channels:
+            if not cmd:
+                contents = [
+                    ['Moodle', ['get', 'Get all events, assignments or classes informations.'],
+                            ['check', 'Recive privetly more informations about assignments.'],
+                            ['getToken', 'Create or get your MoodleAPI Token decrypted.']],
+                    ['General', ['clear', 'Clear chat messages.'],
+                                ['help', 'All commands informations.']],
+                    ['Games', ['cipher', 'Encypt an message with Caesar Cipher.'],
+                            ['roll', 'Roll a dice.']],
+                ]
 
-            embed = help_message(contents)
+                embed = help_message(contents)
 
-            await ctx.send(embed=embed)
-
-        else:
-            if command := get(self.client.commands, name=cmd):
-                await self.cmd_help(ctx, command)
+                await ctx.send(embed=embed)
 
             else:
-                await ctx.send("Command does not exist.")
+                if command := get(self.client.commands, name=cmd):
+                    await self.cmd_help(ctx, command)
+
+                else:
+                    await ctx.send("Command does not exist.")
 
 
 def setup(client):
