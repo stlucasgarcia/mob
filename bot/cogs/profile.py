@@ -3,7 +3,7 @@ from discord.ext.commands import Cog, command, has_permissions
 from settings import allowed_channels
 from utilities import positive_emojis_list
 
-class Levels(Cog):
+class Profile(Cog):
     def __init__(self, client):
         self.client = client
 
@@ -44,7 +44,7 @@ class Levels(Cog):
 
     @command(name="profile", aliases=["Profile", "PROFILE"])
     async def profile(self, ctx, member: discord.Member = None):
-        '''Profile command is used to show someones channel'''
+        '''Profile command is used to show someones profile, levels and experience'''
         member = ctx.author if not member else member
 
         member_id = str(member.id)
@@ -78,6 +78,6 @@ class Levels(Cog):
 
                 await ctx.send(embed=embed)
 
-
+        
 def setup(client):
-    client.add_cog(Levels(client))
+    client.add_cog(Profile(client))
