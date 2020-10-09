@@ -39,7 +39,8 @@ class Profile(Cog):
         await self.client.pg_con.execute("UPDATE bot_users SET experience = $1 WHERE user_id = $2 AND guild_id = $3", user['experience'] + 1, author_id, guild_id)
 
         if await self.level_up(user):
-            await message.channel.send(f"{message.author.mention} is now level {user['level'] + 1}")
+            embed = main_messages_style(f"{message.author.mention} is now level {user['level'] + 1}!!")
+            await message.channel.send(embed=embed)
         
 
     @command(name="profile", aliases=["Profile", "PROFILE"])
