@@ -24,7 +24,7 @@ class Moodle(Cog):
     # Command to get the assignments from the csv and send it embeded to the text chat    
     @command(name='get', aliases=['Get', 'GET'])
     async def get(self, ctx, option=""):
-        '''Get can show you all your Assignments, Events or Classes' up to 2 weeks''
+        '''Get can show you all your Assignments, Events or Classes' up to 2 weeks'''
         channel_id = str(ctx.channel.id)
         isBool = True
 
