@@ -1,7 +1,7 @@
 import discord
 from discord.ext.commands import Cog, command, has_permissions
 from settings import allowed_channels
-from utilities import positive_emojis_list
+from utilities import main_messages_style, positive_emojis_list
 
 class Profile(Cog):
     def __init__(self, client):
@@ -44,7 +44,7 @@ class Profile(Cog):
 
     @command(name="profile", aliases=["Profile", "PROFILE"])
     async def profile(self, ctx, member: discord.Member = None):
-        '''Profile command is used to show someones profile, levels and experience'''
+        """Profile command is used to show someones profile, levels and experience, you can mention another member to see his profile or leave it in blank to see your own"""
         member = ctx.author if not member else member
 
         member_id = str(member.id)
@@ -78,6 +78,6 @@ class Profile(Cog):
 
                 await ctx.send(embed=embed)
 
-        
+
 def setup(client):
     client.add_cog(Profile(client))

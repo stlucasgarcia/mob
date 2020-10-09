@@ -11,7 +11,7 @@ class Fun(Cog):
 
     @command()
     async def avatar(self, ctx, member: discord.Member = None):
-        """Command to show someones avatar on the chat"""
+        """Command to show someones avatar on the chat, you must mention the user"""
         
         member = ctx.author if not member else member
 

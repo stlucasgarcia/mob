@@ -3,7 +3,7 @@ import youtube_dl, discord
 from discord.ext.commands import Cog, command
 from discord.voice_client import VoiceClient
 from discord.utils import get
-from utilities import main_messages_style
+from utilities import main_messages_style, positive_emojis_list
 from settings import allowed_channels
 
 class Music(Cog):
@@ -15,6 +15,7 @@ class Music(Cog):
     async def join(self, ctx):
         """Join command is used to make the bot join to the voice chat which you're in"""
         if str(ctx.channel.id) in allowed_channels:
+            await ctx.message.add_reaction(next(positive_emojis_list))
 
             channel = ctx.message.author.voice.channel
 
@@ -44,6 +45,7 @@ class Music(Cog):
     async def leave(self, ctx):
         """Leave command is used to make the bot disconnect from any voice chat"""
         if str(ctx.channel.id) in allowed_channels:
+            await ctx.message.add_reaction(next(positive_emojis_list))
 
             channel = ctx.message.author.voice.channel
 
@@ -60,15 +62,6 @@ class Music(Cog):
     @command(name="Play", aliases=["play", "PLAY"])
     async def play(self, ctx, url: str):
         """Makes the bot play a song by link"""
-        guild = ctx.message.guild
-        voice_client = guild.voice_client
-
-        async with ctx.typing():
-            player = await YTDLSource.from_url(url)
-        player = await voice_client.create_ytdl_player(url)
-        players[server.id] = player
-        player.start()
-
 
 
 def setup(client):
