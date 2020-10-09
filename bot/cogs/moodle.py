@@ -24,7 +24,7 @@ class Moodle(Cog):
     # Command to get the assignments from the csv and send it embeded to the text chat    
     @command(name='get', aliases=['Get', 'GET'])
     async def get(self, ctx, option=""):
-        '''Get can show you all your Assignments, Events or Classes'''
+        '''Get can show you all your Assignments, Events or Classes' up to 2 weeks''
         channel_id = str(ctx.channel.id)
         isBool = True
 
@@ -75,8 +75,9 @@ class Moodle(Cog):
 
     #Command to check if the assignments were done at the Moodle website
     @command(name='check', aliases=['Check', 'CHECK'])
-    '''Check will send you a direct message with all your personal assignments status'''
+    
     async def check(self, ctx):
+        '''Check will send you a direct message with all your personal assignments status'''
         channel_id = str(ctx.channel.id)
 
         if channel_id in allowed_channels:

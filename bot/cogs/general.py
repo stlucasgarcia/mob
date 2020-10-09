@@ -30,6 +30,7 @@ class General(Cog):
     # Allow, disallow or show the list of the text channel in which the bot can send messages, the variable is stored in /bot/settings.py
     @command(name="chat_permission",aliases=["c_permission", "chat_p", "chatpermission", "Chat_Permission", "Chat_P", "Chat_permission"])
     async def chat_permission(self, ctx, option=""):
+        '''Gives the bot permission to work on that chat'''
         channel_id = str(ctx.channel.id)
         option = option.lower()
         if option != "allow" and option != "revoke" and option != "list" and option == "":
