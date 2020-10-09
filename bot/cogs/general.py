@@ -93,12 +93,14 @@ class General(Cog):
     @command(name="clear", aliases=["purge", "Clear", "CLEAR"])
     @has_permissions(manage_messages=True)
     async def clear(self, ctx, amount: Optional[int] = 2):
+        """Cleans chat messages by any amount given"""
         await ctx.channel.purge(limit=amount)
 
 
     # Print an embed message on the chat
     @command(name="printm", aliases=["Print", "PrintM", "print", "Printmessage", "PRINT"])
     async def printm(self,ctx,name, message, emote=""):
+        """Print a embed message"""
         channel_id = str(ctx.channel.id)
 
         if channel_id in allowed_channels:

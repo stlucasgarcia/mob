@@ -24,6 +24,7 @@ class Moodle(Cog):
     # Command to get the assignments from the csv and send it embeded to the text chat    
     @command(name='get', aliases=['Get', 'GET'])
     async def get(self, ctx, option=""):
+        '''Get can show you all your Assignments, Events or Classes'''
         channel_id = str(ctx.channel.id)
         isBool = True
 
@@ -74,6 +75,7 @@ class Moodle(Cog):
 
     #Command to check if the assignments were done at the Moodle website
     @command(name='check', aliases=['Check', 'CHECK'])
+    '''Check will send you a direct message with all your personal assignments status'''
     async def check(self, ctx):
         channel_id = str(ctx.channel.id)
 
@@ -138,6 +140,7 @@ class Moodle(Cog):
     # Command to create or access your moodle API token    
     @command(name='getToken', aliases=['GetToken', 'gettoken', 'GETTOKEN', 'GETtoken', 'getTOKEN', 'GetT'])
     async def getToken(self, ctx):
+        '''Helps you to get your Moodle Token for Check command'''
         channel_id = str(ctx.channel.id)
 
         if channel_id in allowed_channels:

@@ -42,8 +42,9 @@ class Levels(Cog):
             await message.channel.send(f"{message.author.mention} is now level {user['level'] + 1}")
         
 
-    @command(name="level", aliases=["lvl", "LEVEL", "Level", "LVL"], description="Level command is used to show someones channel")
-    async def level(self, ctx, member: discord.Member = None):
+    @command(name="profile", aliases=["Profile", "PROFILE"])
+    async def profile(self, ctx, member: discord.Member = None):
+        '''Profile command is used to show someones channel'''
         member = ctx.author if not member else member
 
         member_id = str(member.id)

@@ -13,9 +13,9 @@ class General2(Cog):
 	#Creates a Caesar Cipher
 	@command(name='cipher', aliases=['CIPHER', 'Cipher', "Caesar_Cipher", "CaesarCipher, caesar_cipher", "caesar_c"])
 	async def cipher(self,ctx, *text):
+		"""Uses Caesar Cipher with a random key to cipher a given text"""
 		channel_id = str(ctx.channel.id)
 		if channel_id in allowed_channels:
-			cipherText = ""
 			# Check if key value + letter index is greater than 26
 			def check(index, key):
 				if key > 26:
@@ -30,7 +30,7 @@ class General2(Cog):
 
 			# Cipher the message
 			def cipher(listText, key):
-				cipherText= ''
+				cipherText= ""
 				aux = key
 				for i in range(len(listText)):
 					
@@ -53,7 +53,7 @@ class General2(Cog):
 						index, key = check(index, key)
 						result = alphabet[index+key]
 						cipherText += result
-		
+						
 			# Setup Alphabet and random Key
 			alphabet = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']
 			key = randint(2,25)
@@ -71,6 +71,7 @@ class General2(Cog):
 	# Creates a dice command
 	@command(name='roll', aliases=['ROLL', 'Roll'])
 	async def roll(self,ctx, number=6): #Sets default roll number to 6
+		"""Rolls a random number between 1 and the number you gave."""
 		channel_id = str(ctx.channel.id)
 
 		if channel_id in allowed_channels:
@@ -83,6 +84,9 @@ class General2(Cog):
 
 			embed = main_messages_style("🎲 Your results were", f"{randint(1,num)}")
 			await ctx.send(embed=embed)
+	
+
+
 
 		
 
