@@ -1,5 +1,5 @@
 import youtube_dl, discord
-
+from discord.ext import tasks
 from discord.ext.commands import Cog, command
 from discord.voice_client import VoiceClient
 from discord.utils import get
@@ -40,7 +40,6 @@ class Music(Cog):
                 await ctx.send(embed=embed)
 
     
-
     @command(name="Leave", aliases=["LEAVE", "leave"])
     async def leave(self, ctx):
         """Leave command is used to make the bot disconnect from any voice chat"""
@@ -60,8 +59,9 @@ class Music(Cog):
 
 
     @command(name="Play", aliases=["play", "PLAY"])
-    async def play(self, ctx, url: str):
+    async def play(self, ctx, url):
         """Makes the bot play a song by link"""
+        """TODO FUTURE RELEASE"""
 
 
 def setup(client):

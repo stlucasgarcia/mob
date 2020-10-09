@@ -43,7 +43,7 @@ class Profile(Cog):
             await message.channel.send(embed=embed)
         
 
-    @command(name="profile", aliases=["Profile", "PROFILE"])
+    @command(name="profile", aliases=["Profile", "PROFILE", "Prof", "prof"])
     async def profile(self, ctx, member: discord.Member = None):
         """Profile command is used to show someones profile, levels and experience, you can mention another member to see his profile or leave it in blank to see your own"""
         member = ctx.author if not member else member
@@ -52,10 +52,8 @@ class Profile(Cog):
 
         guild_id = str(ctx.guild.id)
 
-        channel_id = str(ctx.channel.id)
 
-
-        if channel_id in allowed_channels:  
+        if str(ctx.channel.id) in allowed_channels:  
             await ctx.message.add_reaction(next(positive_emojis_list))
 
             user = await self.client.pg_con.fetch("SELECT * FROM bot_users WHERE user_id = $1 AND guild_id = $2", member_id, guild_id)

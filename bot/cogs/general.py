@@ -102,9 +102,8 @@ class General(Cog):
     @command(name="printm", aliases=["Print", "PrintM", "print", "Printmessage", "PRINT"])
     async def printm(self,ctx,name, message, emote=""):
         """Print an embed message"""
-        channel_id = str(ctx.channel.id)
 
-        if channel_id in allowed_channels:
+        if str(ctx.channel.id) in allowed_channels:
             embed = main_messages_style(name, message, emote)
             await ctx.send(embed=embed)
             await ctx.message.add_reaction(next(positive_emojis_list))

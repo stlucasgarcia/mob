@@ -74,8 +74,7 @@ class Moodle(Cog):
 
 
     #Command to check if the assignments were done at the Moodle website
-    @command(name='check', aliases=['Check', 'CHECK'])
-    
+    @command(name="check", aliases=["Check", "CHECK"])
     async def check(self, ctx):
         """Check command will send you a direct message with all your personal assignments status using the moodle api"""
         channel_id = str(ctx.channel.id)
@@ -139,7 +138,7 @@ class Moodle(Cog):
         
 
     # Command to create or access your moodle API token    
-    @command(name='getToken', aliases=['GetToken', 'gettoken', 'GETTOKEN', 'GETtoken', 'getTOKEN', 'GetT'])
+    @command(name="getToken", aliases=["GetToken", "gettoken", "GETTOKEN", "GETtoken", "getTOKEN", "GetT"])
     async def getToken(self, ctx):
         """Generates your personal tooken at the moodle api and stores on the bots database, this command is the base for all moodle commands. The token is encrypted and stored in our database"""
         channel_id = str(ctx.channel.id)
