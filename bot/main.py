@@ -1,8 +1,8 @@
-import discord, os, asyncpg, asyncio
+import discord, os, asyncpg, asyncio, nest_asyncio
 
 from discord.ext import commands, tasks
 
-from secret import Bot_token, bitly_token, DataBase_Username, DataBase_Password
+from moodleapi.secret import DATABASE, Bot_token
 
 from utilities import main_messages_style
 
@@ -15,16 +15,20 @@ client = commands.Bot(command_prefix=Prefix, help_command=None)
 
 # Creates a connection with the Discord Database
 async def create_db_pool():
-    client.pg_con = await asyncpg.create_pool(database="DiscordDB", user=DataBase_Username, password=DataBase_Password)
+    client.pg_con = await asyncpg.create_pool(database="DiscordDB", user=DATABASE['user'],
+                                              password=DATABASE['password'])
+    #nest_asyncio.apply(loop)
+
 
 
 # Get allowed_channels from the Database
 async def check_channel():
     guild_id = "748168924465594419"
-    client.channels_data = await client.pg_con.fetch("SELECT allowed_channels FROM bot_data WHERE guild_id = $1", guild_id)
-    client.allowed_channels = [item for i in client.channels_data for item in i]
-    for i in client.allowed_channels:
-        allowed_channels.append(i)        
+    # client.channels_data = await client.pg_con.fetch("SELECT allowed_channels FROM bot_data WHERE guild_id = $1",
+    # guild_id)
+    # client.allowed_channels = [item for i in client.channels_data for item in i]
+    # for i in client.allowed_channels:
+    #     allowed_channels.append(i)
 
 
 # Load and get/initialize all the files .py(cogs) in the folder cogs
@@ -56,8 +60,10 @@ async def on_command_error(ctx, error):
         embed = main_messages_style("Comando inválido", "Digite mack help para ver os comandos disponiveis")
         await ctx.send(embed=embed)
 
-        
-client.loop.run_until_complete(create_db_pool())
-client.loop.run_until_complete(check_channel())
+
+loop = asyncio.get_event_loop()
+loop.run_until_complete(create_db_pool())
+nest_asyncio.apply()
+#loop.run_until_complete(check_channel())
 
 client.run(Bot_token)

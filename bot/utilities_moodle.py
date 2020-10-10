@@ -4,17 +4,17 @@ from itertools import cycle
 loop_channel = int(750313490455068722)
 
 # Dictionary template that we use in most part of Moodle.py
-def data_dict(i, database):
+def data_dict(database):
     assignmentsdata = { 
-    "fullname" : database.iat[i,0].title(),
-    "name" : database.iat[i,1].title(),
-    "description" : database.iat[i,2],
-    "modulename" : database.iat[i,3],
-    "deadline" : database.iat[i,4].title() + " às " + database.iat[i,5].title(),
-    "link" : database.iat[i, 6],
-    "author" : str(database.iat[i, 7]).title(),
-    "hwstatus" : database.iat[i, 8],
-    "hwstatus_time" : database.iat[i, 9]
+    "fullname" : database[5].title(),
+    "name" : database[6].title(),
+    "description" : database[7],
+    "modulename" : database[8],
+    "deadline" : database[9].title() + " às " + database[10].title(),
+    "link" : database[11],
+    "author" : str(database[12]).title(),
+    #"hwstatus" : database[13] if database[13] else '',
+    #"hwstatus_time" : database[14] if database[14] else ''
     }
     return assignmentsdata
 

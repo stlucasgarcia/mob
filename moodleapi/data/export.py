@@ -4,7 +4,7 @@ csv file passed.
 """
 
 
-import asyncpg, asyncio
+import asyncpg, asyncio, nest_asyncio
 from os import path
 from pandas import DataFrame
 
@@ -77,11 +77,11 @@ class Export:
                                "professor varchar,"
                                "guild_id numeric(18));")
 
-            conn.close()
+            await conn.close()
 
         loop = asyncio.get_event_loop()
+        nest_asyncio.apply(loop)
         loop.run_until_complete(create())
-        loop.close()
 
 
     def to_csv(self, data=None, addstyle=True, *args, **kwargs):
@@ -135,7 +135,6 @@ class Export:
 
                 else:
                     if self.name == 'moodle_profile':
-                        print(data)
                         query = "INSERT INTO moodle_profile (discord_id, tia, course, semester, class, guild_id," \
                                 " token) VALUES ($1, $2, $3, $4, $5, $6, $7)"
 
@@ -144,8 +143,8 @@ class Export:
                         try:
                             await conn.execute(query, *values)
 
-                        except: #TODO: add execpt error
-                            raise asyncpg.exceptions.InvalidForeignKeyError('Moodle Profile already exists.')
+                        except asyncpg.exceptions.UniqueViolationError as err: #TODO: add execpt error
+                            print(f'Moodle Profile already exists.\n{err}\n')
 
                     elif self.name == 'moodle_professors':
                         exist = await conn.fetch("SELECT subject FROM moodle_professors "
@@ -163,16 +162,15 @@ class Export:
 
                             await conn.execute(query, *values)
 
-                conn.close()
+                await conn.close()
 
-            loop = asyncio.get_event_loop()
+            loop = asyncio.get_running_loop()
+            nest_asyncio.apply(loop)
             created = loop.run_until_complete(export())
 
             if created:
                 Export._create_table(self)
                 loop.run_until_complete(export())
-
-            loop.close()
 
 
         else:

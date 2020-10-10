@@ -4,7 +4,7 @@ Requests module responsable to get data from Moodle Platform.
 
 from moodleapi.settings import REQUEST
 
-import aiohttp, asyncio, json
+import requests, json
 
 
 class Request:
@@ -31,16 +31,8 @@ class Request:
                 self.url += f'&{key}={value}'
 
 
-        async def get(url):
-            async with aiohttp.ClientSession() as session:
-                async with session.get(url) as response:
-                    return await response.read()
-
-
         try:
-            loop = asyncio.get_event_loop()
-            r = json.loads(loop.run_until_complete(get(self.url)))
-            loop.close()
+            r = requests.get(self.url).json()
 
         except Exception as err:
             return f'HTTP error occured: {err}. Check the parameters.'
