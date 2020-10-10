@@ -6,9 +6,12 @@ bot-env
 venv
 
 # Local archives
-secret.py
 encryption.key
 *.csv
+
+# Secret files
+secret.py
+secret1.py
 
 # IDEs
 .vscode
@@ -16,8 +19,6 @@ encryption.key
 
 # Tests files
 test.py
-moodleapi/secret.py
-secret1.py
 
 # EGG
 moodleapi.egg-info
