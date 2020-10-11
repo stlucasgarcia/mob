@@ -82,24 +82,39 @@ class Course(Request):
             raise ValueError('Courseid or Instance not provided. (type: int)')
 
 
-    def get_subjects(self, userid=None, *args, **kwargs):
+    def get_subject_name(self, userid=None, *args, **kwargs): #TODO: REVISE IF IS NECESSARY
         if userid:
             subjects = Request.get(self, wsfunction='core_enrol_get_users_courses', userid=userid)
 
             subjects_notallowed = (5368, 9, 6854, 6937, 6801, 15331, 15338, 6858, 7885)
 
-            data = []
-
             for subject in subjects:
                 if subject['id'] not in subjects_notallowed:
-                    data.append([
-                        subject['fullname'],
-
-                        subject['id'],
-                    ])
-
-
-            return data
+                    return subject['fullname']
 
         else:
             raise ValueError('UserID not provided or Subject not allowed. (type: int)')
+
+
+    def get_teacher(self, courseid=None, *args, **kwargs):
+        if courseid:
+            component = Request.get(self, wsfunction='core_course_get_contents', courseid=courseid)
+
+            for section in component:
+                for module in section['modules']:
+
+                    try:
+                        if module['contents'][0]:
+                            if module['contents'][0]['type'] == 'file':
+                                if module['contents'][0]['author']:
+                                    return module['contents'][0]['author']
+
+                    except (Exception, KeyError):
+                        pass
+
+            else:
+                print("Unfortunately we couldn't find the teacher from this discipline.")
+                return None
+
+        else:
+            raise ValueError('CourseID not provided. (type: int)')
