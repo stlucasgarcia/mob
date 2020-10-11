@@ -5,9 +5,10 @@ Last Update: 09/18/2020 - added new filters for events
 """
 
 from moodleapi.request import Request
-from moodleapi.settings import professor, week, month
 from moodleapi.data.course import Course
 from moodleapi.data.export import Export
+from moodleapi.data.professor import Professor
+from moodleapi.settings import week, month
 
 from datetime import datetime as dt
 from re import compile, sub
@@ -82,7 +83,7 @@ class Calendar(Request):
         month = Request.get(self, wsfunction='core_calendar_get_calendar_monthly_view', year=y, month=mon)['weeks']
 
         d, h, m = dt.today().day, dt.today().hour, dt.today().minute
-
+        info = args[0]
 
         data = []
 
@@ -108,6 +109,15 @@ class Calendar(Request):
                         if events['modulename'] == 'assign':
                             status, time = Calendar._verify(self, events['course']['id'], events['instance'])
 
+                        params = {
+                            'course': info['course'],
+                            'semester': info['semester'],
+                            'class': info['class'],
+                            'subject': events['course']['fullname'],
+                            'guild_id': info['guild_id'],
+                            'token': self.token,
+                            'courseid': events['course']['id'],
+                        }
 
                         data.append([
 
@@ -128,7 +138,7 @@ class Calendar(Request):
 
                             events['url'],
 
-                            professor[f'{events["course"]["fullname"]}'],
+                            Professor.get(**params),
 
                             f'Tarefa {"não " if status == 0 or not status else ""}entregue',
 
@@ -163,7 +173,9 @@ class Calendar(Request):
                     'class': info['class'],
                     'subject': event['course']['fullname'],
                     'guild_id': info['guild_id'],
-                } # to professors func
+                    'token': self.token,
+                    'courseid': event['course']['id'],
+                }
 
                 status, time = None, None
                 if event['modulename'] == 'assign' and check:
@@ -190,7 +202,7 @@ class Calendar(Request):
 
                     event['url'],
 
-                    professor[f'{event["course"]["fullname"]}'],
+                    Professor.get(**params),
 
                     f'Tarefa {"não " if status == 0 or not status else ""}entregue',
 
@@ -208,7 +220,7 @@ class Calendar(Request):
         events = Request.get(self, wsfunction='core_calendar_get_calendar_day_view', year=y, month=mon, day=d)['events']
 
         try:
-            inf = args[0]
+            info = args[0]
             filter = kwargs['filter']
 
         except KeyError:
@@ -220,11 +232,21 @@ class Calendar(Request):
 
             if event['course']['id'] not in self.courses_notallowed and event['modulename'] in self.allowed_modules:
 
+                params = {
+                    'course': info['course'],
+                    'semester': info['semester'],
+                    'class': info['class'],
+                    'subject': event['course']['fullname'],
+                    'guild_id': info['guild_id'],
+                    'token': self.token,
+                    'courseid': event['course']['id'],
+                }
+
                 deadline = Calendar._clean(self, event['formattedtime'])
 
                 data.append([
 
-                    inf['discord_id'], inf['guild_id'], inf['course'], inf['semester'], inf['class'],
+                    info['discord_id'], info['guild_id'], info['course'], info['semester'], info['class'],
 
                     event['course']['fullname'],
 
@@ -243,11 +265,11 @@ class Calendar(Request):
 
                     event['url'],
 
-                    professor[f'{event["course"]["fullname"]}'],
+                    Professor.get(**params),
 
                 ])
 
         if filter:
             data = Calendar.filter(self, value=filter, data=data)
 
-        return data #Export(kwargs['db']).to_db(data)
+        return data
