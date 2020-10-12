@@ -37,13 +37,23 @@ class Help(Cog):
         if channel_id in allowed_channels:
             if not cmd:
                 contents = [
-                    ['Moodle', ['get', 'Get all events, assignments or classes informations.'],
-                            ['check', 'Recive privetly more informations about assignments.'],
-                            ['getToken', 'Create or get your MoodleAPI Token decrypted.']],
-                    ['General', ['clear', 'Clear chat messages.'],
-                                ['help', 'All commands informations.']],
-                    ['Games', ['cipher', 'Encypt an message with Caesar Cipher.'],
-                            ['roll', 'Roll a dice.']],
+                    ['Moodle', ['get', 'Get all events, assignments or classes informations from Moodle'],
+                            ['check', 'Recive privetly more information about assignments'],
+                            ['getToken', 'Create or get your MoodleAPI Token decrypted. The token is used to check your assignments status on Moodle']],
+                    ['General', ['clear', 'Delete chat messages for the typed amount (Only if you have permission to manage messages on that chat)'],
+                                ['help', 'All commands information'],
+                                ['profile', 'Profile command is used to show someones profile, levels and experience, you can mention another member to see his profile or leave it in blank to see your own'],
+                                ['chat_permission', 'Allow, revoke or shows you the text channels in which the bot can read commands/work on'],
+                                ['reminder', 'Creates a personal reminder about a moodle event or about anything you want to'],
+                                ['ping', 'Shows the bot latency (This command does not requires the server preposition)'],
+                                ['printm', 'Prints an embed message on the text channel']],
+                    ['Fun/Games', ['cipher', 'Encypt an message with Caesar Cipher'],
+                                ['roll', 'Roll a dice'],
+                                ['avatar', 'Command to show someones avatar on the chat, you must mention the user or leave it in blank to see your own avatar'],
+                                ['e&o', 'This command will pick randomly between ever or odd']],
+                    ['Music', ['join', 'Makes the bot join your voice channel'], 
+                                ['leave', 'Makes the bot leave the voice channel']],
+                    ['Admin', ['createRoles','Creates a reaction role menu, you must use the respective roles name and emojis']],
                 ]
 
                 embed = help_message(contents)

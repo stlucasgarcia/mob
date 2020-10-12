@@ -7,7 +7,7 @@ venv
 
 # Local archives
 encryption.key
-*.csv
+release.md
 
 # Secret files
 secret.py

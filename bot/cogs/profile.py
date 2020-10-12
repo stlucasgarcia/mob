@@ -1,5 +1,5 @@
 import discord
-from discord.ext.commands import Cog, command, has_permissions
+from discord.ext.commands import Cog, command
 from settings import allowed_channels
 from utilities import main_messages_style, positive_emojis_list
 
@@ -50,6 +50,7 @@ class Profile(Cog):
     @command(name="profile", aliases=["Profile", "PROFILE", "Prof", "prof"])
     async def profile(self, ctx, member: discord.Member = None):
         """Profile command is used to show someones profile, levels and experience, you can mention another member to see his profile or leave it in blank to see your own"""
+
         member = ctx.author if not member else member
 
         member_id = str(member.id)
@@ -68,6 +69,7 @@ class Profile(Cog):
 
             if not user:
                 await ctx.send("Member doens't have a level")
+
             else:
                 embed = discord.Embed(color=member.color, timestamp=ctx.message.created_at)
                 embed.set_thumbnail(url=member.avatar_url)
@@ -77,6 +79,7 @@ class Profile(Cog):
                 embed.add_field(name="Level", value=f"`{user_level}`")
                 embed.add_field(name="Total XP", value=f"`{user_experience}/{xp_nextlvl}`")
                 embed.add_field(name=f"Messages Needed for level {user_level + 1}", value=f"`{xp_nextlvl - user_experience}`", inline=False)
+                
                 embed.set_footer(text=f"{member}", icon_url=member.avatar_url)
 
                 await ctx.send(embed=embed)

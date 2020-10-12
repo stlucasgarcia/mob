@@ -1,13 +1,13 @@
-import discord, os, asyncpg, asyncio, nest_asyncio
+import os, asyncpg, asyncio
 
-from discord.ext import commands, tasks
+from discord.ext import commands
 
 from utilities import main_messages_style
 
 from settings import allowed_channels
 
 from secret1 import DB_Username, DB_Password, Bot_token
-# Create the bot prefix
+
 Prefix = "mack "
 client = commands.Bot(command_prefix=Prefix, help_command=None)
 

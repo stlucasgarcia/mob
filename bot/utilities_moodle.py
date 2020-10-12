@@ -1,5 +1,3 @@
-import discord
-from itertools import cycle
 
 loop_channel = int(750313490455068722)
 
