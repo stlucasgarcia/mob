@@ -24,7 +24,7 @@ class Export:
         super().__init__()
         self.name = name
         self.path = path.abspath('bot').split('bot')[0] + f"csvfiles\{name}.csv"
-        self.tpool, self.conn = Export._conn
+        self.tpool, self.conn = Export._conn()
 
 
     def __str__(self):

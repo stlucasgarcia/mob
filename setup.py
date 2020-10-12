@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name="moodleapi",
-    version="1.4.0",
+    version="1.4.1",
     author="Daniel Kauffmann",
     author_email="danielvenna2@gmail.com",
     description="MoodleAPI Package for Bot usable",
