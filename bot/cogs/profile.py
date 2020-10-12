@@ -22,25 +22,29 @@ class Profile(Cog):
         
     @Cog.listener()
     async def on_message(self, message):
-        if message.author == self.client.user:
-            return
-        
-        author_id = str(message.author.id)
-        guild_id = str(message.guild.id)
+        try:
+            if message.author == self.client.user:
+                return
+            
+            author_id = str(message.author.id)
+            guild_id = str(message.guild.id)
 
-        user = await self.client.pg_con.fetch("SELECT * FROM bot_users WHERE user_id = $1 AND guild_id = $2", author_id, guild_id)
+            user = await self.client.pg_con.fetch("SELECT * FROM bot_users WHERE user_id = $1 AND guild_id = $2", author_id, guild_id)
 
-        if not user:
-            await self.client.pg_con.execute("INSERT INTO bot_users (user_id, guild_id, level, experience) VALUES ($1, $2, 1, 0)", author_id, guild_id)
+            if not user:
+                await self.client.pg_con.execute("INSERT INTO bot_users (user_id, guild_id, level, experience) VALUES ($1, $2, 1, 0)", author_id, guild_id)
 
 
-        user = await self.client.pg_con.fetchrow("SELECT * FROM bot_users WHERE user_id = $1 AND guild_id = $2", author_id, guild_id)
+            user = await self.client.pg_con.fetchrow("SELECT * FROM bot_users WHERE user_id = $1 AND guild_id = $2", author_id, guild_id)
 
-        await self.client.pg_con.execute("UPDATE bot_users SET experience = $1 WHERE user_id = $2 AND guild_id = $3", user['experience'] + 1, author_id, guild_id)
+            await self.client.pg_con.execute("UPDATE bot_users SET experience = $1 WHERE user_id = $2 AND guild_id = $3", user['experience'] + 1, author_id, guild_id)
 
-        if await self.level_up(user):
-            embed = main_messages_style(f"{message.author.mention} is now level {user['level'] + 1}!!")
-            await message.channel.send(embed=embed)
+            if await self.level_up(user):
+                embed = main_messages_style(f"{message.author.display_name} is now level {user['level'] + 1}!!")
+                await message.channel.send(embed=embed)
+                
+        except AttributeError:
+            pass
         
 
     @command(name="profile", aliases=["Profile", "PROFILE", "Prof", "prof"])

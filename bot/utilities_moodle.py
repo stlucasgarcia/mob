@@ -13,9 +13,12 @@ def data_dict(database):
     "deadline" : database[9].title() + " às " + database[10].title(),
     "link" : database[11],
     "author" : str(database[12]).title(),
-    #"hwstatus" : database[13] if database[13] else '',
-    #"hwstatus_time" : database[14] if database[14] else ''
     }
+
+    if len(database) > 13:
+        assignmentsdata["hwstatus"] = database[13]
+        assignmentsdata["hwstatus_time"] = database[14]
+
     return assignmentsdata
 
 

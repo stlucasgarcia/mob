@@ -18,7 +18,7 @@ class General(Cog):
     async def on_ready(self):
         print('Ready!')
         print('Logged in as ', self.client.user)
-        print('ID:', self.client.user.id)
+        print('ID:', self.client.user.id) 
         self.change_status.start()
 
     #Discord live status that rotate from the list each 600 seconds
@@ -96,6 +96,11 @@ class General(Cog):
     async def clear(self, ctx, amount: Optional[int] = 2):
         """Delete previous chat messages by the amount given, """
         await ctx.channel.purge(limit=amount)
+        embed = main_messages_style(f"The bot deleted {amount} messages sucessfully")
+        await ctx.send(embed=embed)
+        await asyncio.sleep(2)
+        await ctx.channel.purge(limit=1)
+
 
 
     # Print an embed message on the chat
