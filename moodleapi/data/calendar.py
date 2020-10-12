@@ -1,7 +1,8 @@
 """
 Calendar module especifically for calendar functions
 
-Last Update: 09/18/2020 - added new filters for events
+Last Update: 10/12/2020 - added upcoming and day functions
+
 """
 
 from moodleapi.request import Request
@@ -15,7 +16,7 @@ from re import compile, sub
 
 
 class Calendar(Request):
-    """Calendar Class support montlhy informations only and have
+    """Calendar Class support montlhy and day events only and have
     several functions to filter information and format date."""
 
     def __init__(self, token):
@@ -30,11 +31,13 @@ class Calendar(Request):
         return 'Calendar object'
 
 
-    def _clean(self, value):
+    @staticmethod
+    def _clean(value):
          return sub(compile('<.*?>'), '', value)
 
 
-    def _time(self, epoch):
+    @staticmethod
+    def _time(epoch):
         from time import ctime
 
         date = ctime(epoch).split()
@@ -42,7 +45,8 @@ class Calendar(Request):
         return f'{week[date[0]]}, {date[2]} de {month[date[1]]} às {date[3][:-3]}'
 
 
-    def _check_time(self, current_h, current_m, assign_h, assign_m, today):
+    @staticmethod
+    def _check_time(current_h, current_m, assign_h, assign_m, today):
         if current_h > assign_h and today:
             return False
         elif current_h == assign_h and today:
@@ -63,7 +67,8 @@ class Calendar(Request):
         return Course(self.token).simple_contents(courseid, instance, params, assign=True)
 
 
-    def filter(self, value=None, data=None, *args, **kwargs):
+    @staticmethod
+    def filter(value=None, data=None, *args, **kwargs):
         filtering = 'Aula ao vivo - BigBlueButton' if value == 'bbb' else 'Tarefa para entregar via Moodle'
 
         if value and data:
@@ -94,10 +99,10 @@ class Calendar(Request):
                     period = True if d <= int(day['mday']) < d + 15 else False
                     today = True if day['mday'] == d else False
 
-                    deadline = Calendar._clean(self, events['formattedtime'])[:-2] \
+                    deadline = Calendar._clean(events['formattedtime'])[:-2] \
                         if events['modulename'] in self.allowed_modules else None
 
-                    up_to_date = Calendar._check_time(self, h, m, int(deadline[:2]), int(deadline[3:5]), today) \
+                    up_to_date = Calendar._check_time(h, m, int(deadline[:2]), int(deadline[3:5]), today) \
                         if deadline else True
 
 
@@ -126,7 +131,7 @@ class Calendar(Request):
                             events['name'].split(' is ')[0] if ' is ' in events['name']
                             else events['name'].split(' está ')[0],
 
-                            Calendar._clean(self, events['description']) if events['description'] != ''
+                            Calendar._clean(events['description']) if events['description'] != ''
                             else 'Descrição não disponível',
 
                             'Aula ao vivo - BigBlueButton' if events['modulename'] == 'bigbluebuttonbn' else
@@ -142,7 +147,7 @@ class Calendar(Request):
 
                             f'Tarefa {"não " if status == 0 or not status else ""}entregue',
 
-                            Calendar._time(self, time) if time != 0 and time else ''
+                            Calendar._time(time) if time != 0 and time else ''
 
                         ])
 
@@ -165,7 +170,7 @@ class Calendar(Request):
 
             if event['course']['id'] not in self.courses_notallowed and event['modulename'] in self.allowed_modules:
                 
-                deadline = Calendar._clean(self, event['formattedtime'])
+                deadline = Calendar._clean(event['formattedtime'])
 
                 params = {
                     'course': info['course'],
@@ -190,7 +195,7 @@ class Calendar(Request):
                     event['name'].split(' is ')[0] if ' is ' in event['name']
                     else event['name'].split(' está ')[0],
 
-                    Calendar._clean(self, event['description']) if event['description'] != ''
+                    Calendar._clean(event['description']) if event['description'] != ''
                     else 'Descrição não disponível',
 
                     'Aula ao vivo - BigBlueButton' if event['modulename'] == 'bigbluebuttonbn' else
@@ -206,7 +211,7 @@ class Calendar(Request):
 
                     f'Tarefa {"não " if status == 0 or not status else ""}entregue',
 
-                    Calendar._time(self, time) if time != 0 and time else ''
+                    Calendar._time(time) if time != 0 and time else ''
 
                 ])
 
@@ -242,7 +247,7 @@ class Calendar(Request):
                     'courseid': event['course']['id'],
                 }
 
-                deadline = Calendar._clean(self, event['formattedtime'])
+                deadline = Calendar._clean(event['formattedtime'])
 
                 data.append([
 
@@ -253,7 +258,7 @@ class Calendar(Request):
                     event['name'].split(' is ')[0] if ' is ' in event['name']
                     else event['name'].split(' está ')[0],
 
-                    Calendar._clean(self, event['description']) if event['description'] != ''
+                    Calendar._clean(event['description']) if event['description'] != ''
                     else 'Descrição não disponível',
 
                     'Aula ao vivo - BigBlueButton' if event['modulename'] == 'bigbluebuttonbn' else

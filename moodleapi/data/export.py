@@ -1,6 +1,9 @@
 """
-Export Module contains only Export class to export any data for an
-csv file passed.
+Export Module contains only Export class to export any data to the Database
+or csv file.
+
+Last Update: 10/12/2020 - support for database export type
+
 """
 
 
@@ -14,19 +17,22 @@ from moodleapi.secret import DATABASE
 
 
 class Export:
+    """Export class has two types for export data, to the Database using
+    informations in secret.py and to csv files."""
 
     def __init__(self, name=None):
         super().__init__()
         self.name = name
         self.path = path.abspath('bot').split('bot')[0] + f"csvfiles\{name}.csv"
-        self.tpool, self.conn = Export._conn(self)
+        self.tpool, self.conn = Export._conn
 
 
     def __str__(self):
         return f'Export object for file in path {self.path}'
 
 
-    def _conn(self):
+    @staticmethod
+    def _conn():
         try:
             threadedpool = psycopg2.pool.ThreadedConnectionPool(1, 20, database=DATABASE['db'], user=DATABASE['user'],
                                                                 password=DATABASE['password'])

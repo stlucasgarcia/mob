@@ -1,7 +1,8 @@
 """
 Course module especifically for course functions
 
-Last Update: 09/18/2020 - support for contents and subjectsid function
+Last Update: 10/12/2020 - support for contents and subjectsid function
+
 """
 
 from moodleapi.request import Request
@@ -10,7 +11,7 @@ from moodleapi.request import Request
 class Course(Request):
     """Course Class responsable to get all contents by courseid given
     that can be filtered by assingments for the time beign. Also, can
-    get all subjects id by userid."""
+    get all subjects id by userid and professors name."""
 
     def __init__(self, token):
         super().__init__(token)
@@ -20,7 +21,8 @@ class Course(Request):
         return 'Course object'
 
 
-    def filter(self, value=None, data=None, *args, **kwargs):
+    @staticmethod
+    def filter(value=None, data=None, *args, **kwargs):
         """Disabled"""
 
         filtering = ''

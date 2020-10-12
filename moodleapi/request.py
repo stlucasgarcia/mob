@@ -4,7 +4,7 @@ Requests module responsable to get data from Moodle Platform.
 
 from moodleapi.settings import REQUEST
 
-import requests, json
+import requests
 
 
 class Request:

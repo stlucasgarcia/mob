@@ -1,5 +1,6 @@
 """
 Version module contains functions to return stable and lastest version
+
 """
 
 

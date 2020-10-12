@@ -1,5 +1,6 @@
 """
-Token module responsable to get user token.
+Token module responsable to get users token
+
 """
 
 from moodleapi.settings import BASEURL

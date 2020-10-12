@@ -8,6 +8,8 @@ from os import path
 
 
 class Cryptography:
+    """Cryptography class is responsable to generate an public and private key,
+    encrypt and decrypt messages by staticmethods"""
 
     @staticmethod
     def generate_key():

@@ -1,5 +1,6 @@
 """
-Settings module with variables already set
+Settings module with variables already set for Moodle Platform and miscellaneous
+
 """
 
 

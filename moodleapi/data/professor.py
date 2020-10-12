@@ -1,12 +1,21 @@
+"""
+Professor module responsable to get informations about professor's
+
+Last Update: 10/12/2020 - create Professor class and get method
+
+"""
+
+
 import psycopg2
 from psycopg2 import pool
 
 from moodleapi.data.course import Course
-
 from moodleapi.secret import DATABASE
 
 
 class Professor:
+    """Professor class has an often function to get professor name
+    by the courseid given."""
 
     @staticmethod
     def get(*args, **kwargs):
