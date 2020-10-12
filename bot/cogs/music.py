@@ -52,6 +52,8 @@ class Music(Cog):
 
             if voice and voice.is_connected():
                 await voice.disconnect()
+                embed = main_messages_style(f"The bot is now disconnected from `{channel}`")
+                await ctx.send(embed=embed)
 
             else:
                 embed = main_messages_style("The bot is not connected to any voice channel")

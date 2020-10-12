@@ -134,7 +134,8 @@ class General(Cog):
             await ctx.send(embed=embed)
 
             await ctx.message.add_reaction(next(positive_emojis_list))
-        
+
+#TODO Fix printm 
 
     # Check latency/ping
     @Cog.listener()
