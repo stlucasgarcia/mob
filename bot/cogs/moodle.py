@@ -208,7 +208,6 @@ class Moodle(Cog):
     # Loops the GetData function. 
     @tasks.loop(minutes=30)
     async def getData(self):
-        print(getData_Counter)
         CSmain = 0
 
         params = {
@@ -229,10 +228,10 @@ class Moodle(Cog):
             decrypted_token = Cryptography().decrypt_message(bytes(token, encoding='utf-8'))
             
 
-            # Get data from the Calendar and filter it
+            # Get data from the moodle and filter it
             Calendar(decrypted_token).upcoming(False, params)
 
-            # Check if there's assign, classes
+            # Check if there's events
             data = await self.client.pg_con.fetch("SELECT * FROM moodle_events WHERE discord_id = $1 AND guild_id = $2", 169890240708870144, 748168924465594419)
             
             # Counter for the amount of assignments/events    
