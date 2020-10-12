@@ -177,19 +177,21 @@ class Export:
 
                 elif self.name == 'bot_reminder':
                     cursor.execute("SELECT subject_name FROM bot_reminder "
-                                   "WHERE discord_id=%s AND guild_id=%s", (data[0][0], data[0][1]))
+                                   "WHERE discord_id=%s AND guild_id=%s AND subject_name = %s",
+                                   (data[0], data[1], data[6]))
                     exist = cursor.fetchall()
 
                     if exist:
                         cursor.execute("DELETE FROM public.bot_reminder "
-                                       "WHERE discord_id=%s AND guild_id=%s", (data[0][0], data[0][1]))
+                                       "WHERE discord_id=%s AND guild_id=%s AND subject_name = %s",
+                                       (data[0], data[1], data[6]))
                         self.conn.commit()
 
-                    query = f"INSERT INTO {self.name} (discord_id, guild_id, course, semester, class, subject, " \
+                    query = f"INSERT INTO bot_reminder (discord_id, guild_id, course, semester, class, subject, " \
                             f"subject_name, description, subject_type, deadline, deadline_date, url, professor)" \
                             f" VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
 
-                    cursor.execute(query, (*data[0],)[:-2])
+                    cursor.execute(query, (*data,))
                     self.conn.commit()
 
 
