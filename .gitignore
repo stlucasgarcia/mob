@@ -1,15 +1,15 @@
 # Cache
 __pycache__
 
-# Virtual environments
+# Virtual Environments
 bot-env
 venv
 
-# Local archives
+# Local Archives
 encryption.key
 release.md
 
-# Secret files
+# Secret Files
 secret.py
 secret1.py
 
@@ -17,9 +17,13 @@ secret1.py
 .vscode
 .idea
 
-# Tests files
+# Tests Files
 test.py
 
 # EGG
 moodleapi.egg-info
 build
+
+# Music Files
+*.webm
+*.m4a

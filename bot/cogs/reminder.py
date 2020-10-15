@@ -2,15 +2,19 @@ import discord, asyncio
 
 from moodleapi.data.export import Export
 
+from discord.ext import tasks
 from discord.ext.commands import command, Cog
 
-from utilities import main_messages_style, check_command_style, happy_faces, negative_emojis_list, books_list, positive_emojis_list 
+from utilities import main_messages_style, check_command_style, happy_faces, negative_emojis_list, books_list, positive_emojis_list, FULL_MONTHS 
 from utilities_moodle import data_dict, moodle_color, loop_channel
+
+from datetime import datetime as dt
 
 
 class Reminder(Cog):
     def __init__(self, client):
         self.client = client
+        self.reminderLoop.start(discord_id=226485287612710913, guild_id=748168924465594419)
 
     @command(name="reminder", aliases=["Reminder", " REMINDER", "Remind", "REMIND", "RemindMe", "Rememberme"])
     async def reminder(self, ctx):
@@ -34,6 +38,8 @@ class Reminder(Cog):
             
             # Counter for the amount of assignments/events    
             amount = 0
+
+            #TODO: check month, day and response to time and date style
 
             if data:
                 for index in range(len(data)):
@@ -76,7 +82,6 @@ class Reminder(Cog):
                         except Exception:
                             pass
                 
-
                 op = int(op)
                 subject = data[op-1][6]
                 
@@ -91,6 +96,14 @@ class Reminder(Cog):
                 await ctx.author.send(embed=embed)
 
                 Export('bot_reminder').to_db(data=d)
+
+
+                #date = f'{FULL_MONTHS[d[9].split()[-1]]}{d[9].split()[-2]}'
+                #time = d[10]
+                #self.reminderLoop.restart(int(ctx.author.id), int(ctx.guild.id))
+                
+                
+
 
                 await ctx.message.add_reaction(next(positive_emojis_list))
 
@@ -120,10 +133,16 @@ class Reminder(Cog):
             date = await self.client.wait_for('message')
             await asyncio.sleep(1)
 
-
             data = [int(ctx.author.id), int(ctx.guild.id), None, None, None, None, title.content, None, None, date.content, time.content, None, None]
             
             Export('bot_reminder').to_db(data=data)
+
+
+            #date = f'{date.content[:2]}{date.content[3:5]}'
+            #time = time.content
+            #self.reminderLoop.restart(int(ctx.author.id), int(ctx.guild.id))
+            
+
 
             await ctx.message.add_reaction(next(positive_emojis_list))
 
@@ -136,6 +155,42 @@ class Reminder(Cog):
 
             embed = main_messages_style("You must type a valid option", "Note: valid options: `Yes` or `No`")
             await ctx.author.send(embed=embed)
+
+
+    @reminder.after_invoke
+    async def reload_reminder(self, ctx):
+        data = await self.client.pg_con.fetch("SELECT deadline, deadline_date FROM bot_reminder WHERE discord_id = $1 AND guild_id = $2", int(ctx.author.id), int(ctx.guild.id))
+        
+        dates, times = [], []
+
+        for elem in data:
+            if len(elem[0]) > 5:
+                dates.append((FULL_MONTHS[elem[0].split()[-1]], int(elem[0].split()[-2]))) 
+            elif len(elem[0]) == 5:
+                dates.append((int(elem[0].split('/')[0]), int(elem[0].split('/')[1])))
+
+            times.append((int(elem[1][:2]), int(elem[1][3:5])))
+
+        # (10, 14) (10, 18)
+        # (14, 0) (23, 59)
+        dat = []
+        for i in range(len(dates)):
+            dat.append(dt(2020, dates[i][0], int(dates[i][1]), times[i][0], times[i][1]))
+
+        da = dt.today()
+        m, d, h, m = da.month, da.day, da.hour, da.minute
+        date = dt(2020, m, d, h, m)
+
+        print(min(dat, key=lambda d: abs(d - date)))
+
+
+
+
+    @tasks.loop(minutes=1)
+    async def reminderLoop(self, discord_id, guild_id):
+
+        pass
+
 
 
 

@@ -19,9 +19,9 @@ class Fun(Cog):
         if str(ctx.channel.id) in allowed_channels:  
             member = ctx.author if not member else member
 
-            embed = discord.Embed(color = defaultcolor)
+            embed = discord.Embed(color=defaultcolor)
 
-            embed.set_image(url='{}'.format(member.avatar_url))
+            embed.set_image(url=f"{member.avatar_url}")
             
             await ctx.send(embed=embed)
 

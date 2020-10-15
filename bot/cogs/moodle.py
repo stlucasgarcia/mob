@@ -65,9 +65,18 @@ class Moodle(Cog):
                     await ctx.send(embed=embed)
                     await asyncio.sleep(0.5)
 
+                if amount > 0:
+                    embed = main_messages_style(f"There was a total of {amount} {option} {next(books_list)}", f"Note: I am only showing {option} of 14 days ahead ")
+                    await ctx.send(embed=embed)
 
-            embed = main_messages_style(f"There were a total of {amount} {option.capitalize()} {next(books_list)}", f"Note: I am only showing {option.capitalize()} of 14 days ahead ")
-            await ctx.send(embed=embed)
+                elif amount > 1:
+                    embed = main_messages_style(f"There were a total of {amount} {option} {next(books_list)}", f"Note: I am only showing {option} of 14 days ahead ")
+                    await ctx.send(embed=embed)
+
+            elif isBool:
+                embed = main_messages_style(f"There wasn't any scheduled {option} 😑 😮", "Note: This is really weird, be careful 🤨 😶")
+                await ctx.send(embed=embed)
+
 
 
     #Command to check if the assignments were done at the Moodle website
@@ -154,7 +163,7 @@ class Moodle(Cog):
 
             if not user_data:
                 embed = main_messages_style("Apparently you don't have a Moodle API Token, do you want to create one? Yes/No", "Your login and password won't be saved in the "
-                "system, it'll be used to create your Token and the Crypted Token will be stored")
+                "system, it'll be used to create your Token and the Encrypted Token will be stored")
                 await ctx.author.send(embed=embed)
 
                 answer = await self.client.wait_for('message')

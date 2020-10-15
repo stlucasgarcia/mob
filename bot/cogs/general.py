@@ -22,7 +22,11 @@ class General(Cog):
         print('Ready!')
         print('Logged in as ', self.client.user)
         print('ID:', self.client.user.id) 
+
         self.change_status.start()
+
+
+
 
     #Discord live status that rotate from the list each 600 seconds
     @tasks.loop(seconds=600)
@@ -31,10 +35,10 @@ class General(Cog):
 
 
     # Allow, disallow or show the list of the text channel in which the bot can send messages, the variable is stored in /bot/settings.py
-    @command(name="chat_permission",aliases=["c_permission", "chat_p", "chatpermission", "Chat_Permission", "Chat_P", "Chat_permission", "text_permission", "bot_permission"])
+    @command(name="chat_permission",aliases=["c_permission", "chat_p", "chatpermission", "Chat_Permission", "Chat_P", "Chat_permission", "text_permission", "bot_permission", "chat"])
     async def chat_permission(self, ctx, option=""):
         """Gives the bot permission to work on that chat"""
-
+        #TODO Multiple servers support for list 
         channel_id = str(ctx.channel.id)
         option = option.lower()
 
