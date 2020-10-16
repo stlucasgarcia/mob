@@ -2,3 +2,5 @@
 allowed_channels = []
 
 getData_Counter = [0]
+
+queue = []

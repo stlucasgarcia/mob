@@ -1,6 +1,7 @@
 from discord import Embed
 from itertools import cycle
 
+
 # Emojis lists to be used in the entire project 
 positive_emojis_list = cycle(["👍", "🆗", "🤙", "👌", "👊", "🆒", "✅"]) 
 negative_emojis_list = cycle(["🚫", "🛑", "❌", "⛔"])
@@ -14,6 +15,7 @@ thumbnail_url = "https://logodownload.org/wp-content/uploads/2017/09/mackenzie-l
 url = 'https://eadmoodle.mackenzie.br/'
 trans = '\n<:name:758840767786516520>'
 defaultcolor = 0x9f000c
+
 
 # This file is created to style the bot messages
 # Styling the check command from moodle.py
@@ -63,6 +65,7 @@ def main_messages_style(name="", message="", emote="", color="", fot="", thumb=F
     embed.set_footer(text=fot + footer)
     return embed
 
+
 # Template message for help
 def help_message(contents):
     embed = Embed(title='Standard Commands',
@@ -85,6 +88,7 @@ def help_message(contents):
 FULL_MONTHS = {'janeiro': 1,  'fevereiro': 2, u'março': 3,    'abril': 4,
                'maio': 5,     'junho': 6,     'julho': 7,     'agosto': 8,
                'setembro': 9, 'outubro': 10,  'novembro': 11, 'dezembro': 12}
+
 
 def formatTime(seconds):
     hours = seconds // 3600

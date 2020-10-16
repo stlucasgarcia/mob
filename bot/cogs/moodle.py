@@ -6,7 +6,7 @@ from moodleapi.data.export import Export
 
 
 from discord.ext import tasks
-from discord.ext.commands import command, Cog
+from discord.ext.commands import command, Cog, cooldown
 from settings import allowed_channels, getData_Counter
 from utilities import main_messages_style, check_command_style, happy_faces, negative_emojis_list, books_list, positive_emojis_list 
 from utilities_moodle import data_dict, moodle_color, loop_channel
@@ -145,6 +145,7 @@ class Moodle(Cog):
         
     # Command to create or access your moodle API token    
     @command(name="getToken", aliases=["GetToken", "gettoken", "GETTOKEN", "GETtoken", "getTOKEN", "GetT", "CreateToken", "createToken", "createtoken"])
+    @cooldown(1,20)
     async def getToken(self, ctx):
         """Generates your personal tooken at the moodle api and stores on the bots database, this command is the base for all moodle commands. The token is encrypted and stored in our database"""
 

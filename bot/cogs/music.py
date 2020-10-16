@@ -1,13 +1,13 @@
 import youtube_dl, discord, asyncio, os, datetime
 
 from discord.ext import tasks
-from discord.ext.commands import Cog, command, CommandError
+from discord.ext.commands import Cog, command, CommandError, cooldown
 from discord.voice_client import VoiceClient
 from discord.utils import get
 
 
-from utilities import main_messages_style, positive_emojis_list, defaultcolor, footer, formatTime
-from settings import allowed_channels
+from utilities import main_messages_style, positive_emojis_list, negative_emojis_list, defaultcolor, footer, formatTime
+from settings import allowed_channels, queue
 
 
 youtube_dl.utils.bug_reports_message = lambda: ''
@@ -34,13 +34,6 @@ ffmpeg_options = {
 
 
 ytdl = youtube_dl.YoutubeDL(ytdl_format_options)
-
-songs = asyncio.Queue()
-
-play_next_song = asyncio.Event()
-
-queues = {}
-
 
 class YTDLSource(discord.PCMVolumeTransformer):
 
@@ -143,24 +136,18 @@ class Music(Cog):
     @command(name="play", aliases=["Play", "PLAY"])
     async def play(self, ctx, *, url):
         """Makes the bot play a song by youtube link/search"""
-
         #TODO Verification for *, url
-
+        
         if str(ctx.channel.id) in allowed_channels:
 
             channel = ctx.message.author.voice.channel
-
-            queues[ctx.guild.id] = songs
 
             async with ctx.typing():
                 player = await YTDLSource.from_url(url, loop=self.client.loop)
 
                 ctx.voice_client.play(player, after=lambda e: print('Player error: %s' % e) if e else None)
 
-
-                 
-                print("{:,}".format(int(player.view_count)))
-
+                await ctx.message.add_reaction(next(positive_emojis_list))
                         
                 embed= discord.Embed(title=player.title, color=defaultcolor)
                 embed.set_author(name="Now playing:")
@@ -171,17 +158,13 @@ class Music(Cog):
 
                 embed.set_image(url=player.thumbnail)
                 embed.set_footer(text=footer)
-
+                
                 pMessage = await ctx.send(embed=embed)
 
                 await pMessage.add_reaction("⏪")
                 await pMessage.add_reaction("▶")
                 await pMessage.add_reaction("⏩")
 
-                await queues[ctx.guild.id].put(player)
-
-
-            await ctx.message.add_reaction(next(positive_emojis_list))
 
     @command(name="volume", aliases=["vol, Volume", "Vol"])
     async def volume(self, ctx, volume: int):
@@ -211,10 +194,14 @@ class Music(Cog):
             ctx.voice_client.stop()
 
         # Delete older songs (that are not in queue) .webm
-        for filename in os.listdir(os.getcwd()):
-            if filename.endswith(".webm"):
-                os.remove(f'{os.getcwd()}/{filename}')
+        try:
+            for filename in os.listdir(os.getcwd()):
+                if filename.endswith(".webm") or filename.endswith(".m4a"):
+                    os.remove(f"{os.getcwd()}/{filename}")
 
+        except PermissionError:
+            pass
+        
 
 #TODO Queue system, Fix permission error
 

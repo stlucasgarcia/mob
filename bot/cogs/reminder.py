@@ -14,7 +14,7 @@ from datetime import datetime as dt
 class Reminder(Cog):
     def __init__(self, client):
         self.client = client
-        self.reminderLoop.start(discord_id=226485287612710913, guild_id=748168924465594419)
+        self.reminderLoop.start(ctx=None, discord_id=226485287612710913, guild_id=748168924465594419, values=None, sub=None)
 
     @command(name="reminder", aliases=["Reminder", " REMINDER", "Remind", "REMIND", "RemindMe", "Rememberme"])
     async def reminder(self, ctx):
@@ -23,11 +23,12 @@ class Reminder(Cog):
         def check(ctx, m):
             return m.author == ctx.author
         
+        
         embed =  main_messages_style("Do you want to create a reminder about a Moodle event?", "Note: You can create a reminder about a Moodle event or about something personal")
         await ctx.author.send(embed=embed)
         
         valid_options_yes = ["yes", "sim", "s", "y", "moodle", "certamente que sim", "ss po", "ss", "ok", "vai la vai la", "fechou", "bora", "1", "of course", "sure", "sure thing"] + [positive_emojis_list]
-        valid_options_no = ["nao", "não", "n", "no", "0", "nem po", "no, sorry", "i'd rather not", "no buddy", "another day my friend",  "nem da", "not ok", "i don't think so", "maybe not"] + [negative_emojis_list]
+        valid_options_no = ["nao", "não", "n", "no", "0", "nem po", "no, sorry", "i'd rather not", "no buddy", "another day my friend",  "nem da", "not ok", "i don't think so", "maybe not", "nem malz"] + [negative_emojis_list]
         
         option = await self.client.wait_for('message')
 
@@ -159,10 +160,9 @@ class Reminder(Cog):
 
     @reminder.after_invoke
     async def reload_reminder(self, ctx):
-        data = await self.client.pg_con.fetch("SELECT deadline, deadline_date FROM bot_reminder WHERE discord_id = $1 AND guild_id = $2", int(ctx.author.id), int(ctx.guild.id))
+        data = await self.client.pg_con.fetch("SELECT deadline, deadline_date, subject_name FROM bot_reminder WHERE discord_id=$1 AND guild_id=$2", int(ctx.author.id), int(ctx.guild.id))
         
-        dates, times = [], []
-
+        dates, times, subs = [], [], []
         for elem in data:
             if len(elem[0]) > 5:
                 dates.append((FULL_MONTHS[elem[0].split()[-1]], int(elem[0].split()[-2]))) 
@@ -170,26 +170,58 @@ class Reminder(Cog):
                 dates.append((int(elem[0].split('/')[0]), int(elem[0].split('/')[1])))
 
             times.append((int(elem[1][:2]), int(elem[1][3:5])))
+            subs.append(elem[2])
 
-        # (10, 14) (10, 18)
-        # (14, 0) (23, 59)
         dat = []
         for i in range(len(dates)):
             dat.append(dt(2020, dates[i][0], int(dates[i][1]), times[i][0], times[i][1]))
 
         da = dt.today()
-        m, d, h, m = da.month, da.day, da.hour, da.minute
-        date = dt(2020, m, d, h, m)
+        mon, d, h, m = da.month, da.day, da.hour, da.minute
+        date = dt(2020, mon, d, h, m)
 
-        print(min(dat, key=lambda d: abs(d - date)))
+        date_min = min(dat, key=lambda y: abs(y - date))
+        values = [date_min.month, date_min.day, date_min.hour, date_min.minute]
+        #print(type(date_min))
+        subject = subs[dat.index(date_min)]
 
-
+        #2020-10-14 14:00:00
+        #print(dir(date_min))
+        self.reminderLoop.restart(ctx, int(ctx.author.id), int(ctx.guild.id), values, subject)
 
 
     @tasks.loop(minutes=1)
-    async def reminderLoop(self, discord_id, guild_id):
+    async def reminderLoop(self, ctx, discord_id, guild_id, values, sub):
+        now = dt.today()
+        time = [now.month, now.day, now.hour, now.minute]
+        # print(values, sub)
+        # print(time)
+        
+        if values:
+            if (values[0] == time[0]) and (values[1] == time[1]):
+                i, j = time[2] - values[2], time[3] - values[3]
+                # print(i, j)
 
-        pass
+                if i == 3 and j == 0:
+                    embed = main_messages_style(f"The dealine of {sub} is in **3 hours**", "Note: The next reminder will be in an **hour before the deadline**.")
+                    await ctx.author.send(embed=embed)
+
+                elif i == 1 and j == 0:
+                    embed = main_messages_style(f"The dealine of {sub} is in **an hour**", "Note: The next reminder will be in **15 minutes before the deadline**.")
+                    await ctx.author.send(embed=embed)
+
+                elif i == 0 and j == 15:
+                    embed = main_messages_style(f"The dealine of {sub} is in *15 *minutes**", "Note: **This is the last reminder**.")
+                    await ctx.author.send(embed=embed)
+
+                elif i == 0 and j == 0:
+                    await self.client.pg_con.fetch("DELETE FROM bot_reminder WHERE discord_id=$1 AND guild_id=$2 AND subject_name=$3", 
+                                                    int(ctx.author.id), int(ctx.guild.id), sub)
+            
+        # if ctx:
+        #     author = 226485287612710913
+        #     await ctx.author.send("Foi")
+        #self.client.author.send("Foi 2")
 
 
 
