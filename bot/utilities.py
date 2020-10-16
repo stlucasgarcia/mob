@@ -10,7 +10,7 @@ books_list = cycle(["📚", "📔", "📕", "📖", "📗", "📘", "📙", "�
 happy_faces = cycle(["😀", "😁", "😃", "😄", "😅", "😉", "😊", "😋", "😎", "🙂", "🤗", "😛"])
 
 
-footer = "Created with 💖 by Mackenzie Students."
+footer = "Created with 💖 by our team"
 thumbnail_url = "https://logodownload.org/wp-content/uploads/2017/09/mackenzie-logo-3.png"
 url = 'https://eadmoodle.mackenzie.br/'
 trans = '\n<:name:758840767786516520>'
