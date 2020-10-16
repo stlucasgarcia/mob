@@ -27,3 +27,6 @@ build
 # Music Files
 *.webm
 *.m4a
+
+# System Files
+*.DS_Store
