@@ -1,4 +1,4 @@
-# Discord 
+# Discord Moodle Bot
 > A Discord multipurpose bot using Moodle API to get users data inside the Discord environment.
 
 [![Commits][Commits]][Commits]
@@ -56,7 +56,7 @@ Lucas Garcia – [@lsglucass](https://twitter.com/lsglucass) – lsglucas@pm.me
 
 Daniel Kauffmann – [@danieldowombo](https://twitter.com/danieldowombo) – danielvenna2@hotmail.com
 
-Matheus Chang - matheuschang@gmail.com  
+Matheus Chang  
 
 ## License  
 
