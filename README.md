@@ -4,9 +4,9 @@
 [![Commits][Commits]][Commits]
 [![Latest Release][release]][release]
 
-The project's main purpose is helping students to organize themselves through Moodle API built in an Discord Bot with more functionalities.
+The project's main purpose is helping students to organize themselves through Moodle API built in a Discord Bot with more functionalities.
 
-The bot's feature include:
+The bot's features include:
 
 * Music
 * Moodle
@@ -19,7 +19,7 @@ The bot's feature include:
 
 ## Usage example
 
-Inside the Discord, you can use the following commands to get Moodle assignments on a 14 days range:
+On Discord, you can use the following commands to get Moodle assignments on a 14 days range:
 
 ```
 <prep> get assignments
@@ -35,7 +35,7 @@ _For more examples and usage, please refer to the [Wiki][wiki]._
 
 ## Development setup
 
-For the firsts dependices, you need to install all requirements in ```requirements.txt``` and you must have PostgreSQL installed in your machine. For now, you need to create the ```DiscordDB``` in your default public Schema, in the future that will be changed.
+For the firsts dependencies, you need to install all requirements in ```requirements.txt``` and you must have PostgreSQL installed in your machine. For now, you need to create the ```DiscordDB``` in your default public Schema, in the future that will be changed.
 
 ```sh
 pip install -r requirements.txt  
@@ -60,11 +60,11 @@ Matheus Chang
 
 ## License  
 
-There is no License, hence you are not allowed to use, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software. The reprodution or distribution without written permission of the owners is prohibited. If you are interested in using this software, contact one of the creators.
+There is no license, hence you are not allowed to use, modify, merge, publish, distribute, sublicense, and/or sell copies of the software. The reproduction or distribution without written permission of the owners is prohibited. If you are interested in using this software, contact one of the creators.
 
 
 ## Contributing
-You are more than welcome to contribute to the project, if you feel like helping us, you must contact any of the project creators ~~(We will try not to bite)~~
+You are more than welcome to contribute to the project, if you feel like helping us, you must contact any of the project creators ~~(We will try not to bite you)~~
 
 
 [Commits]: https://img.shields.io/github/commit-activity/w/lsglucas/DiscordMackBot?style=flat-square
