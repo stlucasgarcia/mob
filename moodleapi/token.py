@@ -1,5 +1,5 @@
 """
-Token module responsable to get users token
+Token module responsible to get users token
 
 """
 
@@ -15,23 +15,23 @@ class Token:
     login to automatically encrypt and storage in tokens.csv file."""
 
     def __str__(self):
-        return 'Token object'
-
+        return "Token object"
 
     @staticmethod
     def create(*args, **kwargs):
         """Create function recive username and password for token creation and additionaly
         DiscordID from respective user to be added with the encrpyted token in database."""
 
-        SERVICE = 'login/'
-        CONNECTION = 'token.php?'
-        PLATFORM = '&service=moodle_mobile_app'
+        SERVICE = "login/"
+        CONNECTION = "token.php?"
+        PLATFORM = "&service=moodle_mobile_app"
 
         username = f'username={kwargs["username"]}'
         password = f'&password={kwargs["password"]}'
 
-        url = f'{BASEURL}{SERVICE}{CONNECTION}{username}{password}{PLATFORM}'
+        url = f"{BASEURL}{SERVICE}{CONNECTION}{username}{password}{PLATFORM}"
         data = post(url).json()
 
-
-        return Export('moodle_profile').to_db(data=[*args[0].values(), Cryptography().encrypt_message(data['token'])])
+        return Export("moodle_profile").to_db(
+            data=[*args[0].values(), Cryptography().encrypt_message(data["token"])]
+        )

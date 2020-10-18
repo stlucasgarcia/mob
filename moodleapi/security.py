@@ -18,17 +18,17 @@ class Cryptography:
 
         key = Fernet.generate_key()
 
-        with open(path.abspath('bot').split('bot')[0] + "encryption.key", 'wb') as key_file:
+        with open(
+            path.abspath("bot").split("bot")[0] + "encryption.key", "wb"
+        ) as key_file:
             key_file.write(key)
-
 
     @staticmethod
     def load_key():
         """Load de previous key created and storaged in 'encryption.key'
         in binary."""
 
-        return open(path.abspath('bot').split('bot')[0] + "encryption.key", 'rb').read()
-
+        return open(path.abspath("bot").split("bot")[0] + "encryption.key", "rb").read()
 
     @staticmethod
     def encrypt_message(message=None, *args, **kwargs):
@@ -42,11 +42,10 @@ class Cryptography:
             f = Fernet(key)
             encrypted_message = f.encrypt(encoded_message)
 
-            return encrypted_message.decode('utf-8')
+            return encrypted_message.decode("utf-8")
 
         else:
-            raise ValueError('Message not provided.')
-
+            raise ValueError("Message not provided.")
 
     @staticmethod
     def decrypt_message(encrypted_message=None):
@@ -62,4 +61,4 @@ class Cryptography:
             return decrypted_message
 
         else:
-            raise ValueError('Encrypted message not provided.')
+            raise ValueError("Encrypted message not provided.")

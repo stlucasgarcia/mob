@@ -12,8 +12,8 @@ def get_version(version=None):
     returned with get_last_version."""
 
     if not version:
-        return 'Invalid call from version.'
+        return "Invalid call from version."
 
     else:
-        sufix = 'FINAL' if version[2] == 'f' else 'ALPHA'
-        return f'MoodleAPI version {version[0]}.{version[1]}.{version[2]} {sufix} - last time checked: {dt.utcnow()}'
+        sufix = "FINAL" if version[2] == "f" else "ALPHA"
+        return f"MoodleAPI version {version[0]}.{version[1]}.{version[2]} {sufix} - last time checked: {dt.utcnow()}"

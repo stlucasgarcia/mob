@@ -14,28 +14,25 @@ class Request:
     def __init__(self, token):
         self.url = REQUEST + token
 
-
     def __str__(self):
-        return f'Request object for {self.url}'
-
+        return f"Request object for {self.url}"
 
     def get(self, *args, **kwargs):
-        """GET method recive the function according to func dict in settings.
-        All params need to be passed with respectives values well-informed in API"""
+        """GET method receive the function according to func dict in settings.
+        All params need to be passed with respectively values well-informed in API"""
 
         for key, value in kwargs.items():
-            self.url += f'&{key}={value}'
+            self.url += f"&{key}={value}"
 
         for elem in args:
             for key, value in elem.items():
-                self.url += f'&{key}={value}'
-
+                self.url += f"&{key}={value}"
 
         try:
             r = requests.get(self.url).json()
 
         except Exception as err:
-            return f'HTTP error occured: {err}. Check the parameters.'
+            return f"HTTP error occurred: {err}. Check the parameters."
 
         else:
             return r
