@@ -218,7 +218,7 @@ class reactionRole(Cog):
 
                 await menu.add_reaction(emoji)
 
-                # Stores guild_id, emoji_name, role_name, menu_id on the DicordDB
+                # Stores guild_id, emoji_name, role_name, menu_id on the DiscordDB
                 await self.client.pg_con.execute(
                     "INSERT INTO bot_roles (guild_id, emoji_name, role_name, menu_id) VALUES ($1, $2, $3, $4)",
                     guild_id,
