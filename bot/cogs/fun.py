@@ -1,4 +1,7 @@
 import discord
+import random
+import aiohttp
+import requests
 
 from discord.ext.commands import command, Cog
 from random import randint
@@ -97,6 +100,113 @@ class Fun(Cog):
             num = int(number)
 
             embed = main_messages_style(f"Your results were  `{randint(1,num)}`   🎲")
+            await ctx.send(embed=embed)
+
+            await ctx.message.add_reaction(next(positive_emojis_list))
+
+    @command(
+        name="hug", aliases=["Hug", "Hugs", "hugs", "Send_Hug", "send_hug", "send_hugs"]
+    )
+    async def hug(self, ctx, member: discord.Member = None):
+        if str(ctx.channel.id) in allowed_channels:
+            if member:
+                embed = main_messages_style(
+                    f"{ctx.author.display_name} has sent a warm and comforting hug to {member.display_name}!🤗😊🥰",
+                )
+
+            else:
+                embed = discord.Embed(color=defaultcolor)
+                image = random.choice(
+                    [
+                        (
+                            "https://media1.tenor.com/images/a1b6c954f41993410e4e2bf015e13fed/tenor.gif?itemid=4851066"
+                        ),
+                        (
+                            "https://media1.tenor.com/images/b67b70e46deb55aef87a7c744e460373/tenor.gif?itemid=16316679"
+                        ),
+                        (
+                            "https://media1.tenor.com/images/f77657e4f9d454de399b7c8acb1b8735/tenor.gif?itemid=7939501"
+                        ),
+                        (
+                            "https://media1.tenor.com/images/0753413c29948bab6e9013fb70f6dd16/tenor.gif?itemid=14248948"
+                        ),
+                        (
+                            "https://media1.tenor.com/images/c37397b49c003045c1bef4eb2999c739/tenor.gif?itemid=14712846"
+                        ),
+                        (
+                            "https://media1.tenor.com/images/9e421b5fe5de23d27b7d9d6135b2dcd1/tenor.gif?itemid=16936183"
+                        ),
+                    ]
+                )
+
+                embed.set_image(url=image)
+
+            await ctx.send(embed=embed)
+
+            await ctx.message.add_reaction(next(positive_emojis_list))
+
+    @command(name="cat", aliases=["Cat", "Kitty", "Kitten"])
+    async def cat(self, ctx):
+        if str(ctx.channel.id) in allowed_channels:
+
+            embed = discord.Embed(color=defaultcolor)
+
+            async with aiohttp.ClientSession() as session:
+                async with session.get("http://aws.random.cat/meow") as r:
+                    if r.status == 200:
+                        data = await r.json()
+                        session.close()
+
+            embed.set_image(url=data["file"])
+
+            await ctx.send(embed=embed)
+
+            await ctx.message.add_reaction(next(positive_emojis_list))
+
+    @command(
+        name="dog",
+        aliases=["Dog", "Doggo", "Doggy", "Puppy", "doggo", "doggy", "puppy"],
+    )
+    async def dog(self, ctx):
+        if str(ctx.channel.id) in allowed_channels:
+
+            embed = discord.Embed(color=defaultcolor)
+
+            isImage = False
+
+            while not isImage:
+                async with aiohttp.ClientSession() as session:
+                    async with session.get("https://random.dog/woof.json") as r:
+                        if r.status == 200:
+                            data = await r.json()
+                            session.close()
+
+                if data["url"].endswith(".mp4"):
+                    pass
+
+                else:
+                    isImage = True
+
+            embed.set_image(url=data["url"])
+
+            await ctx.send(embed=embed)
+
+            await ctx.message.add_reaction(next(positive_emojis_list))
+
+    @command(name="fox", aliases=["Fox", "Floof", "floof"])
+    async def fox(self, ctx):
+        if str(ctx.channel.id) in allowed_channels:
+
+            embed = discord.Embed(color=defaultcolor)
+
+            async with aiohttp.ClientSession() as session:
+                async with session.get("https://randomfox.ca/floof/") as r:
+                    if r.status == 200:
+                        data = await r.json()
+                        session.close()
+
+            embed.set_image(url=data["image"])
+
             await ctx.send(embed=embed)
 
             await ctx.message.add_reaction(next(positive_emojis_list))
