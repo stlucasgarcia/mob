@@ -16,7 +16,7 @@ The bot's features include:
 * General admin commands
 * Fun  
 
-## Usage example
+## 📱 Usage example
 
 On Discord, you can use the following commands to get Moodle assignments on a 14 days range:
 
@@ -32,7 +32,7 @@ On Discord, you can use the following commands to get Moodle assignments on a 14
 
 _For more examples and usage, please refer to the [Wiki][wiki]._
 
-## Development setup
+## 💻 Development setup
 
 For the firsts dependencies, you need to install all requirements in ```requirements.txt``` and you must have PostgreSQL installed in your machine. For now, you need to create the ```DiscordDB``` in your default public Schema, in the future that will be changed.
 
@@ -40,7 +40,7 @@ For the firsts dependencies, you need to install all requirements in ```requirem
 pip install -r requirements.txt  
 ```
   
-## Release History
+## ✅ Release History
 
 * 3.0.0
   * [Database Update](https://github.com/lsglucas/DiscordMackBot/releases/tag/3.0.0)
@@ -49,7 +49,7 @@ pip install -r requirements.txt
 * 1.0.0
   * [Project and initial version release](https://github.com/lsglucas/DiscordMackBot/releases/tag/1.0.0)
 
-## Meta
+## 👨🏻‍💻 Meta
 
 Lucas Garcia – [@lsglucass](https://twitter.com/lsglucass) – lsglucas@pm.me
 
@@ -57,11 +57,11 @@ Daniel Kauffmann – [@danieldowombo](https://twitter.com/danieldowombo) – dan
 
 Matheus Chang  
 
-## License  
+## 📑 License  
 
 There is no license, hence you are not allowed to use, modify, merge, publish, distribute, sublicense, and/or sell copies of the software. The reproduction or distribution without written permission of the owners is prohibited. If you are interested in using this software, contact one of the creators.
 
-## Contributing
+## 🤝🏻 Contributing
 
 You are more than welcome to contribute to the project, if you feel like helping us, you must contact any of the project creators ~~(We will try not to bite you)~~
 
