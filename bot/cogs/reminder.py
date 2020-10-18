@@ -10,6 +10,7 @@ from utilities import main_messages_style, check_command_style, happy_faces, neg
 from utilities_moodle import data_dict, moodle_color, loop_channel
 
 from datetime import datetime as dt
+from typing import Tuple
 
 
 class Reminder(Cog):
@@ -164,19 +165,9 @@ class Reminder(Cog):
             "SELECT deadline, deadline_date, subject_name FROM bot_reminder WHERE discord_id=$1 AND guild_id=$2",
             int(ctx.author.id), int(ctx.guild.id))
 
-        dates, times, subs = [], [], []
-        for elem in data:
-            if len(elem[0]) > 5:
-                dates.append((FULL_MONTHS[elem[0].split()[-1]], int(elem[0].split()[-2])))
-            elif len(elem[0]) == 5:
-                dates.append((int(elem[0].split('/')[0]), int(elem[0].split('/')[1])))
+        fdata = [ver(elem) for elem in data]
 
-            times.append((int(elem[1][:2]), int(elem[1][3:5])))
-            subs.append(elem[2])
-
-        dat = []
-        for i in range(len(dates)):
-            dat.append(dt(2020, dates[i][0], int(dates[i][1]), times[i][0], times[i][1]))
+        dat = [dt(2020, j, k, l, m) for (j, k, l, m, n) in fdata]
 
         da = dt.today()
         mon, d, h, m = da.month, da.day, da.hour, da.minute
@@ -184,7 +175,7 @@ class Reminder(Cog):
 
         date_min = min(dat, key=lambda y: abs(y - date))
         values = [date_min.month, date_min.day, date_min.hour, date_min.minute]
-        subject = subs[dat.index(date_min)]
+        subject = fdata[dat.index(date_min)][-1]
 
         self.reminderLoop.restart(ctx, int(ctx.author.id), int(ctx.guild.id), values, subject)
 
@@ -220,6 +211,16 @@ class Reminder(Cog):
                     await self.client.pg_con.fetch(
                         "DELETE FROM bot_reminder WHERE discord_id=$1 AND guild_id=$2 AND subject_name=$3",
                         discord_id, guild_id, sub)
+
+
+def ver(elem: Tuple) -> Tuple:
+    e1 = elem[1].split(':')
+    if len(elem[0]) > 5:
+        e = elem[0].split()
+        return FULL_MONTHS[e[-1]], int(e[-2]), int(e1[0]), int(e1[1]), elem[2]
+    elif len(elem[0]) == 5:
+        e = elem[0].split('/')
+        return int(e[0]), int(e[1]), int(e1[0]), int(e1[1]), elem[2]
 
 
 def setup(client):
