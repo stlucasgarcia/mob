@@ -158,7 +158,7 @@ class General(Cog):
 
                     await ctx.message.add_reaction(next(negative_emojis_list))
 
-    # Delete the previous line for x amout of times
+    # Delete the previous line for x amount of times
     @command(
         name="clear",
         aliases=["purge", "Clear", "CLEAR", "Delete", "delete", "del", "DELETE"],
@@ -169,7 +169,7 @@ class General(Cog):
 
         await ctx.channel.purge(limit=amount)
 
-        embed = main_messages_style(f"The bot deleted {amount} messages sucessfully")
+        embed = main_messages_style(f"The bot deleted {amount} messages successfully")
         await ctx.send(embed=embed)
 
         await asyncio.sleep(2)

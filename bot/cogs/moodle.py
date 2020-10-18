@@ -261,7 +261,7 @@ class Moodle(Cog):
                         params, username=username.content, password=password.content
                     )
 
-                    embed = main_messages_style("Your Token was created sucessfully")
+                    embed = main_messages_style("Your Token was created successfully")
                     await ctx.author.send(embed=embed)
                     await ctx.message.add_reaction(next(positive_emojis_list))
 

@@ -1,8 +1,8 @@
-from discord.ext.commands import command, Cog
 from random import randint
 
-from utilities import main_messages_style, positive_emojis_list
+from discord.ext.commands import Cog, command
 from settings import allowed_channels
+from utilities import main_messages_style, positive_emojis_list
 
 
 class General2(Cog):

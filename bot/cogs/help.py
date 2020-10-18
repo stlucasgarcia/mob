@@ -42,7 +42,7 @@ class Help(Cog):
                             "get",
                             "Get all events, assignments or classes informations from Moodle",
                         ],
-                        ["check", "Recive privetly more information about assignments"],
+                        ["check", "Receive privately more information about assignments"],
                         [
                             "getToken",
                             "Create or get your MoodleAPI Token decrypted. The token is used to check your assignments status on Moodle",
@@ -75,7 +75,7 @@ class Help(Cog):
                     ],
                     [
                         "Fun/Games",
-                        ["cipher", "Encypt an message with Caesar Cipher"],
+                        ["cipher", "Encrypt an message with Caesar Cipher"],
                         ["roll", "Roll a dice"],
                         [
                             "avatar",

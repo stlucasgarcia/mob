@@ -94,7 +94,7 @@ class Profile(Cog):
             xp_nextlvl = round((4 * (user_level ** 3)) / 5)
 
             if not user:
-                await ctx.send("Member doens't have a level")
+                await ctx.send("Member doesn't have a level")
 
             else:
                 embed = discord.Embed(

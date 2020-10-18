@@ -29,7 +29,7 @@ async def check_channel():
     )
 
     client.allowed_channels = [item for i in client.channels_data for item in i]
-    
+
     for i in client.allowed_channels:
         allowed_channels.append(i)
 
@@ -61,7 +61,7 @@ for filename in os.listdir("./cogs"):
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
         embed = main_messages_style(
-            "Comando inválido", "Digite mack help para ver os comandos disponiveis"
+            "Invalid command", f"Type {Prefix} help to see the available commands"
         )
         await ctx.send(embed=embed)
 
