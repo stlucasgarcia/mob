@@ -1,9 +1,10 @@
 import discord
+
 from discord.ext.commands import command, Cog
-from utilities import defaultcolor, main_messages_style, positive_emojis_list
 from random import randint
+
 from settings import allowed_channels
-from random import randint
+from utilities import defaultcolor, main_messages_style, positive_emojis_list
 
 
 class Fun(Cog):

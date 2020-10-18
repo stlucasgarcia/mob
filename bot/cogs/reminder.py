@@ -1,12 +1,12 @@
-import discord, asyncio
+import discord
+import asyncio
 
 from moodleapi.data.export import Export
 
 from discord.ext import tasks
 from discord.ext.commands import command, Cog
 
-from utilities import main_messages_style, check_command_style, happy_faces, negative_emojis_list, books_list, \
-    positive_emojis_list, FULL_MONTHS
+from utilities import main_messages_style, check_command_style, happy_faces, negative_emojis_list, books_list, positive_emojis_list, FULL_MONTHS
 from utilities_moodle import data_dict, moodle_color, loop_channel
 
 from datetime import datetime as dt

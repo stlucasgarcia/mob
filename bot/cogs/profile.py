@@ -1,5 +1,7 @@
 import discord
+
 from discord.ext.commands import Cog, command
+
 from settings import allowed_channels
 from utilities import main_messages_style, positive_emojis_list
 

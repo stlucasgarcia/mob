@@ -1,4 +1,6 @@
-import os, asyncpg, asyncio
+import os
+import asyncpg
+import asyncio
 
 from discord.ext import commands
 

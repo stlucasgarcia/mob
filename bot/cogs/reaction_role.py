@@ -1,4 +1,7 @@
-import discord, asyncio, re
+import discord
+import asyncio
+import re
+
 from discord.ext.commands import command, Cog
 from utilities import main_messages_style, footer, positive_emojis_list, defaultcolor, negative_emojis_list
 

@@ -1,4 +1,6 @@
-import discord, asyncio, time
+import discord
+import asyncio
+import time
 
 from typing import Optional
 
@@ -154,7 +156,7 @@ class General(Cog):
                 before = time.monotonic()
 
                 embed = main_messages_style("Checking ping...")
-                msg = await ctx.channel.send(embed=embed)
+                await ctx.channel.send(embed=embed)
 
                 ping = (time.monotonic() - before) * 1000
                 await ctx.channel.purge(limit=1)

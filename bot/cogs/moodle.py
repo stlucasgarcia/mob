@@ -1,4 +1,5 @@
 import asyncio
+
 from moodleapi.security import Cryptography
 from moodleapi.token import Token
 from moodleapi.data.calendar import Calendar

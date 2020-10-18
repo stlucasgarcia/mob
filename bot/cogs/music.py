@@ -1,4 +1,7 @@
-import youtube_dl, discord, asyncio, os, datetime
+import youtube_dl
+import discord
+import asyncio
+import os
 
 from discord.ext import tasks
 from discord.ext.commands import Cog, command, CommandError, cooldown
@@ -6,7 +9,7 @@ from discord.voice_client import VoiceClient
 from discord.utils import get
 
 
-from utilities import main_messages_style, positive_emojis_list, negative_emojis_list, defaultcolor, footer, formatTime
+from utilities import main_messages_style, positive_emojis_list, defaultcolor, footer, formatTime
 from settings import allowed_channels, queue
 
 
@@ -139,9 +142,7 @@ class Music(Cog):
         #TODO Verification for *, url
         
         if str(ctx.channel.id) in allowed_channels:
-
-            channel = ctx.message.author.voice.channel
-
+            
             async with ctx.typing():
                 player = await YTDLSource.from_url(url, loop=self.client.loop)
 
@@ -182,6 +183,7 @@ class Music(Cog):
             await ctx.send(embed=embed)
 
             await ctx.message.add_reaction(next(positive_emojis_list))
+
 
     @play.before_invoke
     async def check_ifvoiceChannel(self, ctx):
