@@ -16,14 +16,20 @@ client = commands.Bot(command_prefix=Prefix, help_command=None)
 
 # Creates a connection with the Discord Database
 async def create_db_pool():
-    client.pg_con = await asyncpg.create_pool(database="DiscordDB", user=DB_Username, password=DB_Password)
+    client.pg_con = await asyncpg.create_pool(
+        database="DiscordDB", user=DB_Username, password=DB_Password
+    )
 
 
 # Get allowed_channels from the Database
 async def check_channel():
     guild_id = "748168924465594419"
-    client.channels_data = await client.pg_con.fetch("SELECT allowed_channels FROM bot_data WHERE guild_id = $1", guild_id)
+    client.channels_data = await client.pg_con.fetch(
+        "SELECT allowed_channels FROM bot_data WHERE guild_id = $1", guild_id
+    )
+
     client.allowed_channels = [item for i in client.channels_data for item in i]
+    
     for i in client.allowed_channels:
         allowed_channels.append(i)
 
@@ -41,9 +47,9 @@ async def unload(ctx, extension):
 
 @client.command()
 async def reload(ctx, extension):
-    client.unload_extension(f'cogs.{extension}')
-    client.load_extension(f'cogs.{extension}')
-    print(f'{extension.capitalize()} successfully re-loaded')
+    client.unload_extension(f"cogs.{extension}")
+    client.load_extension(f"cogs.{extension}")
+    print(f"{extension.capitalize()} successfully re-loaded")
 
 
 for filename in os.listdir("./cogs"):
@@ -54,7 +60,9 @@ for filename in os.listdir("./cogs"):
 @client.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
-        embed = main_messages_style("Comando inválido", "Digite mack help para ver os comandos disponiveis")
+        embed = main_messages_style(
+            "Comando inválido", "Digite mack help para ver os comandos disponiveis"
+        )
         await ctx.send(embed=embed)
 
 
