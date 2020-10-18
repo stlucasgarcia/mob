@@ -105,7 +105,7 @@ def help_message(contents):
         name, value = contents[row][0], ""
 
         for elem in contents[row][1:]:
-            value += f'[`{elem[0]}`{trans if row == 0 and contents[row].index(elem) == 3 else ""}]({url} "{elem[1]}")  '
+            value += f'[`{elem[0]}`{invisible_emoji if row == 0 and contents[row].index(elem) == 3 else ""}]({url} "{elem[1]}")  '
 
         embed.add_field(name=name, value=value, inline=True)
 
