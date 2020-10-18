@@ -81,6 +81,7 @@ class Fun(Cog):
             num = int(number)
 
             await ctx.message.add_reaction(next(positive_emojis_list))
+
             embed = main_messages_style(f"Your results were  `{randint(1,num)}`   🎲")
             await ctx.send(embed=embed)
 

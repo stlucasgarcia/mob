@@ -347,6 +347,7 @@ class Moodle(Cog):
                     embed = check_command_style(
                         assignmentsdata, str(amount), color, None
                     )[0]
+
                     await asyncio.sleep(0.5)
                     await self.client.get_channel(loop_channel).send(embed=embed)
 
@@ -355,6 +356,7 @@ class Moodle(Cog):
                         f"There were a total of {amount} events {next(books_list)} see you in 8 hours {next(happy_faces)} ",
                         "Note: I am only showing events of 14 days ahead",
                     )
+                    
                     await asyncio.sleep(0.5)
                     await self.client.get_channel(loop_channel).send(embed=embed)
 
@@ -363,6 +365,7 @@ class Moodle(Cog):
                         "There weren't any scheduled events 😑😮",
                         "Note: This is really weird, be careful 🤨😶",
                     )
+                    
                     await asyncio.sleep(0.5)
                     await self.client.get_channel(loop_channel).send(embed=embed)
 

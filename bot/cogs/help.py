@@ -42,7 +42,10 @@ class Help(Cog):
                             "get",
                             "Get all events, assignments or classes informations from Moodle",
                         ],
-                        ["check", "Receive privately more information about assignments"],
+                        [
+                            "check",
+                            "Receive privately more information about assignments",
+                        ],
                         [
                             "getToken",
                             "Create or get your MoodleAPI Token decrypted. The token is used to check your assignments status on Moodle",

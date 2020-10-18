@@ -19,7 +19,6 @@ from utilities import (
 )
 
 
-maincolor = None
 # General use bot commands
 class General(Cog):
     def __init__(self, client):

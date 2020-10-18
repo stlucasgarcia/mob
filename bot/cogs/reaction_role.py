@@ -26,26 +26,33 @@ class reactionRole(Cog):
         ids_data = await self.client.pg_con.fetch(
             "SELECT menu_id FROM bot_roles WHERE guild_id = $1", guild_id
         )
+
         ids_list = [item for i in ids_data for item in i]
 
         if str(payload.message_id) in ids_list:
 
             guild = self.client.get_guild(payload.guild_id)
+
             emojis_data = await self.client.pg_con.fetch(
                 "SELECT emoji_name FROM bot_roles WHERE guild_id = $1", guild_id
             )
+
             emojis_list = [item for i in emojis_data for item in i]
 
             role_data = await self.client.pg_con.fetch(
                 "SELECT role_name FROM bot_roles WHERE guild_id = $1", guild_id
             )
+
             role_list = [item for i in role_data for item in i]
 
             for index in range(len(emojis_list)):
                 if ":" in emojis_list[index]:
                     emoji = emojis_list[index]
+
                     pattern = ":(.*?):"
+
                     emoji_name_db = re.search(pattern, emoji).group(1)
+
                 else:
                     emoji_name_db = emojis_list[index]
 
@@ -67,6 +74,7 @@ class reactionRole(Cog):
         ids_data = await self.client.pg_con.fetch(
             "SELECT menu_id FROM bot_roles WHERE guild_id = $1", guild_id
         )
+
         ids_list = [item for i in ids_data for item in i]
 
         if str(payload.message_id) in ids_list:
@@ -75,11 +83,13 @@ class reactionRole(Cog):
             emojis_data = await self.client.pg_con.fetch(
                 "SELECT emoji_name FROM bot_roles WHERE guild_id = $1", guild_id
             )
+
             emojis_list = [item for i in emojis_data for item in i]
 
             role_data = await self.client.pg_con.fetch(
                 "SELECT role_name FROM bot_roles WHERE guild_id = $1", guild_id
             )
+
             role_list = [item for i in role_data for item in i]
 
             for index in range(len(emojis_list)):
@@ -125,6 +135,7 @@ class reactionRole(Cog):
                 "Reaction Role Tool Failed",
                 "Type the command again with the amount of roles that you want to add to the menu, the messages will be deleted on 5 seconds",
             )
+
             await ctx.send(embed=embed)
 
             await asyncio.sleep(5)
@@ -141,6 +152,7 @@ class reactionRole(Cog):
             embed = main_messages_style(
                 "Reaction Role Tool", "Type the Title for the embed message"
             )
+
             await ctx.send(embed=embed)
 
             title = await self.client.wait_for("message")
@@ -150,6 +162,7 @@ class reactionRole(Cog):
             embed = main_messages_style(
                 "Reaction Role Tool", "Type the Description/Category for the roles"
             )
+
             await ctx.send(embed=embed)
 
             main_description = await self.client.wait_for("message")
@@ -170,6 +183,7 @@ class reactionRole(Cog):
                 embed = main_messages_style(
                     "Reaction Role Tool", "Type the Emoji for the Role"
                 )
+
                 await ctx.send(embed=embed)
 
                 Emoji = await self.client.wait_for("message")
@@ -179,6 +193,7 @@ class reactionRole(Cog):
                 embed = main_messages_style(
                     "Reaction Role Tool", "Type the roles Description"
                 )
+
                 await ctx.send(embed=embed)
 
                 Description = await self.client.wait_for("message")
@@ -198,6 +213,7 @@ class reactionRole(Cog):
                 description=main_description.content,
                 color=defaultcolor,
             )
+
             embed.set_author(name="Reaction Role")
 
             for item in range(int(amount)):

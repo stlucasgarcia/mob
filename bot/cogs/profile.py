@@ -100,6 +100,7 @@ class Profile(Cog):
                 embed = discord.Embed(
                     color=member.color, timestamp=ctx.message.created_at
                 )
+
                 embed.set_thumbnail(url=member.avatar_url)
 
                 embed.set_author(name=f"Profile - {member.display_name}")
@@ -108,6 +109,7 @@ class Profile(Cog):
                 embed.add_field(
                     name="Total XP", value=f"`{user_experience}/{xp_nextlvl}`"
                 )
+                
                 embed.add_field(
                     name=f"Messages Needed for level {user_level + 1}",
                     value=f"`{xp_nextlvl - user_experience}`",

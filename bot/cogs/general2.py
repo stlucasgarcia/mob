@@ -16,7 +16,8 @@ class General2(Cog):
             "CIPHER",
             "Cipher",
             "Caesar_Cipher",
-            "CaesarCipher, caesar_cipher",
+            "CaesarCipher",
+            "caesar_cipher",
             "caesar_c",
         ],
     )

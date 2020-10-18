@@ -7,14 +7,16 @@ positive_emojis_list = cycle(["👍", "🆗", "🤙", "👌", "👊", "🆒", "�
 negative_emojis_list = cycle(["🚫", "🛑", "❌", "⛔"])
 status_list = cycle(
     [
-        "Estudando...",
-        "Navegando no Moodle",
-        "Descobrindo tarefas",
-        "Dominando o mundo",
-        "Reduzindo as suas faltas",
-        "Calculando as suas médias",
+        "Studying...",
+        "Mack Help",
+        "Finding events",
+        "Reducing your grades",
+        "Learning new features",
+        "Calculating your absences",
+        "Learning new libraries",
     ]
 )
+
 books_list = cycle(["📚", "📔", "📕", "📖", "📗", "📘", "📙", "📑", "🧾", "📅", "📆", "🗓"])
 happy_faces = cycle(["😀", "😁", "😃", "😄", "😅", "😉", "😊", "😋", "😎", "🙂", "🤗", "😛"])
 
