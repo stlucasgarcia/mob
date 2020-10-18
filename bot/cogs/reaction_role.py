@@ -138,7 +138,7 @@ class reactionRole(Cog):
 
             await ctx.send(embed=embed)
 
-            await asyncio.sleep(5)
+            await asyncio.sleep(10)
 
             await ctx.channel.purge(limit=2)
 

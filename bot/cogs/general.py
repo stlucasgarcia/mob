@@ -169,11 +169,7 @@ class General(Cog):
         await ctx.channel.purge(limit=amount)
 
         embed = main_messages_style(f"The bot deleted {amount} messages successfully")
-        await ctx.send(embed=embed)
-
-        await asyncio.sleep(2)
-
-        await ctx.channel.purge(limit=1)
+        await ctx.send(embed=embed, delete_after=2)
 
     # Print an embed message on the chat
     @command(

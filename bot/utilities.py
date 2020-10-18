@@ -29,7 +29,7 @@ thumbnail_url = (
 
 url = "https://eadmoodle.mackenzie.br/"
 
-trans = "\n<:name:758840767786516520>"
+invisible_emoji = "\n<:name:758840767786516520>"
 
 defaultcolor = 0x9F000C
 

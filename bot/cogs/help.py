@@ -30,10 +30,9 @@ class Help(Cog):
         embed.add_field(name="Command description", value=command.help)
         await ctx.send(embed=embed)
 
-    @command(name="help")
+    @command(name="help", aliases=["show_help", "HELP", "Help", "h"])
     async def show_help(self, ctx, cmd: Optional[str]):
-        channel_id = str(ctx.channel.id)
-        if channel_id in allowed_channels:
+        if str(ctx.channel.id) in allowed_channels:
             if not cmd:
                 contents = [
                     [
