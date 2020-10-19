@@ -2,7 +2,6 @@ import discord
 
 from discord.ext.commands import Cog, command
 
-from settings import allowed_channels
 from utilities import main_messages_style, positive_emojis_list
 
 
@@ -73,44 +72,39 @@ class Profile(Cog):
 
         member_id = str(member.id)
 
-        if str(ctx.channel.id) in allowed_channels:
-            await ctx.message.add_reaction(next(positive_emojis_list))
+        await ctx.message.add_reaction(next(positive_emojis_list))
 
-            user = await self.client.pg_con.fetch(
-                "SELECT * FROM bot_users WHERE user_id = $1",
-                member_id,
+        user = await self.client.pg_con.fetch(
+            "SELECT * FROM bot_users WHERE user_id = $1",
+            member_id,
+        )
+
+        user_level = user[0]["level"]
+        user_experience = user[0]["experience"]
+        xp_nextlvl = round((4 * (user_level ** 3)) / 5)
+
+        if not user:
+            await ctx.send("Member doesn't have a level")
+
+        else:
+            embed = discord.Embed(color=member.color, timestamp=ctx.message.created_at)
+
+            embed.set_thumbnail(url=member.avatar_url)
+
+            embed.set_author(name=f"Profile - {member.display_name}")
+
+            embed.add_field(name="Level", value=f"`{user_level}`")
+            embed.add_field(name="Total XP", value=f"`{user_experience}/{xp_nextlvl}`")
+
+            embed.add_field(
+                name=f"Messages Needed for level {user_level + 1}",
+                value=f"`{xp_nextlvl - user_experience}`",
+                inline=False,
             )
 
-            user_level = user[0]["level"]
-            user_experience = user[0]["experience"]
-            xp_nextlvl = round((4 * (user_level ** 3)) / 5)
+            embed.set_footer(text=f"{member}", icon_url=member.avatar_url)
 
-            if not user:
-                await ctx.send("Member doesn't have a level")
-
-            else:
-                embed = discord.Embed(
-                    color=member.color, timestamp=ctx.message.created_at
-                )
-
-                embed.set_thumbnail(url=member.avatar_url)
-
-                embed.set_author(name=f"Profile - {member.display_name}")
-
-                embed.add_field(name="Level", value=f"`{user_level}`")
-                embed.add_field(
-                    name="Total XP", value=f"`{user_experience}/{xp_nextlvl}`"
-                )
-
-                embed.add_field(
-                    name=f"Messages Needed for level {user_level + 1}",
-                    value=f"`{xp_nextlvl - user_experience}`",
-                    inline=False,
-                )
-
-                embed.set_footer(text=f"{member}", icon_url=member.avatar_url)
-
-                await ctx.send(embed=embed)
+            await ctx.send(embed=embed)
 
 
 def setup(client):

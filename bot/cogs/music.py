@@ -16,7 +16,7 @@ from utilities import (
     footer,
     formatTime,
 )
-from settings import allowed_channels, queue
+from settings import queue
 
 
 youtube_dl.utils.bug_reports_message = lambda: ""
@@ -89,123 +89,105 @@ class Music(Cog):
     async def join(self, ctx):
         """Join command is used to make the bot join to the voice chat which you're in"""
 
-        if str(ctx.channel.id) in allowed_channels:
+        channel = ctx.message.author.voice.channel
 
-            channel = ctx.message.author.voice.channel
+        if not channel:
+            embed = main_messages_style(
+                f"{ctx.author.capitalize()} is not connected to a voice channel"
+            )
+            await ctx.send(embed=embed)
+            return
 
-            if not channel:
-                embed = main_messages_style(
-                    f"{ctx.author.capitalize()} is not connected to a voice channel"
-                )
-                await ctx.send(embed=embed)
-                return
+        voice = get(self.client.voice_clients, guild=ctx.guild)
 
-            voice = get(self.client.voice_clients, guild=ctx.guild)
+        if voice and voice.is_connected():
+            await voice.disconnect()
+            voice = await channel.connect()
 
-            if voice and voice.is_connected():
-                await voice.disconnect()
-                voice = await channel.connect()
+            embed = main_messages_style(f"The bot moved to `{channel}`")
+            await ctx.send(embed=embed)
 
-                embed = main_messages_style(f"The bot moved to `{channel}`")
-                await ctx.send(embed=embed)
+        else:
+            voice = await channel.connect()
 
-            else:
-                voice = await channel.connect()
+            embed = main_messages_style(f"The bot is now connected to `{channel}`")
+            await ctx.send(embed=embed)
 
-                embed = main_messages_style(f"The bot is now connected to `{channel}`")
-                await ctx.send(embed=embed)
-
-            await ctx.message.add_reaction(next(positive_emojis_list))
+        await ctx.message.add_reaction(next(positive_emojis_list))
 
     @command(name="leave", aliases=["LEAVE", "Leave", "disconnect", "Disconnect"])
     async def leave(self, ctx):
         """Leave command is used to make the bot disconnect from any voice chat"""
 
-        if str(ctx.channel.id) in allowed_channels:
+        channel = ctx.message.author.voice.channel
 
-            channel = ctx.message.author.voice.channel
+        voice = get(self.client.voice_clients, guild=ctx.guild)
 
-            voice = get(self.client.voice_clients, guild=ctx.guild)
+        if voice and voice.is_connected():
 
-            if voice and voice.is_connected():
+            await voice.disconnect()
 
-                await voice.disconnect()
+            embed = main_messages_style(f"The bot is now disconnected from `{channel}`")
+            await ctx.send(embed=embed)
 
-                embed = main_messages_style(
-                    f"The bot is now disconnected from `{channel}`"
-                )
-                await ctx.send(embed=embed)
+        else:
+            embed = main_messages_style("The bot is not connected to any voice channel")
+            await ctx.send(embed=embed)
 
-            else:
-                embed = main_messages_style(
-                    "The bot is not connected to any voice channel"
-                )
-                await ctx.send(embed=embed)
-
-            await ctx.message.add_reaction(next(positive_emojis_list))
+        await ctx.message.add_reaction(next(positive_emojis_list))
 
     @command(name="play", aliases=["Play", "PLAY"])
     async def play(self, ctx, *, url):
         """Makes the bot play a song by youtube link/search"""
         # TODO Verification for *, url
 
-        if str(ctx.channel.id) in allowed_channels:
+        async with ctx.typing():
+            player = await YTDLSource.from_url(url, loop=self.client.loop)
 
-            async with ctx.typing():
-                player = await YTDLSource.from_url(url, loop=self.client.loop)
+            ctx.voice_client.play(
+                player, after=lambda e: print("Player error: %s" % e) if e else None
+            )
 
-                ctx.voice_client.play(
-                    player, after=lambda e: print("Player error: %s" % e) if e else None
-                )
+            await ctx.message.add_reaction(next(positive_emojis_list))
 
-                await ctx.message.add_reaction(next(positive_emojis_list))
+            embed = discord.Embed(title=player.title, color=defaultcolor)
+            embed.set_author(name="Now playing:")
+            embed.add_field(name="Link", value=f"{player.webpage_url}", inline=False)
+            embed.add_field(
+                name="Duration",
+                value=f"`{formatTime((player.duration))}`",
+                inline=True,
+            )
+            embed.add_field(
+                name="Views",
+                value="`{:,}`".format(int(player.view_count)),
+                inline=True,
+            )
+            embed.add_field(name="Channel", value=f"`{player.uploader}`", inline=True)
 
-                embed = discord.Embed(title=player.title, color=defaultcolor)
-                embed.set_author(name="Now playing:")
-                embed.add_field(
-                    name="Link", value=f"{player.webpage_url}", inline=False
-                )
-                embed.add_field(
-                    name="Duration",
-                    value=f"`{formatTime((player.duration))}`",
-                    inline=True,
-                )
-                embed.add_field(
-                    name="Views",
-                    value="`{:,}`".format(int(player.view_count)),
-                    inline=True,
-                )
-                embed.add_field(
-                    name="Channel", value=f"`{player.uploader}`", inline=True
-                )
+            embed.set_image(url=player.thumbnail)
+            embed.set_footer(text=footer)
 
-                embed.set_image(url=player.thumbnail)
-                embed.set_footer(text=footer)
+            pMessage = await ctx.send(embed=embed)
 
-                pMessage = await ctx.send(embed=embed)
-
-                await pMessage.add_reaction("⏪")
-                await pMessage.add_reaction("▶")
-                await pMessage.add_reaction("⏩")
+            await pMessage.add_reaction("⏪")
+            await pMessage.add_reaction("▶")
+            await pMessage.add_reaction("⏩")
 
     @command(name="volume", aliases=["vol, Volume", "Vol"])
     async def volume(self, ctx, volume: int):
         """Changes the player's volume"""
 
-        if str(ctx.channel.id) in allowed_channels:
+        if ctx.voice_client is None:
+            embed = main_messages_style("The bot is not connected to a voice channel")
+            return await ctx.send(embed=embed)
 
-            if ctx.voice_client is None:
-                embed = main_messages_style(
-                    "The bot is not connected to a voice channel"
-                )
-                return await ctx.send(embed=embed)
+        ctx.voice_client.source.volume = volume / 100
 
-            ctx.voice_client.source.volume = volume / 100
+        embed = main_messages_style(f"Changed volume to `{volume}`")
+        await ctx.send(embed=embed)
 
-            embed = main_messages_style(f"Changed volume to `{volume}`")
-            await ctx.send(embed=embed)
-
-            await ctx.message.add_reaction(next(positive_emojis_list))
+        await ctx.message.add_reaction(next(positive_emojis_list))
 
     @play.before_invoke
     async def check_ifvoiceChannel(self, ctx):

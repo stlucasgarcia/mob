@@ -7,7 +7,7 @@ from moodleapi.data.calendar import Calendar
 
 from discord.ext import tasks
 from discord.ext.commands import command, Cog, cooldown
-from settings import allowed_channels, getData_Counter
+from settings import getData_Counter
 from utilities import (
     main_messages_style,
     check_command_style,
@@ -34,159 +34,152 @@ class Moodle(Cog):
         guild_id = int(ctx.guild.id)
 
         # Check if the bot has permission to send messages on the specified channel, used in most commands
-        if str(ctx.channel.id) in allowed_channels:
-            option = option.lower()
+        option = option.lower()
 
-            # Get data for what the user desires
-            if option == "assignments":
-                database = await self.client.pg_con.fetch(
-                    "SELECT * FROM moodle_events WHERE subject_type = $1 AND guild_id = $2",
-                    "Tarefa para entregar via Moodle",
-                    guild_id,
-                )
-            elif option == "classes":
-                database = await self.client.pg_con.fetch(
-                    "SELECT * FROM moodle_events WHERE subject_type = $1 AND guild_id = $2",
-                    "Aula ao vivo - BigBlueButton",
-                    guild_id,
-                )
-            elif option == "events":
-                database = await self.client.pg_con.fetch(
-                    "SELECT * FROM moodle_events WHERE guild_id = $1", guild_id
-                )
+        # Get data for what the user desires
+        if option == "assignments":
+            database = await self.client.pg_con.fetch(
+                "SELECT * FROM moodle_events WHERE subject_type = $1 AND guild_id = $2",
+                "Tarefa para entregar via Moodle",
+                guild_id,
+            )
+        elif option == "classes":
+            database = await self.client.pg_con.fetch(
+                "SELECT * FROM moodle_events WHERE subject_type = $1 AND guild_id = $2",
+                "Aula ao vivo - BigBlueButton",
+                guild_id,
+            )
+        elif option == "events":
+            database = await self.client.pg_con.fetch(
+                "SELECT * FROM moodle_events WHERE guild_id = $1", guild_id
+            )
 
-            else:
-                embed = main_messages_style(
-                    "Command **get** plus one of the following options will get assignments, classes or events from your Moodle calendar ",
-                    "Option not available, you must use Assignments, Classes or Events ",
-                    " 😕",
-                )
-                await ctx.message.add_reaction(next(negative_emojis_list))
+        else:
+            embed = main_messages_style(
+                "Command **get** plus one of the following options will get assignments, classes or events from your Moodle calendar ",
+                "Option not available, you must use Assignments, Classes or Events ",
+                " 😕",
+            )
+            await ctx.message.add_reaction(next(negative_emojis_list))
+            await ctx.send(embed=embed)
+            isBool = False
+
+        amount = 0  # Amount of data
+        if isBool and database:
+            embed = main_messages_style(
+                f"Checking {option.lower()} {next(books_list)} ..."
+            )
+            await ctx.send(embed=embed)
+
+            await ctx.message.add_reaction(next(positive_emojis_list))
+
+            for index in range(len(database)):
+                assignmentsdata = data_dict(database[index])
+
+                # Styling the message for better user experience
+                color = moodle_color(index, assignmentsdata)
+
+                amount += 1
+
+                embed = check_command_style(assignmentsdata, str(amount), color)[0]
                 await ctx.send(embed=embed)
-                isBool = False
+                await asyncio.sleep(0.5)
 
-            amount = 0  # Amount of data
-            if isBool and database:
+            if amount > 0:
                 embed = main_messages_style(
-                    f"Checking {option.lower()} {next(books_list)} ..."
-                )
-                await ctx.send(embed=embed)
-
-                await ctx.message.add_reaction(next(positive_emojis_list))
-
-                for index in range(len(database)):
-                    assignmentsdata = data_dict(database[index])
-
-                    # Styling the message for better user experience
-                    color = moodle_color(index, assignmentsdata)
-
-                    amount += 1
-
-                    embed = check_command_style(assignmentsdata, str(amount), color)[0]
-                    await ctx.send(embed=embed)
-                    await asyncio.sleep(0.5)
-
-                if amount > 0:
-                    embed = main_messages_style(
-                        f"There was a total of {amount} {option} {next(books_list)}",
-                        f"Note: I am only showing {option} of 14 days ahead ",
-                    )
-                    await ctx.send(embed=embed)
-
-                elif amount > 1:
-                    embed = main_messages_style(
-                        f"There were a total of {amount} {option} {next(books_list)}",
-                        f"Note: I am only showing {option} of 14 days ahead ",
-                    )
-                    await ctx.send(embed=embed)
-
-            elif isBool:
-                embed = main_messages_style(
-                    f"There wasn't any scheduled {option} 😑 😮",
-                    "Note: This is really weird, be careful 🤨 😶",
+                    f"There was a total of {amount} {option} {next(books_list)}",
+                    f"Note: I am only showing {option} of 14 days ahead ",
                 )
                 await ctx.send(embed=embed)
+
+            elif amount > 1:
+                embed = main_messages_style(
+                    f"There were a total of {amount} {option} {next(books_list)}",
+                    f"Note: I am only showing {option} of 14 days ahead ",
+                )
+                await ctx.send(embed=embed)
+
+        elif isBool:
+            embed = main_messages_style(
+                f"There wasn't any scheduled {option} 😑 😮",
+                "Note: This is really weird, be careful 🤨 😶",
+            )
+            await ctx.send(embed=embed)
 
     # Command to check if the assignments were done at the Moodle website
     @command(name="check", aliases=["Check", "CHECK"])
     async def check(self, ctx):
         """Check command will send you a direct message with all your personal assignments status using the moodle API"""
 
-        if str(ctx.channel.id) in allowed_channels:
+        user_id = int(ctx.author.id)
+        guild_id = int(ctx.guild.id)
 
-            user_id = int(ctx.author.id)
-            guild_id = int(ctx.guild.id)
+        tokens_data = await self.client.pg_con.fetch(
+            "SELECT token FROM moodle_profile WHERE discord_id = $1 AND guild_id = $2",
+            user_id,
+            guild_id,
+        )
+        token = tokens_data[0]["token"]
 
-            tokens_data = await self.client.pg_con.fetch(
-                "SELECT token FROM moodle_profile WHERE discord_id = $1 AND guild_id = $2",
-                user_id,
-                guild_id,
-            )
-            token = tokens_data[0]["token"]
+        params = {
+            "db": "moodle_assign",
+            "course": "CCP",
+            "semester": "02",
+            "class": "D",
+            "discord_id": user_id,
+            "guild_id": guild_id,
+        }
 
-            params = {
-                "db": "moodle_assign",
-                "course": "CCP",
-                "semester": "02",
-                "class": "D",
-                "discord_id": user_id,
-                "guild_id": guild_id,
-            }
+        decrypted_token = Cryptography.decrypt_message(bytes(token, encoding="utf-8"))
+        Calendar(decrypted_token).upcoming(True, params)
 
-            decrypted_token = Cryptography.decrypt_message(
-                bytes(token, encoding="utf-8")
-            )
-            Calendar(decrypted_token).upcoming(True, params)
+        database = await self.client.pg_con.fetch(
+            "SELECT * FROM moodle_assign WHERE discord_id = $1 AND guild_id = $2",
+            user_id,
+            guild_id,
+        )
 
-            database = await self.client.pg_con.fetch(
-                "SELECT * FROM moodle_assign WHERE discord_id = $1 AND guild_id = $2",
-                user_id,
-                guild_id,
-            )
+        embed = main_messages_style(f"Checking your assignments {next(books_list)} ...")
+        await ctx.author.send(embed=embed)
+
+        # Check if there's assigns
+        if database:
+            await ctx.message.add_reaction(next(positive_emojis_list))
+
+            amount = 0
+            done = 0
+
+            for index in range(len(database)):
+
+                amount += 1
+
+                assignmentsdata = data_dict(database[index])
+
+                # Style embed message
+                color = moodle_color(index, assignmentsdata)
+
+                embed, done = check_command_style(
+                    assignmentsdata, str(amount), color, 1, done
+                )
+                await ctx.author.send(embed=embed)
+                await asyncio.sleep(0.5)
 
             embed = main_messages_style(
-                f"Checking your assignments {next(books_list)} ..."
+                f"You did {done} out of {amount} assignments {next(books_list)}",
+                "Note: I am only showing assignments of 14 days ahead",
             )
             await ctx.author.send(embed=embed)
 
-            # Check if there's assigns
-            if database:
-                await ctx.message.add_reaction(next(positive_emojis_list))
+        else:
+            await ctx.message.add_reaction(next(negative_emojis_list))
 
-                amount = 0
-                done = 0
+            embed = main_messages_style(
+                "There weren't any scheduled events 😑😮",
+                "Note: This is really weird, be careful 🤨😶",
+            )
 
-                for index in range(len(database)):
-
-                    amount += 1
-
-                    assignmentsdata = data_dict(database[index])
-
-                    # Style embed message
-                    color = moodle_color(index, assignmentsdata)
-
-                    embed, done = check_command_style(
-                        assignmentsdata, str(amount), color, 1, done
-                    )
-                    await ctx.author.send(embed=embed)
-                    await asyncio.sleep(0.5)
-
-                embed = main_messages_style(
-                    f"You did {done} out of {amount} assignments {next(books_list)}",
-                    "Note: I am only showing assignments of 14 days ahead",
-                )
-                await ctx.author.send(embed=embed)
-
-            else:
-                await ctx.message.add_reaction(next(negative_emojis_list))
-
-                embed = main_messages_style(
-                    "There weren't any scheduled events 😑😮",
-                    "Note: This is really weird, be careful 🤨😶",
-                )
-
-                await asyncio.sleep(0.5)
-                await ctx.author.send(embed=embed)
+            await asyncio.sleep(0.5)
+            await ctx.author.send(embed=embed)
 
     # Command to create or access your moodle API token
     @command(
@@ -207,87 +200,85 @@ class Moodle(Cog):
     async def getToken(self, ctx):
         """Generates your personal tooken at the moodle api and stores on the bots database, this command is the base for all moodle commands. The token is encrypted and stored in our database"""
 
-        if str(ctx.channel.id) in allowed_channels:
+        user_id = ctx.author.id
+        guild_id = ctx.guild.id
 
-            user_id = ctx.author.id
-            guild_id = ctx.guild.id
+        await ctx.message.add_reaction(next(positive_emojis_list))
 
-            await ctx.message.add_reaction(next(positive_emojis_list))
+        # Check if a token for that user already exists
+        user_data = await self.client.pg_con.fetch(
+            "SELECT token FROM moodle_profile WHERE discord_id = $1 AND guild_id = $2",
+            user_id,
+            guild_id,
+        )
 
-            # Check if a token for that user already exists
-            user_data = await self.client.pg_con.fetch(
-                "SELECT token FROM moodle_profile WHERE discord_id = $1 AND guild_id = $2",
-                user_id,
-                guild_id,
+        def check(ctx, m):
+            return m.author == ctx.author
+
+        if not user_data:
+            embed = main_messages_style(
+                "Apparently you don't have a Moodle API Token, do you want to create one? Yes/No",
+                "Your login and password won't be saved in the "
+                "system, it'll be used to create your Token and the Encrypted Token will be stored",
             )
+            await ctx.author.send(embed=embed)
 
-            def check(ctx, m):
-                return m.author == ctx.author
+            answer = await self.client.wait_for("message")
 
-            if not user_data:
-                embed = main_messages_style(
-                    "Apparently you don't have a Moodle API Token, do you want to create one? Yes/No",
-                    "Your login and password won't be saved in the "
-                    "system, it'll be used to create your Token and the Encrypted Token will be stored",
-                )
+            if answer.content.lower() == "yes":
+                embed = main_messages_style("Type and send your Moodle username")
                 await ctx.author.send(embed=embed)
+                await ctx.message.add_reaction(next(positive_emojis_list))
 
-                answer = await self.client.wait_for("message")
+                username = await self.client.wait_for("message")
 
-                if answer.content.lower() == "yes":
-                    embed = main_messages_style("Type and send your Moodle username")
-                    await ctx.author.send(embed=embed)
-                    await ctx.message.add_reaction(next(positive_emojis_list))
+                embed = main_messages_style("Type and send your Moodle password")
+                await ctx.author.send(embed=embed)
+                await ctx.message.add_reaction(next(positive_emojis_list))
 
-                    username = await self.client.wait_for("message")
+                password = await self.client.wait_for("message")
 
-                    embed = main_messages_style("Type and send your Moodle password")
-                    await ctx.author.send(embed=embed)
-                    await ctx.message.add_reaction(next(positive_emojis_list))
+                # Call a function from moodleAPI to create a Token and save it encrypted on the file tokens.csv, it saves the discord author.id as well
+                params = {
+                    "discord_id": int(user_id),
+                    "tia": username.content,
+                    "course": "CC",
+                    "semester": "02",
+                    "class": "D",
+                    "guild_id": int(guild_id),
+                }
 
-                    password = await self.client.wait_for("message")
+                Token.create(
+                    params, username=username.content, password=password.content
+                )
 
-                    # Call a function from moodleAPI to create a Token and save it encrypted on the file tokens.csv, it saves the discord author.id as well
-                    params = {
-                        "discord_id": int(user_id),
-                        "tia": username.content,
-                        "course": "CC",
-                        "semester": "02",
-                        "class": "D",
-                        "guild_id": int(guild_id),
-                    }
-
-                    Token.create(
-                        params, username=username.content, password=password.content
-                    )
-
-                    embed = main_messages_style("Your Token was created successfully")
-                    await ctx.author.send(embed=embed)
-                    await ctx.message.add_reaction(next(positive_emojis_list))
-
-                else:
-                    embed = main_messages_style(
-                        "Okay, use the **GetToken** command when you're ready to create one"
-                    )
-                    await ctx.author.send(embed=embed)
+                embed = main_messages_style("Your Token was created successfully")
+                await ctx.author.send(embed=embed)
+                await ctx.message.add_reaction(next(positive_emojis_list))
 
             else:
-                token = user_data[0]["token"]
-
                 embed = main_messages_style(
-                    "Your Moodle API Token is encripted and safe, to keep the institution and your data safe I will send the Token in your DM"
-                )
-                await ctx.send(embed=embed)
-
-                decrypted_token = Cryptography().decrypt_message(
-                    bytes(token, encoding="utf-8")
-                )
-
-                embed = main_messages_style(
-                    f"Your decrypted Moodle API Token is, {decrypted_token}",
-                    "Note: You won't need to use it in this bot, your Token is already being used and it's stored in our database",
+                    "Okay, use the **GetToken** command when you're ready to create one"
                 )
                 await ctx.author.send(embed=embed)
+
+        else:
+            token = user_data[0]["token"]
+
+            embed = main_messages_style(
+                "Your Moodle API Token is encripted and safe, to keep the institution and your data safe I will send the Token in your DM"
+            )
+            await ctx.send(embed=embed)
+
+            decrypted_token = Cryptography().decrypt_message(
+                bytes(token, encoding="utf-8")
+            )
+
+            embed = main_messages_style(
+                f"Your decrypted Moodle API Token is, {decrypted_token}",
+                "Note: You won't need to use it in this bot, your Token is already being used and it's stored in our database",
+            )
+            await ctx.author.send(embed=embed)
 
     # Gets Moodle data through Moodle API and send it to the chat
     # Loops the GetData function.

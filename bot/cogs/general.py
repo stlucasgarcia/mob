@@ -7,7 +7,6 @@ from typing import Optional
 from discord.ext import tasks
 from discord.ext.commands import command, Cog, has_permissions
 
-from settings import allowed_channels
 from utilities import (
     main_messages_style,
     check_command_style,
@@ -38,133 +37,11 @@ class General(Cog):
     async def change_status(self):
         await self.client.change_presence(activity=discord.Game(next(status_list)))
 
-    # Allow, disallow or show the list of the text channel in which the bot can send messages, the variable is stored in /bot/settings.py
-    @command(
-        name="chat_permission",
-        aliases=[
-            "c_permission",
-            "chat_p",
-            "chatpermission",
-            "Chat_Permission",
-            "Chat_P",
-            "Chat_permission",
-            "text_permission",
-            "bot_permission",
-            "chat",
-        ],
-    )
-    async def chat_permission(self, ctx, option=""):
-        """Gives the bot permission to work on that chat"""
-
-        channel_id = ctx.channel.id
-        option = option.lower()
-
-        if (
-            option != "allow"
-            and option != "revoke"
-            and option != "list"
-            and option == ""
-        ):
-            embed = main_messages_style(
-                "Command **permission** allow or prohibit the bot messages on this chat",
-                "Option not available, you must use Allow, " "Prohibit or List ",
-                " 😕",
-            )
-            await ctx.send(embed=embed)
-
-            await ctx.message.add_reaction(next(negative_emojis_list))
-
-        else:
-            if option == "allow":
-
-                guild_id = ctx.guild.id
-
-                if channel_id not in allowed_channels:
-                    await self.client.pg_con.execute(
-                        "INSERT INTO bot_data (allowed_channels, guild_id) VALUES ($1, $2)",
-                        channel_id,
-                        guild_id,
-                    )
-
-                    allowed_channels.append(channel_id)
-
-                    embed = main_messages_style(
-                        f"Now I will operate on #{self.client.get_channel(ctx.channel.id)}"
-                    )
-                    await ctx.send(embed=embed)
-
-                    await ctx.message.add_reaction(next(positive_emojis_list))
-
-                else:
-                    embed = main_messages_style("I already operate on this channel")
-                    await ctx.send(embed=embed)
-
-                    await ctx.message.add_reaction(next(negative_emojis_list))
-
-            elif option == "revoke":
-                if channel_id in allowed_channels:
-                    await self.client.pg_con.execute(
-                        "DELETE FROM bot_data WHERE allowed_channels = $1", channel_id
-                    )
-
-                    allowed_channels.remove(channel_id)
-
-                    embed = main_messages_style(
-                        f"I will no longer operate on #{self.client.get_channel(ctx.channel.id)}"
-                    )
-                    await ctx.send(embed=embed)
-                    await ctx.message.add_reaction(next(positive_emojis_list))
-
-                else:
-                    embed = main_messages_style(
-                        "I already don't have permission to operate on this channel"
-                    )
-                    await ctx.send(embed=embed)
-                    await ctx.message.add_reaction(next(negative_emojis_list))
-
-            elif option == "list":
-                # TODO Multi server support for list
-                if channel_id in allowed_channels:
-                    list_allowed = []
-
-                    for i in range(len(allowed_channels)):
-                        list_allowed.append(
-                            str(self.client.get_channel((int(allowed_channels[i]))))
-                        )
-
-                    if len(list_allowed) != 0:
-
-                        str_list_allowed = ""
-
-                        for elem in list_allowed:
-                            str_list_allowed += (
-                                elem + ",  #"
-                                if str(list_allowed.index(elem))
-                                != len(list_allowed) - 1
-                                else elem
-                            )
-
-                        embed = main_messages_style(
-                            f"Channels allowed: #{str_list_allowed}"
-                        )
-                        await ctx.send(embed=embed)
-
-                        await ctx.message.add_reaction(next(positive_emojis_list))
-                else:
-                    embed = main_messages_style(
-                        f"I don't have permission to chat here, type **mack Chat_permission allow** to give me the authorization to send messages and read commands in"
-                        f" #{self.client.get_channel(ctx.channel.id)}"
-                    )
-                    await ctx.send(embed=embed)
-
-                    await ctx.message.add_reaction(next(negative_emojis_list))
-
     # Delete the previous line for x amount of times
     @command(
         name="clear",
         aliases=["purge", "Clear", "CLEAR", "Delete", "delete", "del", "DELETE"],
     )
-    @has_permissions(manage_messages=True)
     async def clear(self, ctx, amount: Optional[int] = 2):
         """Delete previous chat messages by the amount given, """
 
@@ -180,36 +57,32 @@ class General(Cog):
     async def printm(self, ctx, name, message, emote=""):
         """Print an embed message"""
 
-        if str(ctx.channel.id) in allowed_channels:
-            embed = main_messages_style(name, message, emote)
-            await ctx.send(embed=embed)
+        embed = main_messages_style(name, message, emote)
+        await ctx.send(embed=embed)
 
-            await ctx.message.add_reaction(next(positive_emojis_list))
+        await ctx.message.add_reaction(next(positive_emojis_list))
 
     # TODO Fix printm
 
     # Check latency/ping
     @Cog.listener()
     async def on_message(self, ctx):
-        channel_id = str(ctx.channel.id)
+        if ctx.author == self.client.user:
+            return
 
-        if channel_id in allowed_channels:
-            if ctx.author == self.client.user:
-                return
+        if ctx.content.startswith("ping"):
+            before = time.monotonic()
 
-            if ctx.content.startswith("ping"):
-                before = time.monotonic()
+            embed = main_messages_style("Checking ping...")
+            await ctx.channel.send(embed=embed)
 
-                embed = main_messages_style("Checking ping...")
-                await ctx.channel.send(embed=embed)
+            ping = (time.monotonic() - before) * 1000
+            await ctx.channel.purge(limit=1)
 
-                ping = (time.monotonic() - before) * 1000
-                await ctx.channel.purge(limit=1)
+            embed = main_messages_style(f"Pong!  🏓  `{int(ping)}ms`")
+            await ctx.channel.send(embed=embed)
 
-                embed = main_messages_style(f"Pong!  🏓  `{int(ping)}ms`")
-                await ctx.channel.send(embed=embed)
-
-                print(f"Ping {int(ping)}ms")
+            print(f"Ping {int(ping)}ms")
 
 
 def setup(client):
