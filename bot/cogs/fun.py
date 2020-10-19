@@ -144,7 +144,7 @@ class Fun(Cog):
 
             await ctx.message.add_reaction(next(positive_emojis_list))
 
-    @command(name="cat", aliases=["Cat", "Kitty", "Kitten"])
+    @command(name="cat", aliases=["Cat", "Kitty", "kitty", "Kitten", "kitten"])
     async def cat(self, ctx):
         if str(ctx.channel.id) in allowed_channels:
 
@@ -164,7 +164,17 @@ class Fun(Cog):
 
     @command(
         name="dog",
-        aliases=["Dog", "Doggo", "Doggy", "Puppy", "doggo", "doggy", "puppy"],
+        aliases=[
+            "Dog",
+            "Doggo",
+            "Doggy",
+            "Puppy",
+            "doggo",
+            "doggy",
+            "puppy",
+            "pupper",
+            "Pupper",
+        ],
     )
     async def dog(self, ctx):
         if str(ctx.channel.id) in allowed_channels:

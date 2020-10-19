@@ -227,7 +227,7 @@ class Music(Cog):
             pass
 
 
-# TODO Queue system, Fix permission error
+# TODO Queue system, rework music system
 
 
 def setup(client):

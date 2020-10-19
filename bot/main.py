@@ -92,6 +92,16 @@ async def on_guild_remove(guild):
         int(guild.id),
     )
 
+    await client.pg_con.execute(
+        "DELETE FROM bot_data WHERE guild_id = $1",
+        int(guild.id),
+    )
+
+    await client.pg_con.execute(
+        "DELETE FROM bot_roles WHERE guild_id = $1",
+        str(guild.id),
+    )
+
 
 client.loop.run_until_complete(create_db_pool())
 client.loop.run_until_complete(check_channel())

@@ -55,8 +55,8 @@ class General(Cog):
     )
     async def chat_permission(self, ctx, option=""):
         """Gives the bot permission to work on that chat"""
-        # TODO Multiple servers support for list
-        channel_id = str(ctx.channel.id)
+
+        channel_id = ctx.channel.id
         option = option.lower()
 
         if (
@@ -77,11 +77,11 @@ class General(Cog):
         else:
             if option == "allow":
 
-                guild_id = str(ctx.guild.id)
+                guild_id = ctx.guild.id
 
                 if channel_id not in allowed_channels:
                     await self.client.pg_con.execute(
-                        "INSERT INTO bot_data (allowed_channels, guild_id, bot_admin) VALUES ($1, $2, 226485287612710913)",
+                        "INSERT INTO bot_data (allowed_channels, guild_id) VALUES ($1, $2)",
                         channel_id,
                         guild_id,
                     )
@@ -123,6 +123,7 @@ class General(Cog):
                     await ctx.message.add_reaction(next(negative_emojis_list))
 
             elif option == "list":
+                # TODO Multi server support for list
                 if channel_id in allowed_channels:
                     list_allowed = []
 
@@ -138,7 +139,8 @@ class General(Cog):
                         for elem in list_allowed:
                             str_list_allowed += (
                                 elem + ",  #"
-                                if list_allowed.index(elem) != len(list_allowed) - 1
+                                if str(list_allowed.index(elem))
+                                != len(list_allowed) - 1
                                 else elem
                             )
 
