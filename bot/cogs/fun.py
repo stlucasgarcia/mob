@@ -1,7 +1,6 @@
 import discord
 import random
 import aiohttp
-import requests
 
 from discord.ext.commands import command, Cog
 from random import randint
@@ -155,7 +154,7 @@ class Fun(Cog):
                 async with session.get("http://aws.random.cat/meow") as r:
                     if r.status == 200:
                         data = await r.json()
-                        session.close()
+                        await session.close()
 
             embed.set_image(url=data["file"])
 
@@ -179,7 +178,7 @@ class Fun(Cog):
                     async with session.get("https://random.dog/woof.json") as r:
                         if r.status == 200:
                             data = await r.json()
-                            session.close()
+                            await session.close()
 
                 if data["url"].endswith(".mp4"):
                     pass
@@ -193,7 +192,7 @@ class Fun(Cog):
 
             await ctx.message.add_reaction(next(positive_emojis_list))
 
-    @command(name="fox", aliases=["Fox", "Floof", "floof"])
+    @command(name="fox", aliases=["Fox", "Floof", "floof", "Foxxy", "foxxy"])
     async def fox(self, ctx):
         if str(ctx.channel.id) in allowed_channels:
 
@@ -203,7 +202,7 @@ class Fun(Cog):
                 async with session.get("https://randomfox.ca/floof/") as r:
                     if r.status == 200:
                         data = await r.json()
-                        session.close()
+                        await session.close()
 
             embed.set_image(url=data["image"])
 
