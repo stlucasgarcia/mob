@@ -1,4 +1,3 @@
-import discord
 import asyncio
 
 from moodleapi.data.export import Export

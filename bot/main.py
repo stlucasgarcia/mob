@@ -1,12 +1,9 @@
 import os
 import asyncpg
-import asyncio
 
 from discord.ext import commands
 
-from utilities import main_messages_style, positive_emojis_list, negative_emojis_list
-
-from settings import allowed_channels
+from utilities import main_messages_style, positive_emojis_list
 
 from secret1 import DB_Username, DB_Password, Bot_token
 
@@ -26,19 +23,6 @@ async def create_db_pool():
     client.pg_con = await asyncpg.create_pool(
         database="DiscordDB", user=DB_Username, password=DB_Password
     )
-
-
-# Get allowed_channels from the Database
-async def check_channel():
-    guild_id = "748168924465594419"
-    client.channels_data = await client.pg_con.fetch(
-        "SELECT allowed_channels FROM bot_data WHERE guild_id = $1", guild_id
-    )
-
-    client.allowed_channels = [item for i in client.channels_data for item in i]
-
-    for i in client.allowed_channels:
-        allowed_channels.append(i)
 
 
 # Load and get/initialize all the files .py(cogs) in the folder cogs
@@ -104,6 +88,5 @@ async def on_guild_remove(guild):
 
 
 client.loop.run_until_complete(create_db_pool())
-client.loop.run_until_complete(check_channel())
 
 client.run(Bot_token)

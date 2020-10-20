@@ -1,18 +1,13 @@
 import discord
-import asyncio
 import time
 
 from typing import Optional
 
 from discord.ext import tasks
-from discord.ext.commands import command, Cog, has_permissions
+from discord.ext.commands import command, Cog
 
 from utilities import (
     main_messages_style,
-    check_command_style,
-    happy_faces,
-    negative_emojis_list,
-    books_list,
     positive_emojis_list,
     status_list,
 )

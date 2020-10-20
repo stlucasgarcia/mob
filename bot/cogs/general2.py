@@ -1,7 +1,7 @@
 from random import randint
 
 from discord.ext.commands import Cog, command
-from utilities import main_messages_style, positive_emojis_list
+from utilities import main_messages_style
 
 
 class General2(Cog):

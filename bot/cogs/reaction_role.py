@@ -3,13 +3,7 @@ import re
 
 import discord
 from discord.ext.commands import Cog, command
-from utilities import (
-    defaultcolor,
-    footer,
-    main_messages_style,
-    negative_emojis_list,
-    positive_emojis_list,
-)
+from utilities import defaultcolor, footer, main_messages_style, negative_emojis_list
 
 
 class reactionRole(Cog):
