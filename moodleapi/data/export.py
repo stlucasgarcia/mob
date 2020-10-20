@@ -18,7 +18,7 @@ from moodleapi.secret import DATABASE
 
 class Export:
     """Export class has two types for export data, to the Database using
-    information in secret.py and to csv files."""
+    information in secret1.py and to csv files."""
 
     def __init__(self, name=None):
         super().__init__()

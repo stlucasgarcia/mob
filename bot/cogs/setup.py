@@ -11,7 +11,7 @@ class Setup(Cog):
     async def preffix(self, ctx, preffix=None):
         """Admin only command to change the server's preffix"""
 
-        if preffix == None:
+        if preffix is None:
 
             server_preffix = await self.client.pg_con.fetch(
                 "SELECT preffix FROM bot_servers WHERE guild_id = $1",
