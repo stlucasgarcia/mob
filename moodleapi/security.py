@@ -33,7 +33,7 @@ class Cryptography:
     @staticmethod
     def encrypt_message(message=None, *args, **kwargs):
         """With the key loaded, you can encrypt any string in this
-        function and will return the message encrpyted."""
+        function and will return the message encrypted."""
 
         if message:
             key = Cryptography.load_key()

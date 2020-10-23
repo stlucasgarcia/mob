@@ -28,5 +28,8 @@ build
 *.webm
 *.m4a
 
+# Database Files
+*.sql
+
 # System Files
 *.DS_Store

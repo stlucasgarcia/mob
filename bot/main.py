@@ -8,15 +8,19 @@ from utilities import main_messages_style, positive_emojis_list
 from secret1 import DB_Username, DB_Password, Bot_token
 
 
-async def get_preffix(client, ctx):
-    preffix = await client.pg_con.fetch(
-        "SELECT preffix FROM bot_servers WHERE guild_id = $1", ctx.guild.id
-    )
-    preffix = preffix[0]["preffix"]
-    return preffix
+async def get_prefix(client, ctx):
+    try:
+        prefix = await client.pg_con.fetch(
+            "SELECT prefix FROM bot_servers WHERE guild_id = $1", ctx.guild.id
+        )
+        prefix = prefix[0]["prefix"]
+        return prefix
+
+    except AttributeError or TypeError:
+        return "--"
 
 
-client = commands.Bot(command_prefix=get_preffix, help_command=None)
+client = commands.Bot(command_prefix=get_prefix, help_command=None)
 
 # Creates a connection with the Discord Database
 async def create_db_pool():
@@ -54,7 +58,8 @@ for filename in os.listdir("./cogs"):
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
         embed = main_messages_style(
-            "Invalid command", f"Type {get_preffix}help to see the available commands"
+            "Invalid command",
+            f"Type {await get_prefix(client, ctx)}help to see the available commands",
         )
         await ctx.send(embed=embed)
 
@@ -62,7 +67,7 @@ async def on_command_error(ctx, error):
 @client.event
 async def on_guild_join(guild):
     await client.pg_con.execute(
-        "INSERT INTO bot_servers (guild_id, guild_name, preffix) VALUES ($1, $2, $3)",
+        "INSERT INTO bot_servers (guild_id, guild_name, prefix) VALUES ($1, $2, $3)",
         int(guild.id),
         str(guild.name),
         "mack ",

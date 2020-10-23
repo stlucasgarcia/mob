@@ -1,11 +1,10 @@
+from os import truncate
 import youtube_dl
 import discord
 import asyncio
 import os
 
-from discord.ext import tasks
-from discord.ext.commands import Cog, command, CommandError, cooldown
-from discord.voice_client import VoiceClient
+from discord.ext.commands import Cog, command
 from discord.utils import get
 
 
@@ -16,7 +15,6 @@ from utilities import (
     footer,
     formatTime,
 )
-from settings import queue
 
 
 youtube_dl.utils.bug_reports_message = lambda: ""
@@ -37,8 +35,8 @@ ytdl_format_options = {
 }
 
 ffmpeg_options = {
-    # 'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', # In case of connection error
-    "options": "-vn"
+    "before_options": "-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5",  # In case of connection error
+    "options": "-vn",
 }
 
 
@@ -66,19 +64,19 @@ class YTDLSource(discord.PCMVolumeTransformer):
         self.uploader = data.get("uploader")
 
     @classmethod
-    async def from_url(cls, url, *, loop=None):
+    async def from_url(cls, url, *, loop=None, download=False):
         loop = loop or asyncio.get_event_loop()
 
         data = await loop.run_in_executor(
-            None, lambda: ytdl.extract_info(url, download=True)
+            None, lambda: ytdl.extract_info(url, download=download)
         )
 
         if "entries" in data:
+            # take first item from a playlist
             data = data["entries"][0]
 
-        file = ytdl.prepare_filename(data)
-
-        return cls(discord.FFmpegPCMAudio(file, **ffmpeg_options), data=data)
+        filename = data["url"] if not download else ytdl.prepare_filename(data)
+        return cls(discord.FFmpegPCMAudio(filename, **ffmpeg_options), data=data)
 
 
 class Music(Cog):
@@ -139,40 +137,41 @@ class Music(Cog):
     @command(name="play", aliases=["Play", "PLAY"])
     async def play(self, ctx, *, url):
         """Makes the bot play a song by youtube link/search"""
-        # TODO Verification for *, url
 
         async with ctx.typing():
-            player = await YTDLSource.from_url(url, loop=self.client.loop)
+            player = await YTDLSource.from_url(
+                url, loop=self.client.loop, download=True
+            )
 
             ctx.voice_client.play(
                 player, after=lambda e: print("Player error: %s" % e) if e else None
             )
 
-            await ctx.message.add_reaction(next(positive_emojis_list))
+        await ctx.message.add_reaction(next(positive_emojis_list))
 
-            embed = discord.Embed(title=player.title, color=defaultcolor)
-            embed.set_author(name="Now playing:")
-            embed.add_field(name="Link", value=f"{player.webpage_url}", inline=False)
-            embed.add_field(
-                name="Duration",
-                value=f"`{formatTime((player.duration))}`",
-                inline=True,
-            )
-            embed.add_field(
-                name="Views",
-                value="`{:,}`".format(int(player.view_count)),
-                inline=True,
-            )
-            embed.add_field(name="Channel", value=f"`{player.uploader}`", inline=True)
+        embed = discord.Embed(title=player.title, color=defaultcolor)
+        embed.set_author(name="Now playing:")
+        embed.add_field(name="Link", value=f"{player.webpage_url}", inline=False)
+        embed.add_field(
+            name="Duration",
+            value=f"`{formatTime((player.duration))}`",
+            inline=True,
+        )
+        embed.add_field(
+            name="Views",
+            value="`{:,}`".format(int(player.view_count)),
+            inline=True,
+        )
+        embed.add_field(name="Channel", value=f"`{player.uploader}`", inline=True)
 
-            embed.set_image(url=player.thumbnail)
-            embed.set_footer(text=footer)
+        embed.set_image(url=player.thumbnail)
+        embed.set_footer(text=footer)
 
-            pMessage = await ctx.send(embed=embed)
+        pMessage = await ctx.send(embed=embed)
 
-            await pMessage.add_reaction("⏪")
-            await pMessage.add_reaction("▶")
-            await pMessage.add_reaction("⏩")
+        await pMessage.add_reaction("⏪")
+        await pMessage.add_reaction("▶")
+        await pMessage.add_reaction("⏩")
 
     @command(name="volume", aliases=["vol, Volume", "Vol"])
     async def volume(self, ctx, volume: int):
@@ -208,8 +207,40 @@ class Music(Cog):
         except PermissionError:
             pass
 
+    @command(name="pause", aliases=["stop", "Stop", "Pause"])
+    async def pause(self, ctx):
+        """Pauses the song that's currently playing"""
 
-# TODO Queue system, rework music system
+        voice = get(self.client.voice_client, guild=ctx.guild)
+        state = self.voice_states.get(ctx.guild.id)
+        if state:
+            print(state)
+        if voice and voice.is_playing():
+            voice.stop()
+            embed = main_messages_style("The music stopped")
+            await ctx.send(embed=embed)
+
+        else:
+            embed = main_messages_style("There's no song currently playing")
+            await ctx.send(embed=embed)
+
+    @command(name="resume", aliases=["Resume"])
+    async def resume(self, ctx):
+        """Resume the song queue"""
+
+        voice = get(self.client.voice_client, guild=ctx.guild)
+
+        if voice and voice.is_playing():
+            voice.resume()
+            embed = main_messages_style("Resumed the music")
+            await ctx.send(embed=embed)
+
+        else:
+            embed = main_messages_style("There's no song currently stopped")
+            await ctx.send(embed=embed)
+
+
+# TODO Queue system, stop using youtube-dl
 
 
 def setup(client):

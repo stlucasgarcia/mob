@@ -27,7 +27,7 @@ class Reminder(Cog):
             ctx=None,
             discord_id=226485287612710913,
             guild_id=748168924465594419,
-            values=None,
+            rem=None,
             sub=None,
         )
 
@@ -38,8 +38,8 @@ class Reminder(Cog):
     async def reminder(self, ctx):
         """Reminder is responsable to create reminders for Moodle events or other types"""
 
-        def check(ctx, m):
-            return m.author == ctx.author
+        def check(message):
+            return message.author == ctx.author
 
         embed = main_messages_style(
             "Do you want to create a reminder about a Moodle event?",
@@ -84,7 +84,7 @@ class Reminder(Cog):
             "nem malz",
         ] + [negative_emojis_list]
 
-        option = await self.client.wait_for("message")
+        option = await self.client.wait_for("message", check=check)
 
         if option.content.lower() in valid_options_yes:
 
@@ -126,7 +126,7 @@ class Reminder(Cog):
                 )
                 await ctx.author.send(embed=embed)
 
-                op = await self.client.wait_for("message")
+                op = await self.client.wait_for("message", check=check)
                 op = op.content
 
                 try:
@@ -146,7 +146,7 @@ class Reminder(Cog):
                         await ctx.author.send(embed=embed)
 
                         try:
-                            op = await self.client.wait_for("message")
+                            op = await self.client.wait_for("message", check=check)
                             op = int(op.content)
 
                         except Exception:
@@ -190,19 +190,46 @@ class Reminder(Cog):
             embed = main_messages_style("What do you want to be reminded about?")
             await ctx.author.send(embed=embed)
 
-            title = await self.client.wait_for("message")
+            title = await self.client.wait_for("message", check=check)
             await asyncio.sleep(1)
 
             embed = main_messages_style("What time?", "Note: Time format must be HH:MM")
             await ctx.author.send(embed=embed)
+            time = await self.client.wait_for("message", check=check)
 
-            time = await self.client.wait_for("message")
+            while verify(time.content, time=True, date=False):
+
+                embed = main_messages_style(
+                    "Please use the correct format. Example: 20:13",
+                    "Note: Time format must be HH:MM",
+                )
+                await ctx.author.send(embed=embed)
+
+                embed = main_messages_style(
+                    "What time?", "Note: Time format must be HH:MM"
+                )
+                await ctx.author.send(embed=embed)
+
+                time = await self.client.wait_for("message", check=check)
+
             await asyncio.sleep(1)
 
             embed = main_messages_style("When?", "Note: Date format must be MM/DD")
             await ctx.author.send(embed=embed)
+            date = await self.client.wait_for("message", check=check)
 
-            date = await self.client.wait_for("message")
+            while verify(date.content, time=False, date=True):
+
+                embed = main_messages_style(
+                    "Please use the correct format. Example: 10/22",
+                    "Note: Date format must be MM/DD",
+                )
+                await ctx.author.send(embed=embed)
+
+                embed = main_messages_style("When?", "Note: Date format must be MM/DD")
+                await ctx.author.send(embed=embed)
+                date = await self.client.wait_for("message", check=check)
+
             await asyncio.sleep(1)
 
             data = [
@@ -251,69 +278,88 @@ class Reminder(Cog):
 
         dat = [dt(2020, j, k, l, m) for (j, k, l, m, n) in fdata]
 
-        da = dt.today()
-        mon, d, h, m = da.month, da.day, da.hour, da.minute
-        date = dt(2020, mon, d, h, m)
+        date = dt.now()
 
         date_min = min(dat, key=lambda y: abs(y - date))
-        values = [date_min.month, date_min.day, date_min.hour, date_min.minute]
         subject = fdata[dat.index(date_min)][-1]
 
         self.reminderLoop.restart(
-            ctx, int(ctx.author.id), int(ctx.guild.id), values, subject
+            ctx, int(ctx.author.id), int(ctx.guild.id), date_min, subject
         )
 
     @tasks.loop(minutes=1)
-    async def reminderLoop(self, ctx, discord_id, guild_id, values, sub):
-        now = dt.today()
-        time = [now.month, now.day, now.hour, now.minute]
-        # print(values, sub)
-        # print(time)
+    async def reminderLoop(self, ctx, discord_id, guild_id, rem, sub):
+        if rem:
+            now = dt.now()
+            hour, mins, sec = map(
+                lambda x: int(x.split(".")[0]), str(rem - now).split(":")
+            )
 
-        if values:
-            if (values[0] == time[0]) and (values[1] == time[1]):
-                i, j = time[2] - values[2], time[3] - values[3]
-                # print(i, j)
+            if hour == 3 and mins == 0:
+                embed = main_messages_style(
+                    f"The dealine of {sub} is in **3 hours**",
+                    "Note: The next reminder will be in an hour before the deadline.",
+                )
+                await ctx.author.send(embed=embed)
 
-                if i == 3 and j == 0:
-                    embed = main_messages_style(
-                        f"The dealine of {sub} is in **3 hours**",
-                        "Note: The next reminder will be in an **hour before the deadline**.",
-                    )
-                    await ctx.author.send(embed=embed)
+            elif hour == 1 and mins == 0:
+                embed = main_messages_style(
+                    f"The dealine of {sub} is in **an hour**",
+                    "Note: The next reminder will be in 15 minutes before the "
+                    "deadline.",
+                )
+                await ctx.author.send(embed=embed)
 
-                elif i == 1 and j == 0:
-                    embed = main_messages_style(
-                        f"The dealine of {sub} is in **an hour**",
-                        "Note: The next reminder will be in **15 minutes before the "
-                        "deadline**.",
-                    )
-                    await ctx.author.send(embed=embed)
+            elif hour == 0 and mins == 15:
+                embed = main_messages_style(
+                    f"The dealine of {sub} is in **15 minutes**",
+                    "Note: This is the last reminder.",
+                )
+                await ctx.author.send(embed=embed)
 
-                elif i == 0 and j == 15:
-                    embed = main_messages_style(
-                        f"The dealine of {sub} is in *15 *minutes**",
-                        "Note: **This is the last reminder**.",
-                    )
-                    await ctx.author.send(embed=embed)
+            elif hour == 0 and mins == 0:
+                await self.client.pg_con.fetch(
+                    "DELETE FROM bot_reminder WHERE discord_id=$1 AND guild_id=$2 AND subject_name=$3",
+                    discord_id,
+                    guild_id,
+                    sub,
+                )
 
-                elif i == 0 and j == 0:
-                    await self.client.pg_con.fetch(
-                        "DELETE FROM bot_reminder WHERE discord_id=$1 AND guild_id=$2 AND subject_name=$3",
-                        discord_id,
-                        guild_id,
-                        sub,
-                    )
+                self.reminderLoop.cancel()
+                await Reminder.reload_reminder(self, ctx)
 
 
 def ver(elem: Tuple) -> Tuple:
     e1 = elem[1].split(":")
+
     if len(elem[0]) > 5:
         e = elem[0].split()
+
         return FULL_MONTHS[e[-1]], int(e[-2]), int(e1[0]), int(e1[1]), elem[2]
+
     elif len(elem[0]) == 5:
         e = elem[0].split("/")
+
         return int(e[0]), int(e[1]), int(e1[0]), int(e1[1]), elem[2]
+
+
+def verify(char, **tips):
+    if tips["time"] or tips["date"]:
+
+        prep = ":" if tips["time"] else "/"
+
+        if len(char) == 5 and prep in char:
+            try:
+                int(char[:2])
+                int(char[3:5])
+
+            except ValueError:
+                pass
+
+            else:
+                return False
+
+    return True
 
 
 def setup(client):
