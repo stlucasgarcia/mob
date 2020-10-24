@@ -87,8 +87,6 @@ class Moodle(Cog):
                 await ctx.send(embed=embed)
                 await asyncio.sleep(0.3)
 
-            print("saiu for")
-
             if amount > 0:
                 embed = main_messages_style(
                     f"There was a total of {amount} {option} {next(books_list)}",
@@ -103,7 +101,7 @@ class Moodle(Cog):
                 )
                 await ctx.send(embed=embed)
 
-        elif isBool:
+        elif isBool and not database:
             embed = main_messages_style(
                 f"There wasn't any scheduled {option} 😑 😮",
                 "Note: This is really weird, be careful 🤨 😶",
