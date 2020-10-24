@@ -21,13 +21,13 @@ The bot's features include:
 On Discord, you can use the following commands to get Moodle assignments on a 14 days range:
 
 ```discord
-<prep> get assignments
+<prefix> get assignments
 ```
 
 `get` support _events_, _assignments_ and _classes_. However, you can obtain personal information about assignments by using `check`
 
 ```discord
-<prep> check
+<prefix> check
 ```
 
 _For more examples and usage, please refer to the [Wiki][wiki]._
