@@ -1,6 +1,6 @@
 import os
 import asyncpg
-
+from discord import Intents
 from discord.ext import commands
 
 from utilities import main_messages_style, positive_emojis_list
@@ -20,7 +20,8 @@ async def get_prefix(client, ctx):
         return "--"
 
 
-client = commands.Bot(command_prefix=get_prefix, help_command=None)
+intents = Intents.all()
+client = commands.Bot(command_prefix=get_prefix, help_command=None, intents=intents)
 
 # Creates a connection with the Discord Database
 async def create_db_pool():

@@ -140,7 +140,7 @@ class reactionRole(Cog):
             roles_list = []
             guild_id = str(ctx.guild.id)
 
-            def check(ctx, m):
+            def check(m):
                 return m.author == ctx.author
 
             embed = main_messages_style(
@@ -149,7 +149,7 @@ class reactionRole(Cog):
 
             await ctx.send(embed=embed)
 
-            title = await self.client.wait_for("message")
+            title = await self.client.wait_for("message", check=check)
             await asyncio.sleep(1)
             await ctx.channel.purge(limit=3)
 
@@ -159,18 +159,18 @@ class reactionRole(Cog):
 
             await ctx.send(embed=embed)
 
-            main_description = await self.client.wait_for("message")
+            main_description = await self.client.wait_for("message", check=check)
 
             await asyncio.sleep(1)
             await ctx.channel.purge(limit=2)
 
             # Get roles name, description and emoji to create the menu
-            for i in range(int(amount)):
+            for _ in range(int(amount)):
 
                 embed = main_messages_style("Reaction Role Tool", "Type the roles name")
                 await ctx.send(embed=embed)
 
-                Role = await self.client.wait_for("message")
+                Role = await self.client.wait_for("message", check=check)
                 await asyncio.sleep(1)
                 await ctx.channel.purge(limit=2)
 
@@ -180,7 +180,7 @@ class reactionRole(Cog):
 
                 await ctx.send(embed=embed)
 
-                Emoji = await self.client.wait_for("message")
+                Emoji = await self.client.wait_for("message", check=check)
                 await asyncio.sleep(1)
                 await ctx.channel.purge(limit=2)
 
@@ -190,7 +190,7 @@ class reactionRole(Cog):
 
                 await ctx.send(embed=embed)
 
-                Description = await self.client.wait_for("message")
+                Description = await self.client.wait_for("message", check=check)
                 await asyncio.sleep(1)
                 await ctx.channel.purge(limit=2)
 
