@@ -1,10 +1,5 @@
 import asyncio
 
-from discord import emoji
-from discord import reaction
-from discord.ext.commands.core import after_invoke
-from youtube_dl import main
-
 from moodleapi.security import Cryptography
 from moodleapi.token import Token
 from moodleapi.data.calendar import Calendar
@@ -22,6 +17,7 @@ from utilities import (
     positive_emojis_list,
     footer,
     defaultcolor,
+    emojis_list,
 )
 from utilities_moodle import data_dict, moodle_color, loop_channel
 
@@ -89,7 +85,7 @@ class Moodle(Cog):
 
                 embed = check_command_style(assignmentsdata, str(index + 1), color)[0]
                 await ctx.send(embed=embed)
-                await asyncio.sleep(0.5)
+                await asyncio.sleep(0.3)
 
             print("saiu for")
 
@@ -127,6 +123,7 @@ class Moodle(Cog):
             user_id,
             guild_id,
         )
+
         token = tokens_data[0]["token"]
 
         params = {
@@ -138,6 +135,9 @@ class Moodle(Cog):
             "guild_id": guild_id,
         }
 
+        embed = main_messages_style(f"Checking your assignments {next(books_list)} ...")
+        await ctx.author.send(embed=embed)
+
         decrypted_token = Cryptography.decrypt_message(bytes(token, encoding="utf-8"))
         Calendar(decrypted_token).upcoming(True, params)
 
@@ -147,9 +147,6 @@ class Moodle(Cog):
             guild_id,
         )
 
-        embed = main_messages_style(f"Checking your assignments {next(books_list)} ...")
-        await ctx.author.send(embed=embed)
-
         # Check if there's assigns
         if database:
             await ctx.message.add_reaction(next(positive_emojis_list))
@@ -158,8 +155,6 @@ class Moodle(Cog):
             done = 0
 
             for index in range(amount):
-
-                amount += 1
 
                 assignmentsdata = data_dict(database[index])
 
@@ -171,7 +166,7 @@ class Moodle(Cog):
                 )
 
                 await ctx.author.send(embed=embed)
-                await asyncio.sleep(0.5)
+                await asyncio.sleep(0.3)
 
             embed = main_messages_style(
                 f"You did {done} out of {amount} assignments {next(books_list)}",
@@ -187,7 +182,7 @@ class Moodle(Cog):
                 "Note: This is really weird, be careful 🤨😶",
             )
 
-            await asyncio.sleep(0.5)
+            await asyncio.sleep(0.3)
             await ctx.author.send(embed=embed)
 
     # Command to create or access your moodle API token
@@ -330,7 +325,7 @@ class Moodle(Cog):
                     f"Sending the twice-daily Moodle events update {next(books_list)} {next(happy_faces)}"
                 )
 
-                await asyncio.sleep(1)
+                await asyncio.sleep(0.5)
 
                 await self.client.get_channel(loop_channel).send(embed=embed)
 
@@ -347,7 +342,7 @@ class Moodle(Cog):
                         assignmentsdata, str(index + 1), color, None
                     )[0]
 
-                    await asyncio.sleep(0.5)
+                    await asyncio.sleep(0.3)
                     await self.client.get_channel(loop_channel).send(embed=embed)
 
                 embed = main_messages_style(
@@ -355,7 +350,7 @@ class Moodle(Cog):
                     "Note: I am only showing events of 14 days ahead",
                 )
 
-                await asyncio.sleep(0.5)
+                await asyncio.sleep(0.3)
 
                 await self.client.get_channel(loop_channel).send(embed=embed)
 
@@ -385,9 +380,7 @@ class Moodle(Cog):
             "createGroup",
         ],
     )
-    async def group(self, ctx, amount: int):
-        amount = amount if amount else None
-
+    async def group(self, ctx, amount: int = None):
         if amount is None:
             embed = main_messages_style(
                 "You must type the command plus the desired amount of members in the group",
@@ -396,17 +389,6 @@ class Moodle(Cog):
             await ctx.send(embed=embed)
 
         else:
-            emojis_list = [
-                "1️⃣",
-                "2️⃣",
-                "3️⃣",
-                "4️⃣",
-                "5️⃣",
-                "6️⃣",
-                "7️⃣",
-                "8️⃣",
-                "9️⃣",
-            ]
 
             embed = Embed(
                 title="How to use it: ",
@@ -464,18 +446,20 @@ class Moodle(Cog):
                     "D",
                 )
 
-                def check(reaction, user):
-                    return user != ctx.author and str(reaction.emoji) in emojis_list
-
-                reaction, user = await self.client.wait_for("reaction_add", check=check)
-
     # @Cog.listener()
     # async def on_raw_reaction_add(self, payload):
 
-    #     messaged_id = await self.client.pg_con.fetch(
-    #         "SELECT message_id FROM moodle_groups WHERE AND guild_id=$1",
-    #         payload.guild_id,
-    #     )
+    #     try:
+    #         message_id = await self.client.pg_con.fetch(
+    #             "SELECT message_id FROM moodle_groups WHERE guild_id=$1",
+    #             payload.guild_id,
+    #         )
+    #         message_is_list = [item for i in message_id for item in i]
+
+    #     def check(reaction, user):
+    #         return user == payload.author and (reaction.emoji) in emojis_list
+
+    #     reaction, user = await self.client.wait_for("reaction_add", check=check)
 
 
 def setup(client):

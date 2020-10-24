@@ -1,4 +1,3 @@
-from os import truncate
 import youtube_dl
 import discord
 import asyncio

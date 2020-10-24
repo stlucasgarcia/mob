@@ -96,13 +96,12 @@ class Reminder(Cog):
             )
 
             # Counter for the amount of assignments/events
-            amount = 0
+            amount = len(data)
 
             # TODO: check month, day and response to time and date style
 
             if data:
-                for index in range(len(data)):
-                    amount += 1
+                for index in range(amount):
                     assignmentsdata = data_dict(data[index])
 
                     # Styling the message to improve user experience

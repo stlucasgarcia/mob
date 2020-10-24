@@ -20,7 +20,17 @@ status_list = cycle(
 books_list = cycle(["📚", "📔", "📕", "📖", "📗", "📘", "📙", "📑", "🧾", "📅", "📆", "🗓"])
 happy_faces = cycle(["😀", "😁", "😃", "😄", "😅", "😉", "😊", "😋", "😎", "🙂", "🤗", "😛"])
 
-
+emojis_list = [
+    "1️⃣",
+    "2️⃣",
+    "3️⃣",
+    "4️⃣",
+    "5️⃣",
+    "6️⃣",
+    "7️⃣",
+    "8️⃣",
+    "9️⃣",
+]
 footer = "Created with 💖 by our team"
 
 thumbnail_url = (
@@ -58,8 +68,15 @@ def check_command_style(dict, amount="", color="", status=None, done=None):
             )
 
     if dict["description"] != "Descrição não disponível":
-        embed.add_field(name="Descrição", value=dict["description"], inline=False)
-        embed.add_field(name="Tipo de tarefa", value=dict["modulename"], inline=True)
+        if dict["description"].isspace():
+            embed.add_field(
+                name="Tipo de tarefa", value=dict["modulename"], inline=False
+            )
+        else:
+            embed.add_field(name="Descrição", value=dict["description"], inline=False)
+            embed.add_field(
+                name="Tipo de tarefa", value=dict["modulename"], inline=True
+            )
     else:
         embed.add_field(name="Tipo de tarefa", value=dict["modulename"], inline=False)
 
