@@ -55,8 +55,6 @@ Lucas Garcia – [@lsglucass](https://twitter.com/lsglucass) – lsglucas@pm.me
 
 Daniel Kauffmann – [@danieldowombo](https://twitter.com/danieldowombo) – danielvenna2@hotmail.com
 
-Matheus Chang  
-
 ## 📑 License  
 
 There is no license, hence you are not allowed to use, modify, merge, publish, distribute, sublicense, and/or sell copies of the software. The reproduction or distribution without written permission of the owners is prohibited. If you are interested in using this software, contact one of the creators.
