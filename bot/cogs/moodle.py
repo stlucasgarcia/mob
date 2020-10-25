@@ -39,23 +39,38 @@ class Moodle(Cog):
         # Check if the bot has permission to send messages on the specified channel, used in most commands
         option = option.lower()
 
+        assignments_options = ["assignments", "assign", "hw", "homework", "projects"]
+        classes_options = [
+            "classes",
+            "live_classes",
+            "bbb",
+            "bigbluebutton",
+            "big_blue_botton",
+            "lecture",
+            "lesson",
+        ]
+        events_options = ["events", "all", "everything", "calendar"]
+
         # Get data for what the user desires
-        if option == "assignments":
+        if option in assignments_options:
             database = await self.client.pg_con.fetch(
                 "SELECT * FROM moodle_events WHERE subject_type = $1 AND guild_id = $2",
                 "Tarefa para entregar via Moodle",
                 guild_id,
             )
-        elif option == "classes":
+            option = "assignments"
+        elif option in classes_options:
             database = await self.client.pg_con.fetch(
                 "SELECT * FROM moodle_events WHERE subject_type = $1 AND guild_id = $2",
                 "Aula ao vivo - BigBlueButton",
                 guild_id,
             )
-        elif option == "events":
+            option = "classes"
+        elif option in events_options:
             database = await self.client.pg_con.fetch(
                 "SELECT * FROM moodle_events WHERE guild_id = $1", guild_id
             )
+            option = "events"
 
         else:
             embed = main_messages_style(
