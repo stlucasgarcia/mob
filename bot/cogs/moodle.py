@@ -367,7 +367,7 @@ class Moodle(Cog):
 
                 await self.client.get_channel(loop_channel).send(embed=embed)
 
-            else:
+            if not data and getData_Counter[0] % 16 == 0:
                 embed = main_messages_style(
                     "There weren't any scheduled events 😑😮",
                     "Note: This is really weird, be careful 🤨😶",
