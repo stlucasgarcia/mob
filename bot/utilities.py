@@ -8,7 +8,7 @@ negative_emojis_list = cycle(["🚫", "🛑", "❌", "⛔"])
 status_list = cycle(
     [
         "Studying...",
-        "Mack Help",
+        "--Help",
         "Finding events",
         "Reducing your grades",
         "Learning new features",
