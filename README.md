@@ -1,4 +1,4 @@
-# Discord Moodle Bot
+# MoodleV - A Discord bot integrated with the Moodle API
 
 > A Discord multipurpose bot using Moodle API to get users data inside the Discord environment.
 
