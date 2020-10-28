@@ -39,7 +39,7 @@ class Profile(Cog):
 
             if not user:
                 await self.client.pg_con.execute(
-                    "INSERT INTO bot_users (user_id, guild_id, level, experience) VALUES ($1, $2, 1, 0)",
+                    "INSERT INTO bot_users (user_id, guild_id, level, experience, rep) VALUES ($1, $2, 1, 0, 0)",
                     author_id,
                     str(message.guild.id),
                 )
@@ -82,6 +82,7 @@ class Profile(Cog):
         user_level = user[0]["level"]
         user_experience = user[0]["experience"]
         xp_nextlvl = round((4 * (user_level ** 3)) / 5)
+        rep = user[0]["rep"]
 
         if not user:
             await ctx.send("Member doesn't have a level")
@@ -94,7 +95,8 @@ class Profile(Cog):
             embed.set_author(name=f"Profile - {member.display_name}")
 
             embed.add_field(name="Level", value=f"`{user_level}`")
-            embed.add_field(name="Total XP", value=f"`{user_experience}/{xp_nextlvl}`")
+            embed.add_field(name="XP", value=f"`{user_experience}/{xp_nextlvl}`")
+            embed.add_field(name="Reputation", value=f"`{rep}`", inline=False)
 
             embed.add_field(
                 name=f"Messages Needed for level {user_level + 1}",
@@ -107,21 +109,60 @@ class Profile(Cog):
             await ctx.send(embed=embed)
 
     @command(name="rep", aliases=["Rep", "Reputation", "reputation"])
-    async def rep(self, ctx, opt: str = None):
+    async def rep(self, ctx, member: discord.Member, opt: str = None):
         positive_options = ["+", "plus", "mais"]
         negative_options = ["-", "negative", "neg"]
 
-        if opt:
+        if opt and ctx.author.id != member.id:
             opt = opt.lower()
 
+            rep = await self.client.pg_con.fetch(
+                "SELECT rep FROM bot_users WHERE user_id = $1", str(member.id)
+            )
+
+            rep = rep[0]["rep"]
+
             if opt in positive_options:
-                pass
-
+                rep += 1
             elif opt in negative_options:
-                pass
+                rep -= 1
+            else:
+                embed = main_messages_style(
+                    "Option not available" "Try using `+` or `-`"
+                )
+                await ctx.send(embed=embed)
+                return
 
-        else:
-            pass
+            await self.client.pg_con.execute(
+                "UPDATE bot_users SET rep = $1 WHERE user_id = $2",
+                rep,
+                str(member.id),
+            )
+
+            embed = main_messages_style(
+                f"{ctx.author.display_name} has given rep to {member.display_name}"
+            )
+            await ctx.send(embed=embed)
+
+        if not opt and member.id != ctx.author.id:
+            rep = await self.client.pg_con.fetch(
+                "SELECT rep FROM bot_users WHERE user_id = $1", str(member.id)
+            )
+
+            rep = rep[0]["rep"]
+
+            rep += 1
+
+            await self.client.pg_con.execute(
+                "UPDATE bot_users SET rep = $1 WHERE user_id = $2",
+                rep,
+                str(member.id),
+            )
+
+            embed = main_messages_style(
+                f"{ctx.author.display_name} has given rep to {member.display_name}"
+            )
+            await ctx.send(embed=embed)
 
 
 def setup(client):
