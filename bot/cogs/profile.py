@@ -106,6 +106,23 @@ class Profile(Cog):
 
             await ctx.send(embed=embed)
 
+    @command(name="rep", aliases=["Rep", "Reputation", "reputation"])
+    async def rep(self, ctx, opt: str = None):
+        positive_options = ["+", "plus", "mais"]
+        negative_options = ["-", "negative", "neg"]
+
+        if opt:
+            opt = opt.lower()
+
+            if opt in positive_options:
+                pass
+
+            elif opt in negative_options:
+                pass
+
+        else:
+            pass
+
 
 def setup(client):
     client.add_cog(Profile(client))
