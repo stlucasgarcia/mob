@@ -1,6 +1,7 @@
 import discord
 import random
 import aiohttp
+from discord.embeds import Embed
 
 from discord.ext.commands import command, Cog
 from random import randint
@@ -216,6 +217,72 @@ class Fun(Cog):
         await ctx.send(embed=embed)
 
         await ctx.message.add_reaction(next(positive_emojis_list))
+
+    @command(
+        name="JoKenPo",
+        aliases=[
+            "jokenpo",
+            "Jokenpo",
+            "JoKenpo",
+            "Rock_paper_scissors",
+            "rock_paper_scissors",
+            "roshambo",
+            "Roshambo",
+            "ro-sham-bo",
+        ],
+    )
+    async def JoKenPo(self, ctx, option):
+        """Rock, paper, scissors game where the user picks one and plays with the bot"""
+
+        num = randint(1, 3)
+
+        option = option.lower()
+
+        if option == "rock":
+            if num == 1:
+                embed = main_messages_style(f"I picked `Rock`, it's a draw 😅 - 👊🏻👊🏻")
+                await ctx.send(embed=embed)
+
+            elif num == 2:
+                embed = main_messages_style(f"I picked `Paper`, I won 😋 - 🧻👊🏻")
+                await ctx.send(embed=embed)
+
+            else:
+                embed = main_messages_style(f"I picked `Scissors`, you won 😒 - ✂👊🏻")
+                await ctx.send(embed=embed)
+
+        elif option == "paper":
+            if num == 1:
+                embed = main_messages_style(f"I picked `Rock`, you won 🤬 - 👊🏻🧻")
+                await ctx.send(embed=embed)
+
+            elif num == 2:
+                embed = main_messages_style(f"I picked `Paper`, it's a draw 😯 - 👊🏻🧻")
+                await ctx.send(embed=embed)
+
+            else:
+                embed = main_messages_style(f"I picked `Scissors`, you lost 😄 - ✂🧻")
+                await ctx.send(embed=embed)
+
+        elif option == "scissors":
+            if num == 1:
+                embed = main_messages_style(f"I picked `Rock`, I won 🥱 - 👊🏻✂")
+                await ctx.send(embed=embed)
+
+            elif num == 2:
+                embed = main_messages_style(f"I picked `Paper`, I lost 😨 - 🧻✂")
+                await ctx.send(embed=embed)
+
+            else:
+                embed = main_messages_style(f"I picked `Scissors`, it's a draw 😶 - ✂✂")
+                await ctx.send(embed=embed)
+
+        else:
+            embed = main_messages_style(
+                "That's not a valid option",
+                "Note: You must choose between rock, paper or scissors ",
+            )
+            await ctx.send(embed=embed)
 
 
 def setup(client):
