@@ -16,7 +16,7 @@ The bot's features include:
 * General admin commands
 * Fun  
 
-## 📱 Usage example
+## 📱 Usage Example
 
 On Discord, you can use the following commands to get Moodle assignments on a 14 days range:
 
@@ -32,7 +32,7 @@ On Discord, you can use the following commands to get Moodle assignments on a 14
 
 _For more examples and usage, please refer to the [Wiki][wiki]._
 
-## 💻 Development setup
+## 💻 Development Setup
 
 For the firsts dependencies, you need to install all requirements in ```requirements.txt``` and you must have PostgreSQL installed in your machine. For now, you need to create the ```DiscordDB``` in your default public Schema, in the future that will be changed.
 
