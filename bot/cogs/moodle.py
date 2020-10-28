@@ -333,50 +333,59 @@ class Moodle(Cog):
                 748168924465594419,
             )
 
-            if data and getData_Counter[0] % 16 == 0:
-                embed = main_messages_style(
-                    f"Sending the Moodle events update {next(books_list)} {next(happy_faces)}"
-                )
+            loop_channel = await self.client.pg_con.fetch(
+                "SELECT loop_channel FROM bot_servers",
+            )
 
-                await asyncio.sleep(0.5)
+            for item in range(len((loop_channel))):  # Send on different servers
+                if loop_channel[item]["loop_channel"]:
+                    loop_channel = loop_channel[item]["loop_channel"]
 
-                await self.client.get_channel(loop_channel).send(embed=embed)
+                    if data and getData_Counter[0] % 16 == 0:
+                        embed = main_messages_style(
+                            f"Sending the Moodle events update {next(books_list)} {next(happy_faces)}"
+                        )
 
-                # Counter for the amount of assignments/events
-                amount = len(data)
+                        await asyncio.sleep(0.5)
 
-                for index in range(amount):
-                    assignmentsdata = data_dict(data[index])
+                        await self.client.get_channel(loop_channel).send(embed=embed)
 
-                    # Styling the message to improve user experience
-                    color = moodle_color(index, assignmentsdata)
+                        amount = len(data)
 
-                    embed = check_command_style(
-                        assignmentsdata, str(index + 1), color, None
-                    )[0]
+                        for index in range(amount):
+                            assignmentsdata = data_dict(data[index])
 
-                    await asyncio.sleep(0.3)
-                    await self.client.get_channel(loop_channel).send(embed=embed)
+                            # Styling the message to improve user experience
+                            color = moodle_color(index, assignmentsdata)
 
-                embed = main_messages_style(
-                    f"There were a total of {amount} events {next(books_list)} see you in 8 hours {next(happy_faces)} ",
-                    "Note: I am only showing events of 14 days ahead",
-                )
+                            embed = check_command_style(
+                                assignmentsdata, str(index + 1), color, None
+                            )[0]
 
-                await asyncio.sleep(0.3)
+                            await asyncio.sleep(0.3)
+                            await self.client.get_channel(loop_channel).send(
+                                embed=embed
+                            )
 
-                await self.client.get_channel(loop_channel).send(embed=embed)
+                        embed = main_messages_style(
+                            f"There were a total of {amount} events {next(books_list)} see you in 8 hours {next(happy_faces)} ",
+                            "Note: I am only showing events of 14 days ahead",
+                        )
 
-            if not data and getData_Counter[0] % 16 == 0:
-                embed = main_messages_style(
-                    "There weren't any scheduled events 😑😮",
-                    "Note: This is really weird, be careful 🤨😶",
-                )
+                        await asyncio.sleep(0.3)
 
-                await asyncio.sleep(0.5)
-                await self.client.get_channel(loop_channel).send(embed=embed)
+                        await self.client.get_channel(loop_channel).send(embed=embed)
 
-            getData_Counter[0] += 1
+                    if not data and getData_Counter[0] % 16 == 0:
+                        embed = main_messages_style(
+                            "There weren't any scheduled events 😑😮",
+                            "Note: This is really weird, be careful 🤨😶",
+                        )
+
+                        await asyncio.sleep(0.5)
+                        await self.client.get_channel(loop_channel).send(embed=embed)
+
+                    getData_Counter[0] += 1
 
         except AttributeError:
             pass

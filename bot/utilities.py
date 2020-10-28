@@ -10,7 +10,7 @@ status_list = cycle(
         "Studying...",
         "--Help",
         "Finding events",
-        "Reducing your grades",
+        "Decreasing your grades",
         "Learning new features",
         "Calculating your absences",
         "Learning new libraries",

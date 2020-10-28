@@ -1,4 +1,6 @@
+from operator import truediv
 from discord.ext.commands import Cog, command
+from discord.ext.commands.core import has_permissions
 
 from utilities import main_messages_style, positive_emojis_list, negative_emojis_list
 
@@ -8,6 +10,7 @@ class Setup(Cog):
         self.client = client
 
     @command(name="prefix", aliases=["Prefix"])
+    @has_permissions(administrator=True)
     async def prefix(self, ctx, prefix=None):
         """Admin only command to change the server's prefix"""
 
@@ -42,8 +45,10 @@ class Setup(Cog):
         await ctx.message.add_reaction(next(positive_emojis_list))
 
     @command(name="register", aliases=["Register", "Set_up", "set_up", "add_server"])
+    @has_permissions(administrator=True)
     async def register(self, ctx):
         """Admin only command, probably it can be used in case of the server did not register properly on the database"""
+
         try:
             await self.client.pg_con.execute(
                 "INSERT INTO bot_servers (guild_id, guild_name, prefix) VALUES ($1, $2, $3)",
@@ -67,6 +72,29 @@ class Setup(Cog):
 
             await ctx.send(embed=embed)
             await ctx.message.add_reaction(next(negative_emojis_list))
+
+    @command(
+        name="loop_channel",
+        aliases=[
+            "set_loop",
+            "loopChannel",
+            "setLoop",
+            "Loop_Channel",
+            "setLoopChannel",
+        ],
+    )
+    @has_permissions(administrator=True)
+    async def loop_channel(self, ctx):
+        """Select the channel to send the getData loop (the moodle events)"""
+
+        await self.client.pg_con.execute(
+            "UPDATE bot_servers SET loop_channel = $1 WHERE guild_id = $2",
+            ctx.channel.id,
+            ctx.guild.id,
+        )
+
+        embed = main_messages_style(f"The loop channel is set to `#{ctx.channel.name}`")
+        await ctx.send(embed=embed)
 
 
 def setup(client):
