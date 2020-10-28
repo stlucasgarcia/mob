@@ -145,28 +145,20 @@ class Calendar(Request):
                         data.append(
                             [
                                 events["course"]["fullname"],
-
                                 events["name"].split(" is ")[0]
                                 if " is " in events["name"]
                                 else events["name"].split(" está ")[0],
-
                                 Calendar._clean(events["description"])
                                 if events["description"] != ""
                                 else "Descrição não disponível",
-
                                 "Aula ao vivo - BigBlueButton"
                                 if events["modulename"] == "bigbluebuttonbn"
                                 else "Tarefa para entregar via Moodle",
-
                                 day["popovertitle"].split(" eventos")[0],
-
                                 deadline,
-
                                 events["url"],
-
                                 Professor.get(**params),
                                 f'Tarefa {"não " if status == 0 or not status else ""}entregue',
-
                                 Calendar._time(time) if time != 0 and time else "",
                             ]
                         )
@@ -220,29 +212,22 @@ class Calendar(Request):
                         info["semester"],
                         info["class"],
                         event["course"]["fullname"],
-
                         event["name"].split(" is ")[0]
                         if " is " in event["name"]
                         else event["name"].split(" está ")[0],
-
                         Calendar._clean(event["description"])
                         if event["description"] != ""
                         else "Descrição não disponível",
-
                         "Aula ao vivo - BigBlueButton"
                         if event["modulename"] == "bigbluebuttonbn"
                         else "Tarefa para entregar via Moodle",
-
                         deadline[:-7],
-
                         deadline[-5:],
-
                         event["url"],
-
                         Professor.get(**params),
-
-                        f'Tarefa {"não " if status == 0 or not status else ""}entregue',
-
+                        f'Tarefa {"não " if status == 0 or not status else ""}entregue'
+                        if event["modulename"] == "assign"
+                        else "",
                         Calendar._time(time) if time != 0 and time else "",
                     ]
                 )
@@ -304,25 +289,18 @@ class Calendar(Request):
                         info["semester"],
                         info["class"],
                         event["course"]["fullname"],
-
                         event["name"].split(" is ")[0]
                         if " is " in event["name"]
                         else event["name"].split(" está ")[0],
-
                         Calendar._clean(event["description"])
                         if event["description"] != ""
                         else "Descrição não disponível",
-
                         "Aula ao vivo - BigBlueButton"
                         if event["modulename"] == "bigbluebuttonbn"
                         else "Tarefa para entregar via Moodle",
-
                         deadline[:-7],
-
                         deadline[-5:],
-
                         event["url"],
-                        
                         Professor.get(**params),
                     ]
                 )

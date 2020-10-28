@@ -33,3 +33,6 @@ build
 
 # System Files
 *.DS_Store
+
+# Others
+moodleapi_rewrite
