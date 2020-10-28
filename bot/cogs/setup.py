@@ -1,4 +1,3 @@
-from operator import truediv
 from discord.ext.commands import Cog, command
 from discord.ext.commands.core import has_permissions
 
