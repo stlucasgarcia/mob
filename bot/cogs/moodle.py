@@ -335,7 +335,7 @@ class Moodle(Cog):
 
             if data and getData_Counter[0] % 16 == 0:
                 embed = main_messages_style(
-                    f"Sending the twice-daily Moodle events update {next(books_list)} {next(happy_faces)}"
+                    f"Sending the Moodle events update {next(books_list)} {next(happy_faces)}"
                 )
 
                 await asyncio.sleep(0.5)
