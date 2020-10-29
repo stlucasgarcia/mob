@@ -7,14 +7,13 @@ from discord.ext.commands import command, Cog
 
 from utilities import (
     main_messages_style,
-    check_command_style,
     happy_faces,
     negative_emojis_list,
     books_list,
     positive_emojis_list,
     FULL_MONTHS,
 )
-from utilities_moodle import data_dict, moodle_color
+from utilities_moodle import data_dict, moodle_color, check_command_style
 
 from datetime import datetime as dt
 from typing import Tuple

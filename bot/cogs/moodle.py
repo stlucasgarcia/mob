@@ -11,7 +11,6 @@ from settings import getData_Counter
 
 from utilities import (
     main_messages_style,
-    check_command_style,
     happy_faces,
     negative_emojis_list,
     books_list,
@@ -20,7 +19,7 @@ from utilities import (
     defaultcolor,
     emojis_list,
 )
-from utilities_moodle import data_dict, moodle_color
+from utilities_moodle import data_dict, moodle_color, check_command_style
 
 
 # List with commands/functionalities related to the Moodle API
@@ -99,7 +98,9 @@ class Moodle(Cog):
                 # Styling the message for better user experience
                 color = moodle_color(index, assignmentsdata)
 
-                embed = check_command_style(assignmentsdata, str(index + 1), color)[0]
+                embed = check_command_style(
+                    assignmentsdata, str(index + 1), color
+                )[0]
                 await ctx.send(embed=embed)
                 await asyncio.sleep(0.3)
 
