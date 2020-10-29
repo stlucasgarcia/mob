@@ -21,7 +21,6 @@ class Export:
     information in secret1.py and to csv files."""
 
     def __init__(self, name=None):
-        super().__init__()
         self.name = name
         self.path = path.abspath("bot").split("bot")[0] + f"csvfiles\{name}.csv"
         self.tpool, self.conn = Export._conn()

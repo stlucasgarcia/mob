@@ -13,6 +13,7 @@ from moodleapi.settings import week, month
 
 from datetime import datetime as dt
 from re import compile, sub
+import time as t
 
 
 class Calendar(Request):

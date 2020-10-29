@@ -98,9 +98,7 @@ class Moodle(Cog):
                 # Styling the message for better user experience
                 color = moodle_color(index, assignmentsdata)
 
-                embed = check_command_style(
-                    assignmentsdata, str(index + 1), color
-                )[0]
+                embed = check_command_style(assignmentsdata, str(index + 1), color)[0]
                 await ctx.send(embed=embed)
                 await asyncio.sleep(0.3)
 
