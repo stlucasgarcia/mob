@@ -1,7 +1,13 @@
 from discord.ext.commands import Cog, command
 from discord.ext.commands.core import has_permissions
-
-from utilities import main_messages_style, positive_emojis_list, negative_emojis_list
+from discord import Embed
+from utilities import (
+    main_messages_style,
+    positive_emojis_list,
+    negative_emojis_list,
+    footer,
+    invisible_emoji,
+)
 
 
 class Setup(Cog):
@@ -93,6 +99,26 @@ class Setup(Cog):
         )
 
         embed = main_messages_style(f"The loop channel is set to `#{ctx.channel.name}`")
+        await ctx.send(embed=embed)
+
+    @command(
+        name="moodleconfig",
+        aliases=[
+            "moodleConfig, moodle_config, MoodleConfig, setupMoodle, setup_moodle, setupmoodle"
+        ],
+    )
+    @has_permissions(administrator=True)
+    async def moodleconfig(self, ctx):
+        embed = Embed(
+            title="Select the server's moodle from the options below",
+            description="React to your moodle's emoji to be ",
+        )
+        embed.set_author(name="Moodle Configuration Tool")
+
+        # Available options
+        embed.add_field(name="Mackenzie", value=invisible_emoji, inline=True)
+
+        embed.set_footer(text=footer)
         await ctx.send(embed=embed)
 
 

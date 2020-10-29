@@ -71,7 +71,7 @@ async def on_guild_join(guild):
         "INSERT INTO bot_servers (guild_id, guild_name, prefix) VALUES ($1, $2, $3)",
         int(guild.id),
         str(guild.name),
-        "mack ",
+        "--",
     )
 
 

@@ -1,5 +1,3 @@
-loop_channel = int(750313490455068722)
-
 # Dictionary template that we use in most part of Moodle.py
 def data_dict(database):
     assignmentsdata = {
