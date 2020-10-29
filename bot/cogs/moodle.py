@@ -8,6 +8,7 @@ from discord import Embed
 from discord.ext import tasks
 from discord.ext.commands import command, Cog, cooldown
 from settings import getData_Counter
+
 from utilities import (
     main_messages_style,
     check_command_style,
@@ -19,7 +20,7 @@ from utilities import (
     defaultcolor,
     emojis_list,
 )
-from utilities_moodle import data_dict, moodle_color, loop_channel
+from utilities_moodle import data_dict, moodle_color
 
 
 # List with commands/functionalities related to the Moodle API

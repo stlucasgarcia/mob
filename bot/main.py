@@ -1,10 +1,10 @@
 import os
 import asyncpg
+
 from discord import Intents
 from discord.ext import commands
 
 from utilities import main_messages_style, positive_emojis_list
-
 from secret1 import DB_Username, DB_Password, Bot_token
 
 
@@ -68,22 +68,18 @@ async def on_command_error(ctx, error):
 @client.event
 async def on_guild_join(guild):
     await client.pg_con.execute(
-        "INSERT INTO bot_servers (guild_id, guild_name, prefix) VALUES ($1, $2, $3)",
+        "INSERT INTO bot_servers (guild_id, guild_name, prefix, moodle_url) VALUES ($1, $2, $3, $4)",
         int(guild.id),
         str(guild.name),
         "--",
+        None,
     )
 
 
 @client.event
 async def on_guild_remove(guild):
     await client.pg_con.execute(
-        "DELETE FROM bot_servers WHERE guild_id = $1",
-        int(guild.id),
-    )
-
-    await client.pg_con.execute(
-        "DELETE FROM bot_data WHERE guild_id = $1",
+        "DELETE FROM {bot_servers, bot_data, moodle_events, moodle_groups, moodle_professors, moodle_professors} WHERE guild_id = $1",
         int(guild.id),
     )
 

@@ -6,8 +6,9 @@ from utilities import (
     positive_emojis_list,
     negative_emojis_list,
     footer,
-    invisible_emoji,
+    defaultcolor,
 )
+from secret1 import moodle_dict
 
 
 class Setup(Cog):
@@ -100,6 +101,7 @@ class Setup(Cog):
 
         embed = main_messages_style(f"The loop channel is set to `#{ctx.channel.name}`")
         await ctx.send(embed=embed)
+        await ctx.message.add_reaction(next(positive_emojis_list))
 
     @command(
         name="moodleconfig",
@@ -109,17 +111,52 @@ class Setup(Cog):
     )
     @has_permissions(administrator=True)
     async def moodleconfig(self, ctx):
+        """Sets up the server's moodle url"""
+
         embed = Embed(
             title="Select the server's moodle from the options below",
             description="React to your moodle's emoji to be ",
+            color=defaultcolor,
         )
         embed.set_author(name="Moodle Configuration Tool")
 
         # Available options
-        embed.add_field(name="Mackenzie", value=invisible_emoji, inline=True)
+        embed.add_field(
+            name="Mackenzie <:mackenzie:771329600609189928>",
+            value="Mackenzie main moodle",
+            inline=True,
+        )
 
         embed.set_footer(text=footer)
-        await ctx.send(embed=embed)
+        menu = await ctx.send(embed=embed)
+
+        emojis_list = ["<:mackenzie:771329600609189928>"]
+
+        for index in range(len(emojis_list)):
+            await menu.add_reaction(emojis_list[index])
+
+        def check(reaction, user):
+            return (
+                reaction.message.id == menu.id
+                and user == ctx.author
+                and str(reaction.emoji) in emojis_list
+            )
+
+        opt = await self.client.wait_for("reaction_add", check=check)
+
+        i = emojis_list.index(str(opt[0]))
+        url: str = ""
+
+        if i == 0:
+            url = moodle_dict["mackenzie"]
+
+        await self.client.pg_con.execute(
+            "UPDATE bot_servers SET moodle_url = $1 WHERE guild_id = $2",
+            url,
+            ctx.guild.id,
+        )
+
+        await ctx.message.add_reaction(next(positive_emojis_list))
 
 
 def setup(client):

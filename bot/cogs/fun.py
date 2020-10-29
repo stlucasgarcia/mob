@@ -1,12 +1,16 @@
 import discord
 import random
 import aiohttp
-from discord.embeds import Embed
 
 from discord.ext.commands import command, Cog
 from random import randint
 
-from utilities import defaultcolor, main_messages_style, positive_emojis_list
+from utilities import (
+    defaultcolor,
+    main_messages_style,
+    positive_emojis_list,
+    negative_emojis_list,
+)
 
 
 class Fun(Cog):
@@ -239,6 +243,8 @@ class Fun(Cog):
         option = option.lower()
 
         if option == "rock":
+            await ctx.message.add_reaction(next(positive_emojis_list))
+
             if num == 1:
                 embed = main_messages_style(f"I picked `Rock`, it's a draw 😅 - 👊🏻👊🏻")
                 await ctx.send(embed=embed)
@@ -252,6 +258,8 @@ class Fun(Cog):
                 await ctx.send(embed=embed)
 
         elif option == "paper":
+            await ctx.message.add_reaction(next(positive_emojis_list))
+
             if num == 1:
                 embed = main_messages_style(f"I picked `Rock`, you won 🤬 - 👊🏻🧻")
                 await ctx.send(embed=embed)
@@ -265,6 +273,8 @@ class Fun(Cog):
                 await ctx.send(embed=embed)
 
         elif option == "scissors":
+            await ctx.message.add_reaction(next(positive_emojis_list))
+
             if num == 1:
                 embed = main_messages_style(f"I picked `Rock`, I won 🥱 - 👊🏻✂")
                 await ctx.send(embed=embed)
@@ -278,6 +288,8 @@ class Fun(Cog):
                 await ctx.send(embed=embed)
 
         else:
+            await ctx.message.add_reaction(next(negative_emojis_list))
+
             embed = main_messages_style(
                 "That's not a valid option",
                 "Note: You must choose between rock, paper or scissors ",

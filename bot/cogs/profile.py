@@ -2,7 +2,7 @@ import discord
 
 from discord.ext.commands import Cog, command
 
-from utilities import main_messages_style, positive_emojis_list
+from utilities import main_messages_style, positive_emojis_list, negative_emojis_list
 
 
 class Profile(Cog):
@@ -110,6 +110,8 @@ class Profile(Cog):
 
     @command(name="rep", aliases=["Rep", "Reputation", "reputation"])
     async def rep(self, ctx, member: discord.Member, opt: str = None):
+        """Gives reputation to another user"""
+
         positive_options = ["+", "plus", "mais"]
         negative_options = ["-", "negative", "neg"]
 
@@ -131,6 +133,8 @@ class Profile(Cog):
                     "Option not available" "Try using `+` or `-`"
                 )
                 await ctx.send(embed=embed)
+                await ctx.message.add_reaction(next(negative_emojis_list))
+
                 return
 
             await self.client.pg_con.execute(
@@ -143,8 +147,9 @@ class Profile(Cog):
                 f"{ctx.author.display_name} has given rep to {member.display_name}"
             )
             await ctx.send(embed=embed)
+            await ctx.message.add_reaction(next(positive_emojis_list))
 
-        if not opt and member.id != ctx.author.id:
+        elif not opt and member.id != ctx.author.id:
             rep = await self.client.pg_con.fetch(
                 "SELECT rep FROM bot_users WHERE user_id = $1", str(member.id)
             )
@@ -161,6 +166,15 @@ class Profile(Cog):
 
             embed = main_messages_style(
                 f"{ctx.author.display_name} has given rep to {member.display_name}"
+            )
+            await ctx.send(embed=embed)
+            await ctx.message.add_reaction(next(positive_emojis_list))
+
+        else:
+            await ctx.message.add_reaction(next(negative_emojis_list))
+
+            embed = main_messages_style(
+                "Option not available", "Available options: `+` and `-`"
             )
             await ctx.send(embed=embed)
 
