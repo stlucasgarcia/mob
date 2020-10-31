@@ -1,8 +1,7 @@
 from discord import Embed
-from utilities import thumbnail_url, defaultcolor, footer
+from utilities import thumbnail_url, defaultcolor, footer, emojis_list
 from secret1 import bitly_token
 import pyshorteners
-import time
 
 # Dictionary template that we use in most part of Moodle.py
 def data_dict(database):
@@ -92,3 +91,31 @@ def check_command_style(dict, amount="", color="", status=None, done=None):
 
     embed.set_footer(text=footer)
     return embed, done
+
+
+# Style for group command
+def group_command_style(member, amount):
+    embed = Embed(
+        title="How to use it: ",
+        description="To join this group you must react with the respective emoji",
+        color=defaultcolor,
+    )
+
+    embed.set_author(name="Group Making Tool")
+
+    embed.add_field(
+        name=f"Member {emojis_list[0]}",
+        value=f"`{member}`",
+        inline=False,
+    )
+
+    for people in range(amount - 1):
+        embed.add_field(
+            name=f"Member {emojis_list[people+1]}",
+            value=f"Click on the emoji to join as member {people+1}",
+            inline=False,
+        )
+
+    embed.set_footer(text=footer)
+
+    return embed

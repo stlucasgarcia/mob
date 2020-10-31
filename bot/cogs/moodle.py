@@ -15,11 +15,14 @@ from utilities import (
     negative_emojis_list,
     books_list,
     positive_emojis_list,
-    footer,
-    defaultcolor,
     emojis_list,
 )
-from utilities_moodle import data_dict, moodle_color, check_command_style
+from utilities_moodle import (
+    data_dict,
+    moodle_color,
+    check_command_style,
+    group_command_style,
+)
 
 
 # List with commands/functionalities related to the Moodle API
@@ -391,6 +394,47 @@ class Moodle(Cog):
             pass
 
     @command(
+        name="moodleUpdate",
+        aliases=["moodle_update", "Update", "moodleupdate", "MoodleUpdate", "force"],
+    )
+    async def moodleUpdate(self, ctx):
+        """Updates moodle data (assignments and classes)"""
+
+        CSmain = 169890240708870144
+
+        params = {
+            "db": "moodle_events",
+            "course": "CCP",
+            "semester": "02",
+            "class": "D",
+            "discord_id": CSmain,
+            "guild_id": 748168924465594419,
+        }
+
+        tokens_data = await self.client.pg_con.fetch(
+            "SELECT token FROM moodle_profile WHERE discord_id = $1", CSmain
+        )
+
+        token = tokens_data[0]["token"]
+
+        decrypted_token = Cryptography.decrypt_message(bytes(token, encoding="utf-8"))
+
+        # Get data from the moodle and filter it
+        Calendar(decrypted_token).upcoming(False, params)
+
+        # Check if there's events
+        await self.client.pg_con.fetch(
+            "SELECT * FROM moodle_events WHERE discord_id = $1 AND guild_id = $2",
+            CSmain,
+            748168924465594419,
+        )
+
+        await ctx.message.add_reaction(next(positive_emojis_list))
+
+        embed = main_messages_style("Moodle events updated successfully")
+        ctx.send(embed=embed)
+
+    @command(
         name="group",
         aliases=[
             "Group",
@@ -403,6 +447,8 @@ class Moodle(Cog):
         ],
     )
     async def group(self, ctx, amount: int = None):
+        """Creates a group making which other students can join your group"""
+
         if amount is None:
             embed = main_messages_style(
                 "You must type the command plus the desired amount of members in the group",
@@ -411,77 +457,47 @@ class Moodle(Cog):
             await ctx.send(embed=embed)
 
         else:
+            member = ctx.author.display_name.capitalize()
 
-            embed = Embed(
-                title="How to use it: ",
-                description="To join this group you must react with the respective emoji",
-                color=defaultcolor,
-            )
+            await ctx.send("MENTION")
 
-            embed.set_author(name="Group Making Tool")
-
-            embed.add_field(
-                name=f"Member {emojis_list[0]}",
-                value=f"`{ctx.author.display_name.capitalize()}`",
-                inline=False,
-            )
-
-            for people in range(amount - 1):
-                embed.add_field(
-                    name=f"Member {emojis_list[people+1]}",
-                    value=f"Click on the emoji to join as member {people+1}",
-                    inline=False,
-                )
-
-            embed.set_footer(text=footer)
-
+            embed = group_command_style(member, amount)
             msg = await ctx.send(embed=embed)
 
             for emoji in range(amount - 1):
                 await msg.add_reaction(emojis_list[emoji + 1])
 
             await self.client.pg_con.execute(
-                "INSERT INTO moodle_groups (message_id) VALUES ($1)", str(msg.id)
+                "INSERT INTO moodle_groups (msg_id, guild_id, member1) VALUES ($1, $2, $3)",
+                str(msg.id),
+                ctx.guild.id,
+                ctx.author.display_name,
             )
 
-            data = None
+            await ctx.message.add_reaction(next(positive_emojis_list))
 
-            try:
-                data = await self.client.pg_con.fetch(
-                    "SELECT discord_id FROM moodle_groups WHERE discord_id=$1 AND guild_id=$2",
-                    ctx.author.id,
-                    int(ctx.guild.id),
-                )
+    @Cog.listener()
+    async def on_raw_reaction_add(self, payload):
+        """Moodle group making 'waiting_for_reaction'"""
 
-            except Exception:
-                pass
+        message_id = await self.client.pg_con.fetch(
+            "SELECT msg_id FROM moodle_groups WHERE guild_id=$1",
+            payload.guild_id,
+        )
 
-            if not data:
-                await self.client.pg_con.execute(
-                    "INSERT INTO moodle_groups (discord_id, discord_name, guild_id, guild_name, course, semester, class) VALUES ($1, $2, $3, $4, $5, $6, $7)",
-                    int(ctx.author.id),
-                    str(ctx.author.display_name),
-                    int(ctx.guild.id),
-                    str(ctx.guild.name),
-                    "CC",
-                    "02",
-                    "D",
-                )
+        message_is_list = [item for i in message_id for item in i]
 
-    # @Cog.listener()
-    # async def on_raw_reaction_add(self, payload):
+        def check(reaction, user):
+            return user == payload.author and (reaction.emoji) in emojis_list
 
-    #     try:
-    #         message_id = await self.client.pg_con.fetch(
-    #             "SELECT message_id FROM moodle_groups WHERE guild_id=$1",
-    #             payload.guild_id,
-    #         )
-    #         message_is_list = [item for i in message_id for item in i]
+        # if str(payload.message_id) in message_is_list:
+        #     await self.client.pg_con.execute(
+        #         "UPDATE bot_groups SET member = $1 WHERE user_id = $2",
+        #         rep,
+        #         str(member.id),
+        #     )
 
-    #     def check(reaction, user):
-    #         return user == payload.author and (reaction.emoji) in emojis_list
-
-    #     reaction, user = await self.client.wait_for("reaction_add", check=check)
+            
 
 
 def setup(client):
