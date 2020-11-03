@@ -27,7 +27,7 @@ class Profile(Cog):
     @Cog.listener()
     async def on_message(self, message):
         try:
-            if message.author == self.client.user and not message.author.bot:
+            if message.author == self.client.user or message.author.bot:
                 return
 
             author_id = str(message.author.id)

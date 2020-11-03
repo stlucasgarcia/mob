@@ -457,6 +457,7 @@ class Moodle(Cog):
             await ctx.send(embed=embed)
 
         else:
+            amount -= 1
             member = ctx.author.display_name.capitalize()
 
             await ctx.send("MENTION")
@@ -468,14 +469,17 @@ class Moodle(Cog):
                 await msg.add_reaction(emojis_list[emoji + 1])
 
             await self.client.pg_con.execute(
-                "INSERT INTO moodle_groups (msg_id, guild_id, member1) VALUES ($1, $2, $3)",
+                "INSERT INTO moodle_groups (msg_id, guild_id, member1, amount, channel_id) VALUES ($1, $2, $3, $4)",
                 str(msg.id),
                 ctx.guild.id,
                 ctx.author.display_name,
+                amount,
+                ctx.channel.id,
             )
 
             await ctx.message.add_reaction(next(positive_emojis_list))
 
+    # Group reaction checking
     @Cog.listener()
     async def on_raw_reaction_add(self, payload):
         """Moodle group making 'waiting_for_reaction'"""
@@ -487,17 +491,43 @@ class Moodle(Cog):
 
         message_is_list = [item for i in message_id for item in i]
 
-        def check(reaction, user):
-            return user == payload.author and (reaction.emoji) in emojis_list
+        if payload.message_id in message_is_list:
+            data = await self.client.pg_con.fetch(
+                "SELECT * from moodle_groups WHERE msg_id = $1", payload.message_id
+            )
+            print(data, len(data[0]))
+            print(dir(payload))
+            amount = int(data[0]["amount"])
+            amount -= 1
 
-        # if str(payload.message_id) in message_is_list:
-        #     await self.client.pg_con.execute(
-        #         "UPDATE bot_groups SET member = $1 WHERE user_id = $2",
-        #         rep,
-        #         str(member.id),
-        #     )
+            await self.client.pg_con.execute(
+                f"UPDATE bot_groups SET member = $1 WHERE msg_id = $2",
+                payload.user_id,
+                payload.message_id,
+                amount,
+            )
 
-            
+            embed = group_command_style(member, amount)
+            msg = await ctx.send(embed=embed)
+
+            for emoji in range(amount - 1):
+                await msg.add_reaction(emojis_list[emoji + 1])
+
+            await self.client.pg_con.execute(
+                "INSERT INTO moodle_groups (msg_id, guild_id, member1, amount) VALUES ($1, $2, $3, $4)",
+                str(msg.id),
+                ctx.guild.id,
+                ctx.author.display_name,
+                amount,
+            )
+
+            await self.client.pg_con.execute(
+                "DELETE FROM moodle_groups WHERE msg_id = $1",
+                str(msg.id),
+                ctx.guild.id,
+                ctx.author.display_name,
+                amount,
+            )
 
 
 def setup(client):
