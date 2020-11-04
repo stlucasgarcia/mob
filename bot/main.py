@@ -9,7 +9,7 @@ from utilities import main_messages_style, positive_emojis_list
 from secret1 import DB_Username, DB_Password, Bot_token, bitly_token
 
 
-async def get_prefix(client, ctx):
+async def get_prefix(client, ctx) -> str:
     try:
         prefix = await client.pg_con.fetch(
             "SELECT prefix FROM bot_servers WHERE guild_id = $1", ctx.guild.id

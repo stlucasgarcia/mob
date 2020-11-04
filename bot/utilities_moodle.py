@@ -23,7 +23,7 @@ def data_dict(database):
 
 
 # Changing color for better student visualization
-def moodle_color(i, assignmentsdata):
+def moodle_color(i: int, assignmentsdata: dict):
     if assignmentsdata["modulename"] == "Tarefa para entregar via Moodle":
         if i % 2 == 0:
             color = 0x480006
@@ -42,7 +42,9 @@ def moodle_color(i, assignmentsdata):
 
 
 # Styling the check command from moodle.py
-def check_command_style(dict, amount="", color="", status=None, done=None):
+def check_command_style(
+    dict: dict, amount: str = "", color: str = "", status: int = None, done: int = None
+):
     # Url shortener
     s = pyshorteners.Shortener(api_key=bitly_token)
 
@@ -94,7 +96,7 @@ def check_command_style(dict, amount="", color="", status=None, done=None):
 
 
 # Style for group command
-def group_command_style(member, amount):
+def group_command_style(member: list, amount: int) -> Embed:
     embed = Embed(
         title="How to use it: ",
         description="To join this group you must react with the respective emoji",

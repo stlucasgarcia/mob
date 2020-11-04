@@ -44,7 +44,14 @@ defaultcolor = 0x9F000C
 
 # This file is created to style the bot messages
 # Creating a template for messages
-def main_messages_style(name="", message="", emote="", color="", fot="", thumb=False):
+def main_messages_style(
+    name: str = "",
+    message: str = "",
+    emote: str = "",
+    color: str = "",
+    fot: str = "",
+    thumb: bool = False,
+) -> Embed:
     message = f"**{message}**" if message != "" else message
     embed = Embed(
         title=name,
@@ -97,7 +104,7 @@ FULL_MONTHS = {
 }
 
 
-def formatTime(seconds):
+def formatTime(seconds: int) -> str:
     hours = seconds // 3600
 
     seconds %= 3600
