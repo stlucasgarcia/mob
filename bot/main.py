@@ -90,6 +90,19 @@ async def on_guild_remove(guild):
     )
 
 
+@client.event
+async def on_member_join(member):
+    try:
+        role = await client.pg_con.fetch(
+            "SELECT on_join_role FROM bot_servers WHERE guild_id = $1", member.guild
+        )
+
+        await member.add_roles(role)
+
+    except AttributeError or TypeError:
+        return
+
+
 client.loop.run_until_complete(create_db_pool())
 
 client.run(Bot_token)

@@ -1,3 +1,4 @@
+import discord
 from discord.ext.commands import Cog, command
 from discord.ext.commands.core import has_permissions
 from discord import Embed
@@ -157,6 +158,34 @@ class Setup(Cog):
         )
 
         await ctx.message.add_reaction(next(positive_emojis_list))
+
+    @command(
+        name="auto_role",
+        aliases=["AutoRole", "autoRole", "AutoRole", "autorole", "auto_Role"],
+    )
+    async def autoRole(self, ctx, role: discord.Role):
+        """Sets up the server's 'on join' role"""
+        if not role:
+            embed = main_messages_style(
+                "You need to type the roles name for this command",
+                "Example: `autoRole Initialrole`",
+            )
+            ctx.send(embed=embed)
+            return
+
+        else:
+            role_id = discord.utils.get(ctx.guild.roles, name=role)
+
+            await self.client.pg_con.execute(
+                "UPDATE bot_servers SET on_join_role = $1 WHERE guild_id = $2",
+                role_id,
+                ctx.guild.id,
+            )
+
+            print(role.name)
+
+            embed = main_messages_style(f"The on server's join role is set to {role}")
+            ctx.send(embed=embed)
 
 
 def setup(client):

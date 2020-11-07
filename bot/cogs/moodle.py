@@ -4,7 +4,6 @@ from moodleapi.security import Cryptography
 from moodleapi.token import Token
 from moodleapi.data.calendar import Calendar
 
-from discord import Embed
 from discord.ext import tasks
 from discord.ext.commands import command, Cog, cooldown
 from settings import getData_Counter
@@ -507,27 +506,27 @@ class Moodle(Cog):
                 amount,
             )
 
-            embed = group_command_style(member, amount)
-            msg = await ctx.send(embed=embed)
+            # embed = group_command_style(member, amount)
+            # msg = await ctx.send(embed=embed)
 
-            for emoji in range(amount - 1):
-                await msg.add_reaction(emojis_list[emoji + 1])
+            # for emoji in range(amount - 1):
+            #     await msg.add_reaction(emojis_list[emoji + 1])
 
-            await self.client.pg_con.execute(
-                "INSERT INTO moodle_groups (msg_id, guild_id, member1, amount) VALUES ($1, $2, $3, $4)",
-                str(msg.id),
-                ctx.guild.id,
-                ctx.author.display_name,
-                amount,
-            )
+            # await self.client.pg_con.execute(
+            #     "INSERT INTO moodle_groups (msg_id, guild_id, member1, amount) VALUES ($1, $2, $3, $4)",
+            #     str(msg.id),
+            #     ctx.guild.id,
+            #     ctx.author.display_name,
+            #     amount,
+            # )
 
-            await self.client.pg_con.execute(
-                "DELETE FROM moodle_groups WHERE msg_id = $1",
-                str(msg.id),
-                ctx.guild.id,
-                ctx.author.display_name,
-                amount,
-            )
+            # await self.client.pg_con.execute(
+            #     "DELETE FROM moodle_groups WHERE msg_id = $1",
+            #     str(msg.id),
+            #     ctx.guild.id,
+            #     ctx.author.display_name,
+            #     amount,
+            # )
 
 
 def setup(client):
