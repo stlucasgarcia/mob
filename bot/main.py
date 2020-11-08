@@ -1,12 +1,11 @@
 import os
 import asyncpg
-import pyshorteners
 
 from discord import Intents
 from discord.ext import commands
 
 from utilities import main_messages_style, positive_emojis_list
-from secret1 import DB_Username, DB_Password, Bot_token, bitly_token
+from secret1 import DB_Username, DB_Password, Bot_token
 
 
 async def get_prefix(client, ctx) -> str:
