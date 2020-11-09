@@ -161,7 +161,7 @@ class Setup(Cog):
 
     @command(
         name="auto_role",
-        aliases=["AutoRole", "autoRole", "AutoRole", "autorole", "auto_Role"],
+        aliases=["AutoRole", "autoRole", "autorole", "auto_Role"],
     )
     async def autoRole(self, ctx, role: discord.Role):
         """Sets up the server's 'on join' role"""
