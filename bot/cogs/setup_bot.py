@@ -170,7 +170,7 @@ class Setup(Cog):
                 "You need to type the roles name for this command",
                 "Example: `autoRole Initialrole`",
             )
-            ctx.send(embed=embed)
+            await ctx.send(embed=embed)
             return
 
         else:
@@ -185,7 +185,7 @@ class Setup(Cog):
             print(role.name)
 
             embed = main_messages_style(f"The on server's join role is set to {role}")
-            ctx.send(embed=embed)
+            await ctx.send(embed=embed)
 
 
 def setup(client):

@@ -431,7 +431,7 @@ class Moodle(Cog):
         await ctx.message.add_reaction(next(positive_emojis_list))
 
         embed = main_messages_style("Moodle events updated successfully")
-        ctx.send(embed=embed)
+        await ctx.send(embed=embed)
 
     @command(
         name="group",
