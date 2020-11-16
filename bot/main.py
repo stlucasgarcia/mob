@@ -13,8 +13,8 @@ async def get_prefix(client, ctx) -> str:
         prefix = await client.pg_con.fetch(
             "SELECT prefix FROM bot_servers WHERE guild_id = $1", ctx.guild.id
         )
-        prefix = prefix[0]["prefix"]
-        return prefix
+        client.prefix = prefix[0]["prefix"]
+        return client.prefix
 
     except AttributeError or TypeError:
         return "--"

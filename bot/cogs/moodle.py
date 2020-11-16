@@ -336,7 +336,7 @@ class Moodle(Cog):
             )
 
             loop_channel = await self.client.pg_con.fetch(
-                "SELECT loop_channel FROM bot_servers",
+                "SELECT loop_channel, loop_time FROM bot_servers",
             )
 
             for item in range(len((loop_channel))):  # Send on different servers

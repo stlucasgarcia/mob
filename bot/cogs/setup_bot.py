@@ -163,6 +163,7 @@ class Setup(Cog):
         name="auto_role",
         aliases=["AutoRole", "autoRole", "autorole", "auto_Role"],
     )
+    @has_permissions(administrator=True)
     async def autoRole(self, ctx, role: discord.Role):
         """Sets up the server's 'on join' role"""
         if not role:
@@ -182,10 +183,27 @@ class Setup(Cog):
                 ctx.guild.id,
             )
 
-            print(role.name)
-
             embed = main_messages_style(f"The on server's join role is set to {role}")
             await ctx.send(embed=embed)
+
+    @command(
+        name="loopTime",
+        aliases=["looptime", "LoopTime", "loop_timer", "setLoopTimer", "setlooptimer"],
+    )
+    @has_permissions(administrator=True)
+    async def loopTime(self, ctx, time):
+        """Defines the time in minutes which getData loop will runs"""
+
+        await self.client.pg_con.execute(
+            "UPDATE bot_servers SET loop_time = $1 WHERE guild_id = $2",
+            int(time),
+            ctx.guild.id,
+        )
+
+        embed = main_messages_style(
+            f"The server's getData loop is set to be every {int(time)} minutes"
+        )
+        await ctx.send(embed=embed)
 
 
 def setup(client):

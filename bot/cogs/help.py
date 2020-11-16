@@ -20,6 +20,8 @@ def syntax(command):
 
 
 class Help(Cog):
+    """The help class is responsible to recreate the default help command"""
+
     def __init__(self, client):
         self.client = client
         self.client.remove_command("help")
@@ -31,6 +33,7 @@ class Help(Cog):
 
     @command(name="help", aliases=["show_help", "HELP", "Help", "h"])
     async def show_help(self, ctx, cmd: Optional[str]):
+        """It shows you all the commands and if you type help + a command it'll give you a more details about that specific command"""
         if not cmd:
             contents = [
                 [
@@ -106,6 +109,10 @@ class Help(Cog):
                 await self.cmd_help(ctx, command)
 
             else:
+                embed = main_messages_style(
+                    "The command does not exist",
+                    f"Type {self.client.prefix}help to view all available commands",
+                )
                 await ctx.send("Command does not exist.")
 
 
