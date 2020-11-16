@@ -8,12 +8,18 @@ from utilities import main_messages_style, positive_emojis_list
 from secret1 import DB_Username, DB_Password, Bot_token
 
 
-async def get_prefix(client, ctx) -> str:
+async def get_serverSettings(client, ctx) -> str:
     try:
         prefix = await client.pg_con.fetch(
-            "SELECT prefix FROM bot_servers WHERE guild_id = $1", ctx.guild.id
+            "SELECT prefix, loop_time FROM bot_servers WHERE guild_id = $1",
+            ctx.guild.id,
         )
         client.prefix = prefix[0]["prefix"]
+        try:
+            client.timer = int(prefix[0]["loop_time"])
+        except TypeError:
+            pass
+        print(prefix, client.timer)
         return client.prefix
 
     except AttributeError or TypeError:
@@ -21,7 +27,9 @@ async def get_prefix(client, ctx) -> str:
 
 
 intents = Intents.all()
-client = commands.Bot(command_prefix=get_prefix, help_command=None, intents=intents)
+client = commands.Bot(
+    command_prefix=get_serverSettings, help_command=None, intents=intents
+)
 
 # Creates a connection with the Discord Database
 async def create_db_pool():
@@ -60,7 +68,7 @@ async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
         embed = main_messages_style(
             "Invalid command",
-            f"Type {await get_prefix(client, ctx)}help to see the available commands",
+            f"Type {client.prefix}help to see the available commands",
         )
         await ctx.send(embed=embed)
 

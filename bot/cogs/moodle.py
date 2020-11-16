@@ -29,6 +29,7 @@ class Moodle(Cog):
     def __init__(self, client):
         self.client = client
         self.getData.start()
+        timer = client.timer
 
     @command(name="get", aliases=["Get", "GET"])
     async def get(self, ctx, option=""):
