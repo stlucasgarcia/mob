@@ -23,7 +23,8 @@ async def get_serverSettings(client, ctx) -> str:
         except TypeError or discord.errors:
             pass
 
-        print(prefix, client.timer)
+        #print(prefix, client.timer)
+        return client.prefix
 
     except AttributeError or TypeError:
         return "--"
