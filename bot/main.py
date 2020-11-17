@@ -1,5 +1,6 @@
 import os
 import asyncpg
+import discord
 
 from discord import Intents
 from discord.ext import commands
@@ -15,12 +16,14 @@ async def get_serverSettings(client, ctx) -> str:
             ctx.guild.id,
         )
         client.prefix = prefix[0]["prefix"]
+
         try:
             client.timer = int(prefix[0]["loop_time"])
-        except TypeError:
+
+        except TypeError or discord.errors:
             pass
+
         print(prefix, client.timer)
-        return client.prefix
 
     except AttributeError or TypeError:
         return "--"
