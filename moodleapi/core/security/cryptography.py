@@ -3,12 +3,11 @@ Security module responsable to all kind of encrypt and decrypt.
 """
 
 from cryptography.fernet import Fernet
-
 from os import path
 
 
-class Cryptography:
-    """Cryptography class is responsable to generate an public and private key,
+class Cryptography:  # TODO: Improve cryptography
+    """Cryptography class is responsible to generate an public and private key,
     encrypt and decrypt messages by staticmethods"""
 
     @staticmethod
@@ -19,7 +18,8 @@ class Cryptography:
         key = Fernet.generate_key()
 
         with open(
-            path.abspath("bot").split("bot")[0] + "encryption.key", "wb"
+            path.abspath("moodleapi").split("moodleapi")[0] + "encryption.key",
+            "wb",
         ) as key_file:
             key_file.write(key)
 
@@ -28,10 +28,13 @@ class Cryptography:
         """Load de previous key created and storaged in 'encryption.key'
         in binary."""
 
-        return open(path.abspath("bot").split("bot")[0] + "encryption.key", "rb").read()
+        return open(
+            path.abspath("moodleapi").split("moodleapi")[0] + "encryption.key",
+            "rb",
+        ).read()
 
     @staticmethod
-    def encrypt_message(message=None, *args, **kwargs):
+    def encrypt_message(message=None):
         """With the key loaded, you can encrypt any string in this
         function and will return the message encrypted."""
 
@@ -49,7 +52,7 @@ class Cryptography:
 
     @staticmethod
     def decrypt_message(encrypted_message=None):
-        """Decrypt an message previusly encrypted and will be returned
+        """Decrypt an message previously encrypted and will be returned
         the real string."""
 
         if encrypted_message:

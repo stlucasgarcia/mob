@@ -9,7 +9,6 @@ from utilities import defaultcolor, footer, main_messages_style, negative_emojis
 class reactionRole(Cog):
     def __init__(self, client):
         self.client = client
-        
 
     # On reaction to the menu, the user will be given the respective Discord role
     @Cog.listener()
