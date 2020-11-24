@@ -1,6 +1,6 @@
 import asyncio
 
-from moodleapi.data.export import Export
+from moodleapi.core.export import Export
 
 from discord.ext import tasks
 from discord.ext.commands import command, Cog

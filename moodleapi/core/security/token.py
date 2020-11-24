@@ -12,8 +12,8 @@ from moodleapi.utils import SERVICE, CONNECTION, PLATFORM
 
 @dataclass
 class Token:
-    """Class Token generate an MoodleAPI token by username and password
-    login to automatically encrypt and storage in tokens.csv file."""
+    """Class Token generates a MoodleAPI token by the user's username and password.
+    It also automatically encrypt and storage."""
 
     url: str = ""
 
@@ -21,8 +21,8 @@ class Token:
         return "Token object"
 
     def create(self, *args, **kwargs):
-        """Create function recive username and password for token creation and additionaly
-        DiscordID from respective user to be added with the encrpyted token in database."""
+        """Create function receive username and password for token creation and additionally
+        DiscordID from respective user to be added with the encrypted token in database."""
 
         url = f"{self.url}{SERVICE}{CONNECTION}{PLATFORM}"
         data = post(url, params=kwargs).json()

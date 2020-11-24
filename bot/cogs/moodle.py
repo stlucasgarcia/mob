@@ -1,8 +1,7 @@
 import asyncio
 
-from moodleapi.security import Cryptography
-from moodleapi.token import Token
-from moodleapi.data.calendar import Calendar
+from moodleapi import Mdl
+from moodleapi.core.security import Token, Cryptography
 
 from discord.ext import tasks
 from discord.ext.commands import command, Cog, cooldown
@@ -29,6 +28,8 @@ class Moodle(Cog):
     def __init__(self, client):
         self.client = client
         self.getData.start()
+        self.moodle = Mdl()
+        # print(self.client.url)
         # timer = client.timer
 
     @command(name="get", aliases=["Get", "GET"])
@@ -142,20 +143,28 @@ class Moodle(Cog):
 
         token = tokens_data[0]["token"]
 
-        params = {
-            "db": "moodle_assign",
-            "course": "CCP",
-            "semester": "02",
-            "class": "D",
-            "discord_id": user_id,
-            "guild_id": guild_id,
-        }
+        decrypted_token = Cryptography.decrypt_message(bytes(token, encoding="utf-8"))
+
+        self.moodle(
+            decrypted_token,
+            self.client.url,
+            "core_calendar_get_calendar_upcoming_view",
+        )
+
+        self.moodle.get(category=2)
 
         embed = main_messages_style(f"Checking your assignments {next(books_list)} ...")
         await ctx.author.send(embed=embed)
 
-        decrypted_token = Cryptography.decrypt_message(bytes(token, encoding="utf-8"))
-        Calendar(decrypted_token).upcoming(True, params)
+        # Get data from the moodle and filter it
+        self.moodle.export(
+            db="moodle_assign",
+            course="CCP",
+            semester="02",
+            clss="D",
+            discord_id=user_id,
+            guild_id=guild_id,
+        )
 
         database = await self.client.pg_con.fetch(
             "SELECT * FROM moodle_assign WHERE discord_id = $1 AND guild_id = $2",
@@ -260,15 +269,15 @@ class Moodle(Cog):
 
                 # Call a function from moodleAPI to create a Token and save it encrypted on the file tokens.csv, it saves the discord author.id as well
                 params = {
-                    "discord_id": int(user_id),
+                    "discord_id": user_id,
                     "tia": username.content,
-                    "course": "CC",
+                    "course": "CCP",
                     "semester": "02",
                     "class": "D",
-                    "guild_id": int(guild_id),
+                    "guild_id": guild_id,
                 }
 
-                Token.create(
+                Token("https://eadmoodle.mackenzie.br/").create(
                     params, username=username.content, password=password.content
                 )
 
@@ -284,15 +293,14 @@ class Moodle(Cog):
 
         else:
             token = user_data[0]["token"]
+            print(token)
 
             embed = main_messages_style(
                 "Your Moodle API Token is encripted and safe, to keep the institution and your data safe I will send the Token in your DM"
             )
             await ctx.send(embed=embed)
 
-            decrypted_token = Cryptography().decrypt_message(
-                bytes(token, encoding="utf-8")
-            )
+            decrypted_token = Cryptography().decrypt(bytes(token, encoding="utf-8"))
 
             embed = main_messages_style(
                 f"Your decrypted Moodle API Token is, {decrypted_token}",
@@ -306,15 +314,6 @@ class Moodle(Cog):
     async def getData(self):
         CSmain = 169890240708870144
 
-        params = {
-            "db": "moodle_events",
-            "course": "CCP",
-            "semester": "02",
-            "class": "D",
-            "discord_id": CSmain,
-            "guild_id": 748168924465594419,
-        }
-
         try:
             tokens_data = await self.client.pg_con.fetch(
                 "SELECT token FROM moodle_profile WHERE discord_id = $1", CSmain
@@ -327,7 +326,22 @@ class Moodle(Cog):
             )
 
             # Get data from the moodle and filter it
-            Calendar(decrypted_token).upcoming(False, params)
+            self.moodle(
+                decrypted_token,
+                self.client.url,
+                "core_calendar_get_calendar_upcoming_view",
+            )
+
+            self.moodle.get(category=2)
+
+            self.moodle.export(
+                db="moodle_events",
+                course="CCP",
+                semester="02",
+                clss="D",
+                discord_id=CSmain,
+                guild_id=748168924465594419,
+            )
 
             # Check if there's events
             data = await self.client.pg_con.fetch(
@@ -400,33 +414,46 @@ class Moodle(Cog):
     async def moodleUpdate(self, ctx):
         """Updates moodle data (assignments and classes)"""
 
-        CSmain = 169890240708870144
+        print("começo")
+        guild_id = ctx.guild.id
 
-        params = {
-            "db": "moodle_events",
-            "course": "CCP",
-            "semester": "02",
-            "class": "D",
-            "discord_id": CSmain,
-            "guild_id": 748168924465594419,
-        }
+        CSmain = 169890240708870144
 
         tokens_data = await self.client.pg_con.fetch(
             "SELECT token FROM moodle_profile WHERE discord_id = $1", CSmain
         )
 
         token = tokens_data[0]["token"]
+        print(bytes(token, encoding="utf-8"))
 
         decrypted_token = Cryptography.decrypt_message(bytes(token, encoding="utf-8"))
+        print("Token", decrypted_token)
+
+        print(self.client.url)
 
         # Get data from the moodle and filter it
-        Calendar(decrypted_token).upcoming(False, params)
+        self.moodle(
+            decrypted_token,
+            self.client.url,
+            "core_calendar_get_calendar_upcoming_view",
+        )
+
+        self.moodle.get(category=2)
+
+        self.moodle.export(
+            db="moodle_events",
+            course="CCP",
+            semester="02",
+            clss="D",
+            discord_id=CSmain,
+            guild_id=guild_id,
+        )
 
         # Check if there's events
         await self.client.pg_con.fetch(
             "SELECT * FROM moodle_events WHERE discord_id = $1 AND guild_id = $2",
             CSmain,
-            748168924465594419,
+            guild_id,
         )
 
         await ctx.message.add_reaction(next(positive_emojis_list))

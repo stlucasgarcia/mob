@@ -11,14 +11,16 @@ from secret1 import DB_Username, DB_Password, Bot_token
 
 async def get_serverSettings(client, ctx) -> str:
     try:
-        prefix = await client.pg_con.fetch(
-            "SELECT prefix, loop_time FROM bot_servers WHERE guild_id = $1",
+        data = await client.pg_con.fetch(
+            "SELECT prefix, loop_time, moodle_url FROM bot_servers WHERE guild_id = $1",
             ctx.guild.id,
         )
-        client.prefix = prefix[0]["prefix"]
+        client.prefix = data[0]["prefix"]
+
+        client.url = data[0]["moodle_url"]
 
         try:
-            client.timer = int(prefix[0]["loop_time"])
+            client.timer = int(data[0]["loop_time"])
 
         except TypeError or discord.errors:
             pass

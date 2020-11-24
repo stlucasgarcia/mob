@@ -2,7 +2,6 @@ import psycopg2
 from dataclasses import dataclass
 
 from ..export import search_query
-from moodleapi.utils import db_query
 from moodleapi.secret import DATABASE
 
 
