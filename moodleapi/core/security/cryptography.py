@@ -2,20 +2,29 @@
 Security module responsable to all kind of encrypt and decrypt.
 """
 
-from cryptography.fernet import Fernet
+
+import base64
 from os import path
 
+from cryptography.fernet import Fernet, InvalidToken
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
-class Cryptography:  # TODO: Improve cryptography
-    """Cryptography class is responsible to generate an public and private key,
-    encrypt and decrypt messages by staticmethods"""
 
+class Cryptography:
     @staticmethod
-    def generate_key():
-        """Create an file with both public and private key for encrypt
-        and decrypt respectively."""
+    def generate_key_derivation(salt: bytes, master_password: str) -> None:
+        """Generate 256 bits key and storaged in 'encryption.key' in binary."""
 
-        key = Fernet.generate_key()
+        kdf = PBKDF2HMAC(
+            algorithm=hashes.SHA256(),
+            length=32,
+            salt=salt,
+            iterations=1000,
+            backend=default_backend(),
+        )
+        key = base64.urlsafe_b64encode(kdf.derive(master_password.encode()))
 
         with open(
             path.abspath("moodleapi").split("moodleapi")[0] + "encryption.key",
@@ -24,7 +33,7 @@ class Cryptography:  # TODO: Improve cryptography
             key_file.write(key)
 
     @staticmethod
-    def load_key():
+    def load_key() -> bytes:
         """Load de previous key created and storaged in 'encryption.key'
         in binary."""
 
@@ -34,34 +43,23 @@ class Cryptography:  # TODO: Improve cryptography
         ).read()
 
     @staticmethod
-    def encrypt_message(message=None):
+    def encrypt(value_to_encrypt: str) -> str:
         """With the key loaded, you can encrypt any string in this
         function and will return the message encrypted."""
 
-        if message:
-            key = Cryptography.load_key()
-            encoded_message = message.encode()
+        f = Fernet(Cryptography.load_key())
+        encrypted_key = f.encrypt(value_to_encrypt.encode())
 
-            f = Fernet(key)
-            encrypted_message = f.encrypt(encoded_message)
-
-            return encrypted_message.decode("utf-8")
-
-        else:
-            raise ValueError("Message not provided.")
+        return str(encrypted_key)
 
     @staticmethod
-    def decrypt_message(encrypted_message=None):
+    def decrypt(encrypted_key: bytes) -> str:
         """Decrypt an message previously encrypted and will be returned
         the real string."""
 
-        if encrypted_message:
-            key = Cryptography.load_key()
-            f = Fernet(key)
+        f = Fernet(Cryptography.load_key())
+        try:
+            return f.decrypt(encrypted_key).decode()
 
-            decrypted_message = f.decrypt(encrypted_message).decode()
-
-            return decrypted_message
-
-        else:
-            raise ValueError("Encrypted message not provided.")
+        except InvalidToken:
+            raise InvalidToken("Invalid Token")

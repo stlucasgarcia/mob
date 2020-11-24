@@ -14,7 +14,7 @@ class Export:
     def __post_init__(self):
         self.conn = psycopg2.connect(**DATABASE)
         self.cursor = self.conn.cursor()
-        self.query = search_query(db_query[self.db])
+        self.query = search_query(self.db)
         self._expo()
 
     def _expo(self):

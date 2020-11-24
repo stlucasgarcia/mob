@@ -29,5 +29,5 @@ class Token:
 
         return Export(
             "moodle_profile",
-            [*args[0].values(), Cryptography().encrypt_message(data["token"])],
+            [*args[0].values(), Cryptography().encrypt(data["token"])],
         )
