@@ -27,7 +27,11 @@ class Token:
         url = f"{self.url}{SERVICE}{CONNECTION}{PLATFORM}"
         data = post(url, params=kwargs).json()
 
+        token = Cryptography.encrypt(data["token"])
+
+        inf = [*args[0].values(), token]
+
         return Export(
             "moodle_profile",
-            [*args[0].values(), Cryptography().encrypt(data["token"])],
+            inf,
         )
