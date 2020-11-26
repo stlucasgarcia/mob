@@ -22,17 +22,19 @@ from utilities_moodle import (
     moodle_color,
     check_command_style,
     group_command_style,
+    get_data_timer,
 )
-
 
 # List with commands/functionalities related to the Moodle API
 class Moodle(Cog):
+    timer = get_data_timer[0]
+    print(timer)
+
     def __init__(self, client):
         self.client = client
         self.getData.start()
         self.moodle = Mdl()
         # print(self.client.url)
-        # timer = client.timer
 
     @command(name="get", aliases=["Get", "GET"])
     async def get(self, ctx, option=""):
@@ -147,15 +149,15 @@ class Moodle(Cog):
 
         token = tokens_data[0]["token"]
 
-        decrypted_token = Cryptography.decrypt_message(bytes(token, encoding="utf-8"))
-
+        decrypted_token = Cryptography.decrypt(token)
+        # TODO Don not add classes to assignments
         self.moodle(
             decrypted_token,
             self.client.url,
-            "core_calendar_get_calendar_upcoming_view",
+            "core_calendar_get_calendar_day_view",  # "core_calendar_get_calendar_upcoming_view",
         )
 
-        self.moodle.get(category=2)
+        self.moodle.get(day=30, month=9, year=2020)
 
         embed = main_messages_style(f"Checking your assignments {next(books_list)} ...")
         await ctx.author.send(embed=embed)
@@ -318,14 +320,13 @@ class Moodle(Cog):
 
         else:
             token = user_data[0]["token"]
-            print(token)
 
             embed = main_messages_style(
                 "Your Moodle API Token is encripted and safe, to keep the institution and your data safe I will send the Token in your DM"
             )
             await ctx.send(embed=embed)
 
-            decrypted_token = Cryptography().decrypt(bytes(token, encoding="utf-8"))
+            decrypted_token = Cryptography.decrypt(token)
 
             embed = main_messages_style(
                 f"Your decrypted Moodle API Token is, {decrypted_token}",
@@ -336,7 +337,7 @@ class Moodle(Cog):
     # Gets Moodle data through Moodle API and send it to the chat
     # Loops the GetData function.
     # TODO get the minutes
-    @tasks.loop(minutes=30)
+    @tasks.loop(minutes=timer)
     async def getData(self):
         CSmain = 169890240708870144
 
@@ -347,9 +348,7 @@ class Moodle(Cog):
 
             token = tokens_data[0]["token"]
 
-            decrypted_token = Cryptography.decrypt_message(
-                bytes(token, encoding="utf-8")
-            )
+            decrypted_token = Cryptography.decrypt(token)
 
             # Get data from the moodle and filter it
             self.moodle(
@@ -358,7 +357,7 @@ class Moodle(Cog):
                 "core_calendar_get_calendar_upcoming_view",
             )
 
-            self.moodle.get(category=2)
+            self.moodle.get(categoryid=2)
 
             self.moodle.export(
                 db="moodle_events",
@@ -449,12 +448,8 @@ class Moodle(Cog):
         )
 
         token = tokens_data[0]["token"]
-        print(bytes(token, encoding="utf-8"))
 
-        decrypted_token = Cryptography.decrypt_message(bytes(token, encoding="utf-8"))
-        print("Token", decrypted_token)
-
-        print(self.client.url)
+        decrypted_token = Cryptography.decrypt(token)
 
         # Get data from the moodle and filter it
         self.moodle(
@@ -463,7 +458,7 @@ class Moodle(Cog):
             "core_calendar_get_calendar_upcoming_view",
         )
 
-        self.moodle.get(category=2)
+        self.moodle.get(categoryid=2)
 
         self.moodle.export(
             db="moodle_events",

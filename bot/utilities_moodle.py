@@ -3,6 +3,8 @@ from utilities import thumbnail_url, defaultcolor, footer, emojis_list
 from secret1 import bitly_token
 import pyshorteners
 
+get_data_timer: list = [30]
+
 # Dictionary template that we use in most part of Moodle.py
 def data_dict(database):
     assignmentsdata = {

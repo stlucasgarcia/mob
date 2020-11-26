@@ -6,6 +6,7 @@ from discord import Intents
 from discord.ext import commands
 
 from utilities import main_messages_style, positive_emojis_list
+from utilities_moodle import get_data_timer
 from secret1 import DB_Username, DB_Password, Bot_token
 
 
@@ -20,7 +21,7 @@ async def get_serverSettings(client, ctx) -> str:
         client.url = data[0]["moodle_url"]
 
         try:
-            client.timer = int(data[0]["loop_time"])
+            get_data_timer[0] = int(data[0]["loop_time"])
 
         except TypeError or discord.errors:
             pass
