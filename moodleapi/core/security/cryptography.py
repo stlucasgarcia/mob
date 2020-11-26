@@ -4,7 +4,7 @@ Security module responsable to all kind of encrypt and decrypt.
 
 
 import base64
-from os import path, chdir, getcwd
+from os import chdir, getcwd
 
 from cryptography.fernet import Fernet, InvalidToken
 from cryptography.hazmat.backends import default_backend
@@ -26,7 +26,7 @@ class Cryptography:
         )
         key = base64.urlsafe_b64encode(kdf.derive(master_password.encode()))
 
-        directory = getcwd().split("/")[-1]
+        directory = getcwd().split("\\")[-1]  # TODO: FIX PATH FOR UNIX SO
 
         chdir("../")
 
@@ -42,7 +42,7 @@ class Cryptography:
     def load_key() -> bytes:
         """Load de previous key created and storaged in 'encryption.key'
         in binary."""
-        directory = getcwd().split("/")[-1]
+        directory = getcwd().split("\\")[-1]
 
         chdir("../")
 

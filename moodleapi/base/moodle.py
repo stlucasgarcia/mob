@@ -1,9 +1,7 @@
 import logging
 from typing import Any
 
-from ..base.process import (
-    BaseProcess,
-)  # TODO: change file name in base module
+from ..base.process import BaseProcess
 from ..core.export import connection, db_exist
 
 
@@ -13,22 +11,25 @@ class BaseMoodle:
         self.data: dict = {}
         self.tpool: Any = ""
         self.conn: Any = ""
-        # self.cursor: Any = ""
+        self.cursor: Any = ""
 
     def db(self, db):
         self.tpool, self.conn = connection()
-        cursor = self.conn.cursor()
-        db_exist(cursor, self.tpool, self.conn, db)
-        return cursor
+        self.cursor = self.conn.cursor()
+        db_exist(db)
 
-    def process_data(self, data, conn, cursor, **kwargs):
+    def process_data(self, data, **kwargs):
+        self.db(kwargs["db"])
         BaseProcess(
             self.wsfunction,
             data,
-            cursor,
-            conn,
+            self.cursor,
+            self.conn,
             self.token,
             self.r,
             self.url,
             kwargs,
         )
+        self.cursor.close()
+        self.tpool.putconn(self.conn)
+        self.tpool.closeall()

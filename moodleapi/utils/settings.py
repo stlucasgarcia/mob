@@ -58,4 +58,11 @@ week = {
     "Sat": "Sábado",
 }
 
+# Error codes
+error_code = {
+    "invalidtoken": "001",
+    "invalidparameter": "002",
+}
+
+
 # TODO: VER SE TALVEZ SEJA BOM COLOCAR NO INIT DOS PACKAGES

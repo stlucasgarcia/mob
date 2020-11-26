@@ -5,6 +5,8 @@ from ..utils import (
     functions,
     courses_not_allowed,
     allowed_modules,
+    error_code,
+    BEX,
 )
 
 from ..core.export import (
@@ -16,6 +18,8 @@ from ..core.calendar import (
     upcoming_information,
     upcoming_check_information,
 )
+
+from moodleapi.exception import MoodleException
 
 
 @dataclass
@@ -30,7 +34,23 @@ class BaseProcess:
     kwargs: dict = ""
 
     def __post_init__(self):
-        getattr(self, functions[self.wsfunction])()
+        if self._process_response():
+            getattr(self, functions[self.wsfunction])()
+
+    def _process_response(self):
+        if "exception" in self.data.keys():
+            print(
+                MoodleException(
+                    f"{BEX.FAIL}moodle.exception.MoodleException: "
+                    f"An error occured while connecting with MoodleAPI -> "
+                    f"{BEX.BOLD}{self.data['message']}{BEX.ENDC} "
+                    f"{BEX.UNDERLINE}(error code: {error_code[self.data['errorcode']]}){BEX.ENDC}"
+                )
+            )
+            return False
+
+        else:
+            return True
 
     def monthly(self):
         pass

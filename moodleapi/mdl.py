@@ -24,8 +24,4 @@ class Mdl(BaseMoodle):  # TODO: add description to classes and functions
             self.data = r.json()
 
     def export(self, **kwargs):
-        cursor = self.db(kwargs["db"])
-        self.process_data(self.data, self.conn, cursor, **kwargs)
-        cursor.close()
-        self.tpool.putconn(self.conn)
-        self.tpool.closeall()
+        self.process_data(self.data, **kwargs)
