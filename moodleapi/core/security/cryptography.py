@@ -61,18 +61,19 @@ class Cryptography:
         function and will return the message encrypted."""
 
         f = Fernet(Cryptography.load_key())
-        encrypted_key = f.encrypt(value_to_encrypt.encode())
+        encrypted_key = f.encrypt(value_to_encrypt.encode()).decode()
 
-        return str(encrypted_key)
+        return encrypted_key
 
     @staticmethod
-    def decrypt(encrypted_key: bytes) -> str:
+    def decrypt(encrypted_key: str) -> str:
         """Decrypt an message previously encrypted and will be returned
         the real string."""
 
         f = Fernet(Cryptography.load_key())
+
         try:
-            return f.decrypt(encrypted_key).decode()
+            return f.decrypt(encrypted_key.encode()).decode()
 
         except InvalidToken:
             raise InvalidToken("Invalid Token")
