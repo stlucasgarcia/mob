@@ -3,7 +3,13 @@ import re
 
 import discord
 from discord.ext.commands import Cog, command
-from utilities import defaultcolor, footer, main_messages_style, negative_emojis_list
+from utilities import (
+    defaultcolor,
+    footer,
+    negative_emojis_list,
+    main_messages_style,
+    timeout_message,
+)
 
 
 class reactionRole(Cog):
@@ -137,6 +143,8 @@ class reactionRole(Cog):
             await ctx.channel.purge(limit=2)
 
         else:
+            title = None
+            timeout = 120.0
             roles_list = []
             guild_id = str(ctx.guild.id)
 
@@ -148,8 +156,14 @@ class reactionRole(Cog):
             )
 
             await ctx.send(embed=embed)
+            try:
+                title = await self.client.wait_for(
+                    "message", timeout=timeout, check=check
+                )
+            except asyncio.TimeoutError:
+                embed = timeout_message(timeout)
+                return await ctx.author.send(embed=embed)
 
-            title = await self.client.wait_for("message", check=check)
             await asyncio.sleep(1)
             await ctx.channel.purge(limit=3)
 
@@ -159,7 +173,13 @@ class reactionRole(Cog):
 
             await ctx.send(embed=embed)
 
-            main_description = await self.client.wait_for("message", check=check)
+            try:
+                main_description = await self.client.wait_for(
+                    "message", timeout=timeout, check=check
+                )
+            except asyncio.TimeoutError:
+                embed = timeout_message(timeout)
+                return await ctx.author.send(embed=embed)
 
             await asyncio.sleep(1)
             await ctx.channel.purge(limit=2)
@@ -170,27 +190,46 @@ class reactionRole(Cog):
                 embed = main_messages_style("Reaction Role Tool", "Type the roles name")
                 await ctx.send(embed=embed)
 
-                Role = await self.client.wait_for("message", check=check)
+                try:
+                    Role = await self.client.wait_for(
+                        "message", timeout=timeout, check=check
+                    )
+                except asyncio.TimeoutError:
+                    embed = timeout_message(timeout)
+                    return await ctx.author.send(embed=embed)
+
                 await asyncio.sleep(1)
                 await ctx.channel.purge(limit=2)
 
                 embed = main_messages_style(
                     "Reaction Role Tool", "Type the Emoji for the Role"
                 )
-
                 await ctx.send(embed=embed)
 
-                Emoji = await self.client.wait_for("message", check=check)
+                try:
+                    Emoji = await self.client.wait_for(
+                        "message", timeout=timeout, check=check
+                    )
+                except asyncio.TimeoutError:
+                    embed = timeout_message(timeout)
+                    return await ctx.author.send(embed=embed)
+
                 await asyncio.sleep(1)
                 await ctx.channel.purge(limit=2)
 
                 embed = main_messages_style(
                     "Reaction Role Tool", "Type the roles Description"
                 )
-
                 await ctx.send(embed=embed)
 
-                Description = await self.client.wait_for("message", check=check)
+                try:
+                    Description = await self.client.wait_for(
+                        "message", timeout=timeout, check=check
+                    )
+                except asyncio.TimeoutError:
+                    embed = timeout_message(timeout)
+                    return await ctx.author.send(embed=embed)
+
                 await asyncio.sleep(1)
                 await ctx.channel.purge(limit=2)
 

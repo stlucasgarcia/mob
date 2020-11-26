@@ -1,9 +1,12 @@
 import discord
+import asyncio
+
 from discord.ext.commands import Cog, command
 from discord.ext.commands.core import has_permissions
 from discord import Embed
 from utilities import (
     main_messages_style,
+    timeout_message,
     positive_emojis_list,
     negative_emojis_list,
     footer,
@@ -143,7 +146,14 @@ class Setup(Cog):
                 and str(reaction.emoji) in emojis_list
             )
 
-        opt = await self.client.wait_for("reaction_add", check=check)
+        timeout = 60.0
+        try:
+            opt = await self.client.wait_for(
+                "reaction_add", timeout=timeout, check=check
+            )
+        except asyncio.TimeoutError:
+            embed = timeout_message(timeout, reaction=True)
+            return await ctx.send(embed=embed)
 
         i = emojis_list.index(str(opt[0]))
         url: str = ""

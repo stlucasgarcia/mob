@@ -7,6 +7,7 @@ from discord.ext.commands import command, Cog
 
 from utilities import (
     main_messages_style,
+    timeout_message,
     happy_faces,
     negative_emojis_list,
     books_list,
@@ -36,6 +37,9 @@ class Reminder(Cog):
     )
     async def reminder(self, ctx):
         """Reminder is responsable to create reminders for Moodle events or other types"""
+
+        option = None
+        timeout = 45.0
 
         def check(message):
             return message.author == ctx.author
@@ -83,7 +87,11 @@ class Reminder(Cog):
             "nem malz",
         ] + [negative_emojis_list]
 
-        option = await self.client.wait_for("message", check=check)
+        try:
+            option = await self.client.wait_for("message", timeout=timeout, check=check)
+        except asyncio.TimeoutError:
+            embed = timeout_message(timeout)
+            return await ctx.author.send(embed=embed)
 
         if option.content.lower() in valid_options_yes:
 
@@ -100,6 +108,8 @@ class Reminder(Cog):
             # TODO: check month, day and response to time and date style
 
             if data:
+                op = None
+
                 for index in range(amount):
                     assignmentsdata = data_dict(data[index])
 
@@ -124,7 +134,14 @@ class Reminder(Cog):
                 )
                 await ctx.author.send(embed=embed)
 
-                op = await self.client.wait_for("message", check=check)
+                try:
+                    op = await self.client.wait_for(
+                        "message", timeout=timeout, check=check
+                    )
+                except asyncio.TimeoutError:
+                    embed = timeout_message(timeout)
+                    return await ctx.author.send(embed=embed)
+
                 op = op.content
 
                 try:
@@ -144,11 +161,13 @@ class Reminder(Cog):
                         await ctx.author.send(embed=embed)
 
                         try:
-                            op = await self.client.wait_for("message", check=check)
+                            op = await self.client.wait_for(
+                                "message", timeout=timeout, check=check
+                            )
                             op = int(op.content)
-
-                        except Exception:
-                            pass
+                        except asyncio.TimeoutError:
+                            embed = timeout_message(timeout)
+                            return await ctx.author.send(embed=embed)
 
                 op = int(op)
                 subject = data[op - 1][6]
@@ -185,15 +204,31 @@ class Reminder(Cog):
                 await ctx.author.send(embed=embed)
 
         elif option.content.lower() in valid_options_no:
+            timeout = 60.0
+
             embed = main_messages_style("What do you want to be reminded about?")
             await ctx.author.send(embed=embed)
 
-            title = await self.client.wait_for("message", check=check)
+            try:
+                title = await self.client.wait_for(
+                    "message", timeout=timeout, check=check
+                )
+            except asyncio.TimeoutError:
+                embed = timeout_message(timeout)
+                return await ctx.author.send(embed=embed)
+
             await asyncio.sleep(1)
 
             embed = main_messages_style("What time?", "Note: Time format must be HH:MM")
             await ctx.author.send(embed=embed)
-            time = await self.client.wait_for("message", check=check)
+
+            try:
+                time = await self.client.wait_for(
+                    "message", timeout=timeout, check=check
+                )
+            except asyncio.TimeoutError:
+                embed = timeout_message(timeout)
+                return await ctx.author.send(embed=embed)
 
             while verify(time.content, time=True, date=False):
 
@@ -208,13 +243,26 @@ class Reminder(Cog):
                 )
                 await ctx.author.send(embed=embed)
 
-                time = await self.client.wait_for("message", check=check)
+                try:
+                    time = await self.client.wait_for(
+                        "message", timeout=timeout, check=check
+                    )
+                except asyncio.TimeoutError:
+                    embed = timeout_message(timeout)
+                    return await ctx.author.send(embed=embed)
 
             await asyncio.sleep(1)
 
             embed = main_messages_style("When?", "Note: Date format must be MM/DD")
             await ctx.author.send(embed=embed)
-            date = await self.client.wait_for("message", check=check)
+
+            try:
+                date = await self.client.wait_for(
+                    "message", timeout=timeout, check=check
+                )
+            except asyncio.TimeoutError:
+                embed = timeout_message(timeout)
+                return await ctx.author.send(embed=embed)
 
             while verify(date.content, time=False, date=True):
 
@@ -226,7 +274,14 @@ class Reminder(Cog):
 
                 embed = main_messages_style("When?", "Note: Date format must be MM/DD")
                 await ctx.author.send(embed=embed)
-                date = await self.client.wait_for("message", check=check)
+
+                try:
+                    date = await self.client.wait_for(
+                        "message", timeout=timeout, check=check
+                    )
+                except asyncio.TimeoutError:
+                    embed = timeout_message(timeout)
+                    return await ctx.author.send(embed=embed)
 
             await asyncio.sleep(1)
 

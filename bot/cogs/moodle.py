@@ -9,12 +9,14 @@ from settings import getData_Counter
 
 from utilities import (
     main_messages_style,
+    timeout_message,
     happy_faces,
     negative_emojis_list,
     books_list,
     positive_emojis_list,
     emojis_list,
 )
+
 from utilities_moodle import (
     data_dict,
     moodle_color,
@@ -63,6 +65,7 @@ class Moodle(Cog):
                 guild_id,
             )
             option = "assignments"
+
         elif option in classes_options:
             database = await self.client.pg_con.fetch(
                 "SELECT * FROM moodle_events WHERE subject_type = $1 AND guild_id = $2",
@@ -70,6 +73,7 @@ class Moodle(Cog):
                 guild_id,
             )
             option = "classes"
+
         elif option in events_options:
             database = await self.client.pg_con.fetch(
                 "SELECT * FROM moodle_events WHERE guild_id = $1", guild_id
@@ -245,6 +249,9 @@ class Moodle(Cog):
             return message.author == ctx.author
 
         if not user_data:
+            answer, username = None, None
+            timeout = 45.0
+
             embed = main_messages_style(
                 "Apparently you don't have a Moodle API Token, do you want to create one? Yes/No",
                 "Your login and password won't be saved in the "
@@ -252,20 +259,38 @@ class Moodle(Cog):
             )
             await ctx.author.send(embed=embed)
 
-            answer = await self.client.wait_for("message", check=check)
+            try:
+                answer = await self.client.wait_for(
+                    "message", timeout=timeout, check=check
+                )
+            except asyncio.TimeoutError:
+                embed = timeout_message(timeout)
+                return await ctx.author.send(embed=embed)
 
             if answer.content.lower() == "yes":
                 embed = main_messages_style("Type and send your Moodle username")
                 await ctx.author.send(embed=embed)
                 await ctx.message.add_reaction(next(positive_emojis_list))
 
-                username = await self.client.wait_for("message", check=check)
+                try:
+                    username = await self.client.wait_for(
+                        "message", timeout=timeout, check=check
+                    )
+                except asyncio.TimeoutError:
+                    embed = timeout_message(timeout)
+                    return await ctx.author.send(embed=embed)
 
                 embed = main_messages_style("Type and send your Moodle password")
                 await ctx.author.send(embed=embed)
                 await ctx.message.add_reaction(next(positive_emojis_list))
 
-                password = await self.client.wait_for("message", check=check)
+                try:
+                    password = await self.client.wait_for(
+                        "message", timeout=timeout, check=check
+                    )
+                except asyncio.TimeoutError:
+                    embed = timeout_message(timeout)
+                    return await ctx.author.send(embed=embed)
 
                 # Call a function from moodleAPI to create a Token and save it encrypted on the file tokens.csv, it saves the discord author.id as well
                 params = {
@@ -310,6 +335,7 @@ class Moodle(Cog):
 
     # Gets Moodle data through Moodle API and send it to the chat
     # Loops the GetData function.
+    # TODO get the minutes
     @tasks.loop(minutes=30)
     async def getData(self):
         CSmain = 169890240708870144
@@ -414,7 +440,6 @@ class Moodle(Cog):
     async def moodleUpdate(self, ctx):
         """Updates moodle data (assignments and classes)"""
 
-        print("começo")
         guild_id = ctx.guild.id
 
         CSmain = 169890240708870144

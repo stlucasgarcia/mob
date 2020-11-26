@@ -117,3 +117,10 @@ def formatTime(seconds: int) -> str:
         return "%02i:%02i" % (minutes, seconds)
     else:
         return "%02i:%02i:%02i" % (hours, minutes, seconds)
+
+
+def timeout_message(timeout: float, reaction: bool = False) -> Embed:
+    state = "reply" if not reaction else "react"
+    return main_messages_style(
+        "Timeout error", f"You only have {int(timeout)} seconds to {state}."
+    )
