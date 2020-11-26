@@ -5,7 +5,7 @@ Token module responsible to get users token
 from dataclasses import dataclass
 from requests import post
 
-from ..export import Export
+from ..export import Export, create_moodle_profile
 from ..security import Cryptography
 from moodleapi.utils import SERVICE, CONNECTION, PLATFORM
 
@@ -16,6 +16,7 @@ class Token:
     It also automatically encrypt and storage."""
 
     url: str = ""
+    # create_moodle_profile()
 
     def __str__(self):
         return "Token object"

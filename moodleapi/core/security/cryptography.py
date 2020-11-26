@@ -4,7 +4,7 @@ Security module responsable to all kind of encrypt and decrypt.
 
 
 import base64
-from os import path
+from os import path, chdir, getcwd
 
 from cryptography.fernet import Fernet, InvalidToken
 from cryptography.hazmat.backends import default_backend
@@ -26,21 +26,34 @@ class Cryptography:
         )
         key = base64.urlsafe_b64encode(kdf.derive(master_password.encode()))
 
+        directory = getcwd().split("/")[-1]
+
+        chdir("../")
+
         with open(
-            path.abspath("moodleapi").split("moodleapi")[0] + "encryption.key",
+            getcwd() + "/encryption.key",
             "wb",
         ) as key_file:
             key_file.write(key)
+
+        chdir(f"{getcwd()}/{directory}")
 
     @staticmethod
     def load_key() -> bytes:
         """Load de previous key created and storaged in 'encryption.key'
         in binary."""
+        directory = getcwd().split("/")[-1]
 
-        return open(
-            path.abspath("moodleapi").split("moodleapi")[0] + "encryption.key",
+        chdir("../")
+
+        file = open(
+            getcwd() + "/encryption.key",
             "rb",
         ).read()
+
+        chdir(f"{getcwd()}/{directory}")
+
+        return file
 
     @staticmethod
     def encrypt(value_to_encrypt: str) -> str:

@@ -13,6 +13,7 @@ class BaseMoodle:
         self.data: dict = {}
         self.tpool: Any = ""
         self.conn: Any = ""
+        # self.cursor: Any = ""
 
     def db(self, db):
         self.tpool, self.conn = connection()

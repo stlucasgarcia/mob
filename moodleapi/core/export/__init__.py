@@ -13,7 +13,7 @@ from .generic import Export
 
 from .helper import (
     db_exist,
-    create_table,
+    create_moodle_profile,
     events_check,
     profile_check,
     professors_check,
@@ -30,7 +30,7 @@ __all__ = [
     "bot_reminder_query",
     "Export",
     "db_exist",
-    "create_table",
+    "create_moodle_profile",
     "events_check",
     "profile_check",
     "professors_check",
