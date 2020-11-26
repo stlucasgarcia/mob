@@ -1,12 +1,14 @@
 from typing import Any
 from dataclasses import dataclass
 
+import colorama
+from colorama import Fore, Style
+
 from ..utils import (
     functions,
     courses_not_allowed,
     allowed_modules,
     error_code,
-    BEX,
 )
 
 from ..core.export import (
@@ -38,13 +40,14 @@ class BaseProcess:
             getattr(self, functions[self.wsfunction])()
 
     def _process_response(self):
-        if "exception" in self.data.keys():
+        if "exception" in self.data.keys():  # TODO: REVISE
+            colorama.init()
             print(
                 MoodleException(
-                    f"{BEX.FAIL}moodle.exception.MoodleException: "
+                    f"{Fore.RED}moodle.exception.MoodleException: "
                     f"An error occured while connecting with MoodleAPI -> "
-                    f"{BEX.BOLD}{self.data['message']}{BEX.ENDC} "
-                    f"{BEX.UNDERLINE}(error code: {error_code[self.data['errorcode']]}){BEX.ENDC}"
+                    f"{Style.BRIGHT}{self.data['message']}{Style.NORMAL} "
+                    f"{Fore.LIGHTBLACK_EX}(error code: {error_code[self.data['errorcode']]}){Style.RESET_ALL}"
                 )
             )
             return False

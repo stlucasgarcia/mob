@@ -4,6 +4,7 @@ Security module responsable to all kind of encrypt and decrypt.
 
 
 import base64
+from sys import platform
 from os import chdir, getcwd
 
 from cryptography.fernet import Fernet, InvalidToken
@@ -26,7 +27,9 @@ class Cryptography:
         )
         key = base64.urlsafe_b64encode(kdf.derive(master_password.encode()))
 
-        directory = getcwd().split("\\")[-1]  # TODO: FIX PATH FOR UNIX SO
+        sep = "\\" if platform == "win32" else "/"
+
+        directory = getcwd().split(sep)[-1]
 
         chdir("../")
 
@@ -42,7 +45,9 @@ class Cryptography:
     def load_key() -> bytes:
         """Load de previous key created and storaged in 'encryption.key'
         in binary."""
-        directory = getcwd().split("\\")[-1]
+        sep = "\\" if platform == "win32" else "/"
+
+        directory = getcwd().split(sep)[-1]
 
         chdir("../")
 
@@ -76,4 +81,4 @@ class Cryptography:
             return f.decrypt(encrypted_key.encode()).decode()
 
         except InvalidToken:
-            raise InvalidToken("Invalid Token")
+            raise InvalidToken("Invalid Token, check encryption key")

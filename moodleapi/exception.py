@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+
 # TODO: ADD EXEPTIONS TO MOODLEAPI
 @dataclass
 class MoodleException(Exception):
