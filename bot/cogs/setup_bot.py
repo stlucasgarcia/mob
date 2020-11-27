@@ -215,6 +215,10 @@ class Setup(Cog):
         )
         await ctx.send(embed=embed)
 
+    @command(name="setCourse", aliases=["SetCourse", "courseSet", "CourseSet", "setUpCourse", "setcourse", "courseset"])
+    @has_permissions(administrator=True)
+    async def setCourse(self, ctx, token):
+        pass
 
 def setup(client):
     client.add_cog(Setup(client))
