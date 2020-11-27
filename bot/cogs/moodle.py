@@ -28,13 +28,11 @@ from utilities_moodle import (
 # List with commands/functionalities related to the Moodle API
 class Moodle(Cog):
     timer = get_data_timer[0]
-    print(timer)
 
     def __init__(self, client):
         self.client = client
         self.getData.start()
         self.moodle = Mdl()
-        # print(self.client.url)
 
     @command(name="get", aliases=["Get", "GET"])
     async def get(self, ctx, option=""):
@@ -112,19 +110,12 @@ class Moodle(Cog):
                 await ctx.send(embed=embed)
                 await asyncio.sleep(0.3)
 
-            if amount > 0:
-                embed = main_messages_style(
-                    f"There was a total of {amount} {option} {next(books_list)}",
-                    f"Note: I am only showing {option} of 14 days ahead ",
-                )
-                await ctx.send(embed=embed)
-
-            elif amount > 1:
-                embed = main_messages_style(
-                    f"There were a total of {amount} {option} {next(books_list)}",
-                    f"Note: I am only showing {option} of 14 days ahead ",
-                )
-                await ctx.send(embed=embed)
+            word = "were" if amount > 1 else "was"
+            embed = main_messages_style(
+                f"There {word} a total of {amount} {option} {next(books_list)}",
+                f"Note: I am only showing {option} of 14 days ahead ",
+            )
+            await ctx.send(embed=embed)
 
         elif isBool and not database:
             embed = main_messages_style(
@@ -183,7 +174,7 @@ class Moodle(Cog):
             await ctx.message.add_reaction(next(positive_emojis_list))
 
             amount = len(database)
-            done = 0
+            done = [0, 0]
 
             for index in range(amount):
 
@@ -199,8 +190,9 @@ class Moodle(Cog):
                 await ctx.author.send(embed=embed)
                 await asyncio.sleep(0.3)
 
+            word = "classes" if done[1] > 1 else "class"
             embed = main_messages_style(
-                f"You did {done} out of {amount} assignments {next(books_list)}",
+                f"You did {done[0]} out of {amount - done[1]} assignments and have {done[1]} {word} to attend {next(books_list)}",
                 "Note: I am only showing assignments of 14 days ahead",
             )
             await ctx.author.send(embed=embed)
@@ -336,7 +328,6 @@ class Moodle(Cog):
 
     # Gets Moodle data through Moodle API and send it to the chat
     # Loops the GetData function.
-    # TODO get the minutes
     @tasks.loop(minutes=timer)
     async def getData(self):
         CSmain = 169890240708870144

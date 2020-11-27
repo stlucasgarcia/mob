@@ -11,6 +11,8 @@ from secret1 import DB_Username, DB_Password, Bot_token
 
 
 async def get_serverSettings(client, ctx) -> str:
+    """Gets the server's prefix, the time in which getdata's will loop and the server's url, it's accessable at any cog"""
+
     try:
         data = await client.pg_con.fetch(
             "SELECT prefix, loop_time, moodle_url FROM bot_servers WHERE guild_id = $1",
@@ -40,6 +42,7 @@ client = commands.Bot(
 
 # Creates a connection with the Discord Database
 async def create_db_pool():
+    """Creates a connection with the database, it's accessible on any cog"""
     client.pg_con = await asyncpg.create_pool(
         database="DiscordDB", user=DB_Username, password=DB_Password
     )
@@ -48,21 +51,43 @@ async def create_db_pool():
 # Load and get/initialize all the files .py(cogs) in the folder cogs
 @client.command()
 async def load(ctx, extension):
+    """Load the chosen cog"""
     client.load_extension(f"cogs.{extension}")
 
 
 @client.command()
 async def unload(ctx, extension):
+    """Unloads the chosen cog"""
     client.unload_extension(f"cogs.{extension}")
 
 
 @client.command()
-async def reload(ctx, extension):
-    client.unload_extension(f"cogs.{extension}")
-    client.load_extension(f"cogs.{extension}")
-    await ctx.message.add_reaction(next(positive_emojis_list))
+async def reload(ctx, extension=None):
+    """Reload all extensions or only reload the chosen extension"""
 
-    print(f"{extension.capitalize()} successfully re-loaded")
+    if not extension:
+        for filename in os.listdir("./cogs"):
+            if filename.endswith(".py") and not filename.startswith("_"):
+                client.unload_extension(f"cogs.{filename[:-3]}")
+                client.load_extension(f"cogs.{filename[:-3]}")
+
+        await ctx.message.add_reaction(next(positive_emojis_list))
+
+        embed = main_messages_style("All extensions were successfully reloaded")
+        await ctx.send(embed=embed)
+        print("All extensions were successfully reloaded")
+
+    else:
+        client.unload_extension(f"cogs.{extension}")
+        client.load_extension(f"cogs.{extension}")
+
+        await ctx.message.add_reaction(next(positive_emojis_list))
+
+        embed = main_messages_style(
+            f"{extension.capitalize()} was successfully reloaded"
+        )
+        await ctx.send(embed=embed)
+        print(f"{extension.capitalize()} was successfully reloaded")
 
 
 for filename in os.listdir("./cogs"):

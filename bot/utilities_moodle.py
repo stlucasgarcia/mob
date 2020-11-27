@@ -45,10 +45,10 @@ def moodle_color(i: int, assignmentsdata: dict):
 
 # Styling the check command from moodle.py
 def check_command_style(
-    dict: dict, amount: str = "", color: str = "", status: int = None, done: int = None
+    dict: dict, amount: str = "", color: str = "", status: int = None, done_list: list = None
 ):
     # Url shortener
-    s = pyshorteners.Shortener(api_key=bitly_token)
+    shorter_url = pyshorteners.Shortener(api_key=bitly_token)
 
     embed = Embed(
         title=dict["modulename"] + " - " + amount,
@@ -64,12 +64,16 @@ def check_command_style(
                 name=dict["hwstatus"] + " " + dict["hwstatus_time"],
                 icon_url="https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Checkmark_green.svg/1200px-Checkmark_green.svg.png",
             )
-            done += 1
-        else:
+            done_list[0] += 1
+
+        elif dict["hwstatus"] == "Tarefa não entregue":
             embed.set_author(
                 name=dict["hwstatus"],
                 icon_url="https://i1.pngguru.com/preview/326/505/102/red-cross-emoji-discord-logo-line-soviet-union-material-property-symbol-png-clipart.jpg",
             )
+        
+        else:
+            done_list[1] += 1
 
     if dict["description"] != "Descrição não disponível":
         if dict["description"].isspace():
@@ -89,12 +93,12 @@ def check_command_style(
     else:
         embed.add_field(name="Data de entrega", value=dict["deadline"], inline=True)
 
-    embed.add_field(name="Link", value=s.bitly.short(dict["link"]), inline=False)
+    embed.add_field(name="Link", value=shorter_url.bitly.short(dict["link"]), inline=False)
 
     embed.add_field(name="Professor", value=dict["author"], inline=False)
 
     embed.set_footer(text=footer)
-    return embed, done
+    return embed, done_list
 
 
 # Style for group command
