@@ -59,111 +59,110 @@ class BaseProcess:
         pass
 
     def upcoming(self):
-        if self.data["events"]:
-            events = self.data["events"]
-            query = search_query(self.kwargs["db"])
+        events = self.data["events"]
+        query = search_query(self.kwargs["db"])
 
-            if self.kwargs["db"] == "moodle_assign":
-                events_check(
-                    self.cursor,
-                    self.conn,
-                    "moodle_assign",
-                    self.kwargs["discord_id"],
-                    self.kwargs["guild_id"],
-                )
+        if self.kwargs["db"] == "moodle_assign":
+            events_check(
+                self.cursor,
+                self.conn,
+                "moodle_assign",
+                self.kwargs["discord_id"],
+                self.kwargs["guild_id"],
+            )
 
-                for event in events:
-                    if (
-                        event["course"]["id"] not in courses_not_allowed
-                        and event["modulename"] in allowed_modules
-                    ):
+            for event in events:
+                if (
+                    event["course"]["id"] not in courses_not_allowed
+                    and event["modulename"] in allowed_modules
+                ):
 
-                        params = {
-                            "course": self.kwargs["course"],
-                            "semester": self.kwargs["semester"],
-                            "class": self.kwargs["clss"],
-                            "subject": event["course"]["fullname"],
-                            "guild_id": self.kwargs["guild_id"],
-                            "token": self.token,
-                            "courseid": event["course"]["id"],
-                            "cursor": self.cursor,
-                            "conn": self.conn,
-                            "r": self.r,
-                            "url": self.url,
-                        }
+                    params = {
+                        "course": self.kwargs["course"],
+                        "semester": self.kwargs["semester"],
+                        "class": self.kwargs["clss"],
+                        "subject": event["course"]["fullname"],
+                        "guild_id": self.kwargs["guild_id"],
+                        "token": self.token,
+                        "courseid": event["course"]["id"],
+                        "cursor": self.cursor,
+                        "conn": self.conn,
+                        "r": self.r,
+                        "url": self.url,
+                    }
 
-                        self.cursor.execute(
-                            query,
-                            (
-                                self.kwargs["discord_id"],
-                                self.kwargs["guild_id"],
-                                self.kwargs["course"],
-                                self.kwargs["semester"],
-                                self.kwargs["clss"],
-                                *upcoming_check_information(
-                                    event["course"]["fullname"],
-                                    event["name"],
-                                    event["description"],
-                                    event["modulename"],
-                                    event["formattedtime"],
-                                    event["url"],
-                                    event["course"]["id"],
-                                    event["instance"],
-                                    params,
-                                ),
+                    self.cursor.execute(
+                        query,
+                        (
+                            self.kwargs["discord_id"],
+                            self.kwargs["guild_id"],
+                            self.kwargs["course"],
+                            self.kwargs["semester"],
+                            self.kwargs["clss"],
+                            *upcoming_check_information(
+                                event["course"]["fullname"],
+                                event["name"],
+                                event["description"],
+                                event["modulename"],
+                                event["formattedtime"],
+                                event["url"],
+                                event["course"]["id"],
+                                event["instance"],
+                                params,
                             ),
-                        )
-                        self.conn.commit()
+                        ),
+                    )
+                    self.conn.commit()
 
-            else:
-                events_check(
-                    self.cursor,
-                    self.conn,
-                    "moodle_events",
-                    self.kwargs["discord_id"],
-                    self.kwargs["guild_id"],
-                )
+        else:
+            events_check(
+                self.cursor,
+                self.conn,
+                "moodle_events",
+                self.kwargs["discord_id"],
+                self.kwargs["guild_id"],
+            )
 
-                for event in events:
-                    if (
-                        event["course"]["id"] not in courses_not_allowed
-                        and event["modulename"] in allowed_modules
-                    ):
+            for event in events:
+                if (
+                    event["course"]["id"] not in courses_not_allowed
+                    and event["modulename"] in allowed_modules
+                ):
 
-                        params = {
-                            "course": self.kwargs["course"],
-                            "semester": self.kwargs["semester"],
-                            "class": self.kwargs["clss"],
-                            "subject": event["course"]["fullname"],
-                            "guild_id": self.kwargs["guild_id"],
-                            "token": self.token,
-                            "courseid": event["course"]["id"],
-                            "cursor": self.cursor,
-                            "conn": self.conn,
-                            "r": self.r,
-                            "url": self.url,
-                        }
+                    params = {
+                        "course": self.kwargs["course"],
+                        "semester": self.kwargs["semester"],
+                        "class": self.kwargs["clss"],
+                        "subject": event["course"]["fullname"],
+                        "guild_id": self.kwargs["guild_id"],
+                        "token": self.token,
+                        "courseid": event["course"]["id"],
+                        "cursor": self.cursor,
+                        "conn": self.conn,
+                        "r": self.r,
+                        "url": self.url,
+                    }
 
-                        self.cursor.execute(
-                            query,
-                            (
-                                self.kwargs["discord_id"],
-                                self.kwargs["guild_id"],
-                                self.kwargs["course"],
-                                self.kwargs["semester"],
-                                self.kwargs["clss"],
-                                *upcoming_information(
-                                    event["course"]["fullname"],
-                                    event["name"],
-                                    event["description"],
-                                    event["modulename"],
-                                    event["formattedtime"],
-                                    event["url"],
-                                    params,
-                                ),
+                    self.cursor.execute(
+                        query,
+                        (
+                            self.kwargs["discord_id"],
+                            self.kwargs["guild_id"],
+                            self.kwargs["course"],
+                            self.kwargs["semester"],
+                            self.kwargs["clss"],
+                            *upcoming_information(
+                                event["course"]["fullname"],
+                                event["name"],
+                                event["description"],
+                                event["modulename"],
+                                event["formattedtime"],
+                                event["url"],
+                                params,
                             ),
-                        )
-                        self.conn.commit()
+                        ),
+                    )
+                    self.conn.commit()
 
     def day(self):  # TODO: Redirecting to upcoming
         if self.kwargs["db"] in ("moodle_events", "moodle_assign"):

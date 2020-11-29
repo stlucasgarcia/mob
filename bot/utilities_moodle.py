@@ -45,7 +45,11 @@ def moodle_color(i: int, assignmentsdata: dict):
 
 # Styling the check command from moodle.py
 def check_command_style(
-    dict: dict, amount: str = "", color: str = "", status: int = None, done_list: list = None
+    dict: dict,
+    amount: str = "",
+    color: str = "",
+    status: int = None,
+    done_list: list = None,
 ):
     # Url shortener
     shorter_url = pyshorteners.Shortener(api_key=bitly_token)
@@ -71,7 +75,7 @@ def check_command_style(
                 name=dict["hwstatus"],
                 icon_url="https://i1.pngguru.com/preview/326/505/102/red-cross-emoji-discord-logo-line-soviet-union-material-property-symbol-png-clipart.jpg",
             )
-        
+
         else:
             done_list[1] += 1
 
@@ -93,7 +97,9 @@ def check_command_style(
     else:
         embed.add_field(name="Data de entrega", value=dict["deadline"], inline=True)
 
-    embed.add_field(name="Link", value=shorter_url.bitly.short(dict["link"]), inline=False)
+    embed.add_field(
+        name="Link", value=shorter_url.bitly.short(dict["link"]), inline=False
+    )
 
     embed.add_field(name="Professor", value=dict["author"], inline=False)
 

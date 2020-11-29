@@ -8,14 +8,6 @@ functions = {
     "core_enrol_get_users_courses": "courses",
 }
 
-db_query = {
-    "moodle_events": "moodle_events_query",
-    "moodle_assign": "moodle_assign_query",
-    "moodle_profile": "moodle_profile_query",
-    "moodle_professors": "moodle_professors_query",
-    "bot_reminder": "bot_reminder_query",
-}
-
 allowed_modules = ("assign", "bigbluebuttonbn")
 
 courses_not_allowed = (
@@ -62,7 +54,8 @@ week = {
 error_code = {
     "invalidtoken": "001",
     "invalidparameter": "002",
+    "missingparam": "003",
+    "invalidprivatetoken": "004",
 }
-
 
 # TODO: VER SE TALVEZ SEJA BOM COLOCAR NO INIT DOS PACKAGES

@@ -2,7 +2,6 @@ from .request import request
 
 from .settings import (
     functions,
-    db_query,
     allowed_modules,
     courses_not_allowed,
     SERVICE,
@@ -21,7 +20,6 @@ from .version import get_version
 __all__ = [
     # "request", not using for now
     "functions",
-    "db_query",
     "allowed_modules",
     "courses_not_allowed",
     "SERVICE",
