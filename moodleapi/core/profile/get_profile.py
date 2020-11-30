@@ -19,4 +19,4 @@ def get_user_profile(**kwargs):
     data = r.get(kwargs["url"], params=params, stream=True).json()
     data[0]["description"] = clean(data[0]["description"])
 
-    return data
+    return data[0]
