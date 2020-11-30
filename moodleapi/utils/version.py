@@ -3,9 +3,6 @@ Version module contains functions to return stable and lastest version
 """
 
 
-from datetime import datetime as dt
-
-
 def get_version(version=None):
     """Return only stable version for production. The lastest version can be
     returned with get_last_version."""
@@ -14,5 +11,4 @@ def get_version(version=None):
         return "Invalid call from version."
 
     else:
-        suffix = "FINAL" if version[2] == "f" else "ALPHA"
-        return f"MoodleAPI version {version[0]}.{version[1]}.{version[2]} {suffix} - last time checked: {dt.utcnow()}"
+        return f"{version[0]}.{version[1]}.{version[2]}"
