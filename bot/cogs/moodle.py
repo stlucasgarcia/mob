@@ -567,6 +567,21 @@ class Moodle(Cog):
             #     amount,
             # )
 
+    @command(
+        name="getProfile",
+        aliases=[
+            "get_profile",
+            "MoodleProfile",
+            "moodle_profile",
+            "moodleprofile",
+            "moodleProfile",
+        ],
+    )
+    async def getProfile(self, ctx):
+        # TODO Create the moodle profile with link, image and all data from the request
+        # TODO Request
+        pass
+
 
 def setup(client):
     client.add_cog(Moodle(client))

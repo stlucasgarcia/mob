@@ -227,8 +227,72 @@ class Setup(Cog):
         ],
     )
     @has_permissions(administrator=True)
-    async def setCourse(self, ctx, token):
-        pass
+    async def setCourseToken(self, ctx):
+        """Creates a subject and assign a token to be used in the getData loop"""
+        # TODO Fix This
+
+        # print("Entrou")
+        timeout = 35.0
+
+        def check(m):
+            return m.author == ctx.author
+
+        embed = main_messages_style("Type the subject you want to add/update")
+        await ctx.send(embed=embed)
+
+        subject = None
+        try:
+            subject = await self.client.wait_for(
+                "message", timeout=timeout, check=check
+            )
+        except asyncio.TimeoutError:
+            embed = timeout_message(timeout)
+            return await ctx.author.send(embed=embed)
+
+        await ctx.channel.purge(limit=2)
+
+        embed = main_messages_style(
+            f"Type the token you want to address to {subject.content}"
+        )
+        await ctx.send(embed=embed)
+
+        token = None
+        try:
+            token = await self.client.wait_for("message", timeout=timeout, check=check)
+        except asyncio.TimeoutError:
+            embed = timeout_message(timeout)
+            return await ctx.author.send(embed=embed)
+
+        await ctx.channel.purge(limit=2)
+
+        guild_id = ctx.guild.id
+
+        try:
+            await self.client.pg_con.execute(
+                "UPDATE bot_servers SET $1 = $2 WHERE guild_id = $3",
+                subject.content,
+                token.content,
+                guild_id,
+            )
+            embed = main_messages_style("Token updated successfully on the database")
+            await ctx.send(embed=embed)
+
+        except Exception:
+            await self.client.pg_con.execute(
+                "ALTER TABLE bot_servers ADD $1 varchar(255)",
+                subject.content,
+            )
+            # print("Alter table")
+
+            await self.client.pg_con.execute(
+                "UPDATE bot_servers SET $1 = $2 WHERE guild_id = $3",
+                subject.content,
+                token.content,
+                guild_id,
+            )
+
+            embed = main_messages_style("Token and subject created successfully")
+            await ctx.send(embed=embed)
 
 
 def setup(client):
