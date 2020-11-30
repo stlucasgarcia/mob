@@ -1,9 +1,9 @@
 """
 MOODLEAPI PACKAGE FOR CONNECTION WITH MOODLE PLATFORM
 
-LATEST VERSION: 4.3.1
+LATEST VERSION: 4.3.2
 
-STABLE VERSION: 4.3.1
+STABLE VERSION: 4.3.2
 """
 
 
@@ -18,7 +18,7 @@ from .exception import (
 
 from .utils import get_version
 
-VERSION = (4, 3, 1)
+VERSION = (4, 3, 2)
 
 __version__ = get_version(VERSION)
 
