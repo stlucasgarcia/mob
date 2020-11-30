@@ -21,7 +21,7 @@ async def get_serverSettings(client, ctx) -> str:
         client.prefix = data[0]["prefix"]
 
         client.url = data[0]["moodle_url"]
-
+        
         try:
             get_data_timer[0] = int(data[0]["loop_time"])
 

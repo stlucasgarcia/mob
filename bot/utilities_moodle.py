@@ -43,6 +43,7 @@ def moodle_color(i: int, assignmentsdata: dict):
         return color
 
 
+# TODO Change tarefa to aula
 # Styling the check command from moodle.py
 def check_command_style(
     dict: dict,

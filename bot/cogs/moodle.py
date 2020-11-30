@@ -141,7 +141,7 @@ class Moodle(Cog):
         token = tokens_data[0]["token"]
 
         decrypted_token = Cryptography.decrypt(token)
-        # TODO Don not add classes to assignments
+
         self.moodle(
             decrypted_token,
             self.client.url,
