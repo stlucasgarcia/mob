@@ -1,8 +1,9 @@
 import setuptools
+from moodleapi import __version__
 
 setuptools.setup(
     name="moodleapi",
-    version="4.3.0",
+    version=__version__,
     author="Daniel Kauffmann",
     author_email="danielvenna2@hotmail.com",
     description="MoodleAPI Package for Bot usable",

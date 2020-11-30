@@ -19,7 +19,7 @@ def get_professor(cursor: Any, conn: Any, **kwargs) -> str:
             "moodlewsrestformat": "json",
         }
         prof = _find_professor(
-            kwargs["r"].get(kwargs["url"], params=params, stream=False).json()
+            kwargs["r"].get(kwargs["url"], params=params, stream=True).json()
         )
 
         cursor.execute(
