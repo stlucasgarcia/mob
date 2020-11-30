@@ -17,15 +17,6 @@ def get_user_profile(**kwargs):
     }
 
     data = r.get(kwargs["url"], params=params, stream=True).json()
-    data["description"] = clean(data["description"])
+    data[0]["description"] = clean(data[0]["description"])
 
     return data
-
-
-dict = {
-    "token": "8c745a73b1836bccf43619a99b1f013c",
-    "tia": "32074956",
-    "url": "https://eadmoodle.mackenzie.br/webservice/rest/server.php?",
-}
-
-print(get_user_profile(**dict))
