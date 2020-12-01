@@ -21,6 +21,8 @@ from typing import Tuple
 
 
 class Reminder(Cog):
+    """Class(Cog) responsible for creating the reminder feature and organizing it"""
+
     def __init__(self, client):
         self.client = client
         self.reminderLoop.start(
@@ -321,6 +323,8 @@ class Reminder(Cog):
 
     @reminder.after_invoke
     async def reload_reminder(self, ctx):
+        """Reloads the reminder after invoking it which is used to get the currently time and when it to send the remind to the user"""
+
         data = await self.client.pg_con.fetch(
             "SELECT deadline, deadline_date, subject_name FROM bot_reminder WHERE discord_id=$1 AND guild_id=$2",
             int(ctx.author.id),
@@ -342,6 +346,8 @@ class Reminder(Cog):
 
     @tasks.loop(minutes=1)
     async def reminderLoop(self, ctx, discord_id, guild_id, rem, sub):
+        """Reminder loop to get the current time"""
+
         if rem:
             now = dt.now()
             hour, mins, sec = map(

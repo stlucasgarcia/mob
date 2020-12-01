@@ -12,13 +12,17 @@ from utilities import (
 )
 
 
-class reactionRole(Cog):
+class ReactionRole(Cog):
+    """Class(Cog) responsible for managing the Reaction Role features and its functions"""
+
     def __init__(self, client):
         self.client = client
 
     # On reaction to the menu, the user will be given the respective Discord role
     @Cog.listener()
     async def on_raw_reaction_add(self, payload):
+        """Adds the respective role to the user"""
+
         role = None
         guild_id = str(payload.guild_id)
 
@@ -68,6 +72,8 @@ class reactionRole(Cog):
     # On reaction to the menu, the users respective Discord role will be removed
     @Cog.listener()
     async def on_raw_reaction_remove(self, payload):
+        """Removes the respective role"""
+
         role = None
         guild_id = str(payload.guild_id)
 
@@ -278,4 +284,4 @@ class reactionRole(Cog):
 
 
 def setup(client):
-    client.add_cog(reactionRole(client))
+    client.add_cog(ReactionRole(client))

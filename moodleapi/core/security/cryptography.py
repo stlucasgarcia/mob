@@ -45,6 +45,7 @@ class Cryptography:
     def load_key() -> bytes:
         """Load de previous key created and storaged in 'encryption.key'
         in binary."""
+        
         sep = "\\" if platform == "win32" else "/"
 
         directory = getcwd().split(sep)[-1]

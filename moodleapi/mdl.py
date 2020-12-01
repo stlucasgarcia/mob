@@ -17,6 +17,8 @@ class Mdl(BaseMoodle):  # TODO: add description to classes and functions
         self.wsfunction = wsfunction
 
     def get(self, moodlewsrestformat="json", **kwargs):
+        """It's responsible for the main moodle request"""
+        
         params = make_params(self.token, self.wsfunction, moodlewsrestformat)
         params.update(to_dict(kwargs))
         r = self.r.get(self.url, params=params, stream=True)

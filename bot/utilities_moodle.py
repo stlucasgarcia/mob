@@ -7,6 +7,8 @@ get_data_timer: list = [30]
 
 # Dictionary template that we use in most part of Moodle.py
 def data_dict(database):
+    """Creates a dict with the respective data"""
+    
     assignmentsdata = {
         "fullname": database[5].title(),
         "name": database[6].title(),
@@ -26,6 +28,8 @@ def data_dict(database):
 
 # Changing color for better student visualization
 def moodle_color(i: int, assignmentsdata: dict):
+    """Creates a color difference for better organization and visualization of assignments and classes"""
+
     if assignmentsdata["modulename"] == "Tarefa para entregar via Moodle":
         if i % 2 == 0:
             color = 0x480006
@@ -52,6 +56,8 @@ def check_command_style(
     status: int = None,
     done_list: list = None,
 ):
+    """Organizes and styles the user's data which is shown in the check command"""
+
     # Url shortener
     shorter_url = pyshorteners.Shortener(api_key=bitly_token)
 
@@ -110,6 +116,8 @@ def check_command_style(
 
 # Style for group command
 def group_command_style(member: list, amount: int) -> Embed:
+    """Returns the embed message which is used in the group's menu"""
+
     embed = Embed(
         title="How to use it: ",
         description="To join this group you must react with the respective emoji",
@@ -130,6 +138,34 @@ def group_command_style(member: list, amount: int) -> Embed:
             value=f"Click on the emoji to join as member {people+1}",
             inline=False,
         )
+
+    embed.set_footer(text=footer)
+
+    return embed
+
+
+def moodle_profile_style(data: dict) -> Embed:
+    """Returns the embedded moodle profile message which is used in the profile command"""
+    shorter_url = pyshorteners.Shortener(api_key=bitly_token)
+
+    embed = Embed(
+        title=data["fullname"].title(),
+        color=defaultcolor,
+        description=data["description"],
+    )
+
+    embed.set_author(
+        name=f"Moodle Profile - {(data['fullname'].split()[0]).capitalize()}",
+        url=data["profileimageurl"],
+    )
+
+    embed.set_thumbnail(url=data["profileimageurl"])
+
+    link = "https://eadmoodle.mackenzie.br/user/profile.php?id=" + str(data["id"])
+
+    embed.add_field(name="Email", value=data["email"], inline=True)
+
+    embed.add_field(name="Link", value=shorter_url.bitly.short(link), inline=True)
 
     embed.set_footer(text=footer)
 

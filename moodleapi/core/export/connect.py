@@ -5,6 +5,8 @@ from moodleapi.secret import DATABASE
 
 
 def connection():
+    """Creates a connection with the database"""
+
     try:
         threadedpool = psycopg2.pool.ThreadedConnectionPool(1, 20, **DATABASE)
 

@@ -1,11 +1,16 @@
 import discord
 
+from moodleapi.core.security.cryptography import Cryptography
+from moodleapi.core.profile import get_user_profile
 from discord.ext.commands import Cog, command
 
 from utilities import main_messages_style, positive_emojis_list, negative_emojis_list
+from utilities_moodle import moodle_profile_style
 
 
 class Profile(Cog):
+    """Class(Cog) responsible for managing the user's moodle profile and its dependencies"""
+
     def __init__(self, client):
         self.client = client
 
@@ -65,48 +70,85 @@ class Profile(Cog):
             pass
 
     @command(name="profile", aliases=["Profile", "PROFILE", "Prof", "prof"])
-    async def profile(self, ctx, member: discord.Member = None):
-        """Profile command is used to show someones profile, levels and experience, you can mention another member to see his profile or leave it in blank to see your own"""
+    async def profile(self, ctx, member=None):
+        """Profile command is used to show someones profile, levels and experience, you can mention another member to see his profile,
+        leave it in blank to see your own or type someone's moodle username (TIA) to see his/hers moodle profile"""
 
         member = ctx.author if not member else member
 
-        member_id = str(member.id)
-
-        await ctx.message.add_reaction(next(positive_emojis_list))
-
-        user = await self.client.pg_con.fetch(
-            "SELECT * FROM bot_users WHERE user_id = $1",
-            member_id,
-        )
-
-        user_level = user[0]["level"]
-        user_experience = user[0]["experience"]
-        xp_nextlvl = round((4 * (user_level ** 3)) / 5)
-        rep = user[0]["rep"]
-
-        if not user:
-            await ctx.send("Member doesn't have a level")
-
-        else:
-            embed = discord.Embed(color=member.color, timestamp=ctx.message.created_at)
-
-            embed.set_thumbnail(url=member.avatar_url)
-
-            embed.set_author(name=f"Profile - {member.display_name}")
-
-            embed.add_field(name="Level", value=f"`{user_level}`")
-            embed.add_field(name="XP", value=f"`{user_experience}/{xp_nextlvl}`")
-            embed.add_field(name="Reputation", value=f"`{rep}`", inline=False)
-
-            embed.add_field(
-                name=f"Messages Needed for level {user_level + 1}",
-                value=f"`{xp_nextlvl - user_experience}`",
-                inline=False,
+        if str(member)[0].isnumeric():
+            user_data = await self.client.pg_con.fetch(
+                "SELECT token FROM moodle_profile WHERE discord_id = $1 AND guild_id = $2",
+                ctx.author.id,
+                ctx.guild.id,
             )
 
-            embed.set_footer(text=f"{member}", icon_url=member.avatar_url)
+            if not user_data:
+                embed = main_messages_style(
+                    "You must create a token to use this command",
+                    "Create a token by typing prefix + gettoken",
+                )
+                await ctx.send(embed=embed)
+
+            token = Cryptography.decrypt(user_data[0]["token"])
+
+            params = {
+                "token": token,
+                "tia": member,
+                "url": "https://eadmoodle.mackenzie.br/webservice/rest/server.php?",
+            }
+
+            data = get_user_profile(**params)
+
+            embed = moodle_profile_style(data)
 
             await ctx.send(embed=embed)
+
+        else:
+            member = (
+                ctx.guild.get_member(int(member[3:-1]))
+                if ctx.author != member
+                else member
+            )
+            member_id = str(member.id)
+
+            user = await self.client.pg_con.fetch(
+                "SELECT * FROM bot_users WHERE user_id = $1",
+                member_id,
+            )
+
+            user_level = user[0]["level"]
+            user_experience = user[0]["experience"]
+            xp_nextlvl = round((4 * (user_level ** 3)) / 5)
+            rep = user[0]["rep"]
+
+            if not user:
+                await ctx.send("Member doesn't have a level")
+
+            else:
+                embed = discord.Embed(
+                    color=member.color, timestamp=ctx.message.created_at
+                )
+
+                embed.set_thumbnail(url=member.avatar_url)
+
+                embed.set_author(name=f"Profile - {member.display_name}")
+
+                embed.add_field(name="Level", value=f"`{user_level}`")
+                embed.add_field(name="XP", value=f"`{user_experience}/{xp_nextlvl}`")
+                embed.add_field(name="Reputation", value=f"`{rep}`", inline=False)
+
+                embed.add_field(
+                    name=f"Messages Needed for level {user_level + 1}",
+                    value=f"`{xp_nextlvl - user_experience}`",
+                    inline=False,
+                )
+
+                embed.set_footer(text=f"{member}", icon_url=member.avatar_url)
+
+                await ctx.send(embed=embed)
+
+        await ctx.message.add_reaction(next(positive_emojis_list))
 
     @command(name="rep", aliases=["Rep", "Reputation", "reputation"])
     async def rep(self, ctx, member: discord.Member, opt: str = None):

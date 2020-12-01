@@ -2,6 +2,8 @@ from typing import Any
 
 
 def get_professor(cursor: Any, conn: Any, **kwargs) -> str:
+    """This function is responsible for getting the user's professor in the database which is used to check the status of assignments"""
+
     cursor.execute(
         "SELECT professor FROM moodle_professors WHERE course=%s AND subject=%s AND guild_id=%s",
         (kwargs["course"], kwargs["subject"], kwargs["guild_id"]),

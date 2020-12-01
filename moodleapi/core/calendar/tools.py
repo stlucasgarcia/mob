@@ -11,6 +11,8 @@ def clean(value: str) -> str:
 
 
 def time(epoch: int) -> str:
+    """Converts the time from epoch to human readable time"""
+
     date = ctime(epoch).split()
 
     return f"{week[date[0]]}, {date[2]} de {month[date[1]]} às {date[3][:-3]}"

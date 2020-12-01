@@ -5,6 +5,8 @@ from utilities import main_messages_style
 
 
 class General2(Cog):
+    """Class(Cog) responsible for organizing general use commands"""
+
     def __init__(self, client):
         self.client = client
 

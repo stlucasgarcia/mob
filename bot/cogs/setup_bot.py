@@ -16,6 +16,8 @@ from secret1 import moodle_dict
 
 
 class Setup(Cog):
+    """Class(Cog) responsible for setting up the server to make all features available"""
+
     def __init__(self, client):
         self.client = client
 
@@ -176,6 +178,7 @@ class Setup(Cog):
     @has_permissions(administrator=True)
     async def autoRole(self, ctx, role: discord.Role):
         """Sets up the server's 'on join' role"""
+
         if not role:
             embed = main_messages_style(
                 "You need to type the roles name for this command",

@@ -2,6 +2,7 @@ import asyncio
 
 from moodleapi import Mdl
 from moodleapi.core.security import Token, Cryptography
+from moodleapi.core.profile import get_user_profile
 
 from discord.ext import tasks
 from discord.ext.commands import command, Cog, cooldown
@@ -22,6 +23,7 @@ from utilities_moodle import (
     moodle_color,
     check_command_style,
     group_command_style,
+    moodle_profile_style,
     get_data_timer,
 )
 
@@ -566,21 +568,6 @@ class Moodle(Cog):
             #     ctx.author.display_name,
             #     amount,
             # )
-
-    @command(
-        name="getProfile",
-        aliases=[
-            "get_profile",
-            "MoodleProfile",
-            "moodle_profile",
-            "moodleprofile",
-            "moodleProfile",
-        ],
-    )
-    async def getProfile(self, ctx):
-        # TODO Create the moodle profile with link, image and all data from the request
-        # TODO Request
-        pass
 
 
 def setup(client):

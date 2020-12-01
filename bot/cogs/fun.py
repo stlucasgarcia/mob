@@ -14,6 +14,8 @@ from utilities import (
 
 
 class Fun(Cog):
+    """Class(Cog) responsible for organizing fun commands"""
+
     def __init__(self, client):
         self.client = client
 

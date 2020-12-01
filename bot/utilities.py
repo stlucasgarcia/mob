@@ -52,6 +52,8 @@ def main_messages_style(
     fot: str = "",
     thumb: bool = False,
 ) -> Embed:
+    """Styles for the main messages, it's used in most commands where printing to the user is needed, returns the embedded message"""
+
     message = f"**{message}**" if message != "" else message
     embed = Embed(
         title=name,
@@ -69,6 +71,8 @@ def main_messages_style(
 
 # Template message for help
 def help_message(contents):
+    """Returns the help message embedded and styled"""
+
     embed = Embed(
         title="Standard Commands",
         description="Type `mack help [command]` for more help eg. `mack help get`",
@@ -105,6 +109,8 @@ FULL_MONTHS = {
 
 
 def formatTime(seconds: int) -> str:
+    """Fortmats youtube time"""
+
     hours = seconds // 3600
 
     seconds %= 3600
@@ -120,6 +126,8 @@ def formatTime(seconds: int) -> str:
 
 
 def timeout_message(timeout: float, reaction: bool = False) -> Embed:
+    """Returns the embed for the timeout error message"""
+
     state = "reply" if not reaction else "react"
     return main_messages_style(
         "Timeout error", f"You only have {int(timeout)} seconds to {state}."

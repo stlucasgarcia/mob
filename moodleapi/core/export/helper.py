@@ -16,6 +16,8 @@ def db_exist(name: str) -> None:
 
 
 def create_moodle_events() -> str:
+    """Return the query responsible for creating the moodle events table on the database which is used in moodle commands"""
+
     return (
         "CREATE TABLE IF NOT EXISTS moodle_events ("
         "discord_id numeric(18),"
@@ -35,6 +37,8 @@ def create_moodle_events() -> str:
 
 
 def create_moodle_assign() -> str:
+    """Return the query responsible for creating the moodle assign table on the database which is used in moodle commands"""
+
     return (
         "CREATE TABLE IF NOT EXISTS moodle_assign ("
         "discord_id numeric(18),"
@@ -56,6 +60,8 @@ def create_moodle_assign() -> str:
 
 
 def create_moodle_professor() -> str:
+    """Return the query responsible for creating the moodle professor table on the database which is used to get the status of assignments """
+
     return (
         "CREATE TABLE IF NOT EXISTS moodle_professors ("
         "course varchar(3),"
@@ -68,6 +74,8 @@ def create_moodle_professor() -> str:
 
 
 def create_moodle_profile() -> str:
+    """Return the query responsible for creating the users profile with all needed information which is used in moodle's commands"""
+
     return (
         "CREATE TABLE IF NOT EXISTS moodle_profile ("
         "discord_id numeric(18) PRIMARY KEY,"
@@ -87,6 +95,8 @@ def events_check(
     discord_id: int,
     guild_id: int,
 ) -> None:
+    """Verify the existent events with the respective discord and guild id, if so it cleans those events"""
+
     cursor.execute(
         f"SELECT discord_id FROM {name} WHERE discord_id=%s AND guild_id=%s",
         (discord_id, guild_id),

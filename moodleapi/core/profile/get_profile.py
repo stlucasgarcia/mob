@@ -3,7 +3,7 @@ from requests import Session
 from moodleapi.core.calendar import clean
 
 
-def get_user_profile(**kwargs):
+def get_user_profile(**kwargs) -> dict:
     """Used to get the moodle profile through the email"""
 
     r = Session()
@@ -15,8 +15,12 @@ def get_user_profile(**kwargs):
         "field": "email",
         "values[0]": kwargs["tia"] + "@mackenzista.com.br",
     }
-
     data = r.get(kwargs["url"], params=params, stream=True).json()
+
+    if not data:
+        print("Invalid Username/params - moodleapi.core.profile")
+        return
+
     data[0]["description"] = clean(data[0]["description"])
 
     return data[0]

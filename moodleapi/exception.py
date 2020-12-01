@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 
-# TODO: ADD EXEPTIONS TO MOODLEAPI
+# TODO: ADD EXCEPTIONS TO MOODLEAPI
 @dataclass
 class MoodleException(Exception):
     message: str = ""

@@ -15,6 +15,8 @@ from utilities import (
 
 # General use bot commands
 class General(Cog):
+    """Class(Cog) responsible for organizing general use commands"""
+
     def __init__(self, client):
         self.client = client
 
@@ -62,6 +64,8 @@ class General(Cog):
     # Check latency/ping
     @Cog.listener()
     async def on_message(self, ctx):
+        """Shows the bot's ping"""
+        
         if ctx.author == self.client.user:
             return
 
