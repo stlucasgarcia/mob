@@ -42,6 +42,8 @@ pip install -r requirements.txt
   
 ## ✅ Release History
 
+* 4.5.0
+  * [Moodle Rewrite Update](https://github.com/lsglucas/DiscordMackBot/releases/tag/3.0.0)
 * 3.0.0
   * [Database Update](https://github.com/lsglucas/DiscordMackBot/releases/tag/3.0.0)
 * 2.0.0
