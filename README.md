@@ -10,7 +10,7 @@ The bot's features include:
 
 * Music
 * Moodle
-* Reminder (currently being reworked)
+* Reminder
 * Profile (with level system)
 * Reaction role
 * General admin commands
