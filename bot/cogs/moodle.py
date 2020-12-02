@@ -2,6 +2,7 @@ import asyncio
 
 from moodleapi import Mdl
 from moodleapi.core.security import Token, Cryptography
+from moodleapi.core.profile import MoodleProfile
 
 from discord.ext import tasks
 from discord.ext.commands import command, Cog, cooldown
@@ -310,19 +311,47 @@ class Moodle(Cog):
                 params = {
                     "discord_id": user_id,
                     "tia": username.content,
-                    "course": "CCP",
-                    "semester": "02",
-                    "class": "D",
+                    "course": "",
+                    "semester": "",
+                    "class": "",
                     "guild_id": guild_id,
                 }
 
-                Token("https://eadmoodle.mackenzie.br/").create(
+                Token(self.client.url.split("web")[0]).create(
                     params, username=username.content, password=password.content
                 )
 
                 embed = main_messages_style("Your Token was created successfully")
                 await ctx.author.send(embed=embed)
                 await ctx.message.add_reaction(next(positive_emojis_list))
+
+                token = await self.client.pg_con.fetch(
+                    "SELECT token FROM moodle_profile WHERE discord_id = $1 AND guild_id = $2",
+                    user_id,
+                    guild_id,
+                )
+                decrypted_token = Cryptography.decrypt(token[0]["token"])
+
+                data = MoodleProfile().get_user_profile_data(
+                    token=decrypted_token, tia=username.content, url=self.client.url
+                )
+                course, semester, clss = "CCP", None, None
+
+                for discipline in data["enrolledcourses"]:
+                    shortname = discipline.get("shortname")
+                    if shortname:
+                        if len(shortname.split("-")[-1]) == 3:
+                            fullid = shortname.split("-")[-1]
+                            semester, clss = fullid[:2], fullid[-1]
+
+                await self.client.pg_con.fetch(
+                    "UPDATE moodle_profile SET course=$1, semester=$2, class=$3 WHERE discord_id = $4 AND guild_id = $5",
+                    course,
+                    semester,
+                    clss,
+                    user_id,
+                    guild_id,
+                )
 
             else:
                 embed = main_messages_style(
