@@ -17,7 +17,8 @@ class MoodleProfile:
             "wsfunction": "core_user_get_users_by_field",
             "moodlewsrestformat": "json",
             "field": "email",
-            "values[0]": kwargs["tia"] + "@mackenzista.com.br",
+            "values[0]": kwargs["tia"]
+            + "@mackenzista.com.br",  # TODO Make it available to other Moodle in the future
         }
         data = self.r.get(kwargs["url"], params=params, stream=True).json()
 
