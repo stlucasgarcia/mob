@@ -7,7 +7,7 @@ class MoodleCourse:
     def __init__(self):
         self.r = Session()
 
-    def get_user_courses(self, **kwargs):
+    def get_user_courses(self, **kwargs) -> list:
 
         params = {
             "wstoken": kwargs["token"],
