@@ -2,7 +2,6 @@ import asyncio
 
 from moodleapi import Mdl
 from moodleapi.core.security import Token, Cryptography
-from moodleapi.core.profile import get_user_profile
 
 from discord.ext import tasks
 from discord.ext.commands import command, Cog, cooldown
@@ -23,7 +22,6 @@ from utilities_moodle import (
     moodle_color,
     check_command_style,
     group_command_style,
-    moodle_profile_style,
     get_data_timer,
 )
 
@@ -147,10 +145,10 @@ class Moodle(Cog):
         self.moodle(
             decrypted_token,
             self.client.url,
-            "core_calendar_get_calendar_day_view",  # "core_calendar_get_calendar_upcoming_view",
+            "core_calendar_get_calendar_upcoming_view",  # "core_calendar_get_calendar_upcoming_view", "core_calendar_get_calendar_upcoming_view"
         )
 
-        self.moodle.get(day=30, month=9, year=2020)
+        self.moodle.get(categoryid=2)
 
         embed = main_messages_style(f"Checking your assignments {next(books_list)} ...")
         await ctx.author.send(embed=embed)
@@ -192,9 +190,29 @@ class Moodle(Cog):
                 await ctx.author.send(embed=embed)
                 await asyncio.sleep(0.3)
 
-            word = "classes" if done[1] > 1 else "class"
+            word_classes = "classes" if done[1] > 1 else "class"
+            word_assignments = "assignments" if amount - done[1] > 0 else "assignment"
+
+            assignments_message = (
+                f"You did {done[0]} out of {amount - done[1]} {word_assignments}"
+                if (amount - done[1]) > 0
+                else None
+            )
+            classes_message = (
+                f"You have {done[1]} {word_classes} to attend" if done[1] > 0 else None
+            )
+
+            message = None
+
+            if assignments_message and classes_message:
+                message = assignments_message + "and" + classes_message.lower()
+            elif assignments_message and not classes_message:
+                message = assignments_message
+            elif not assignments_message and classes_message:
+                message = classes_message
+
             embed = main_messages_style(
-                f"You did {done[0]} out of {amount - done[1]} assignments and have {done[1]} {word} to attend {next(books_list)}",
+                f"{message} {next(books_list)}",
                 "Note: I am only showing assignments of 14 days ahead",
             )
             await ctx.author.send(embed=embed)
