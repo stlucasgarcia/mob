@@ -1,5 +1,6 @@
 import psycopg2
 
+from psycopg2 import pool
 from moodleapi.secret import DATABASE
 
 
