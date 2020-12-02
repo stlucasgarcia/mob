@@ -100,6 +100,13 @@ class Profile(Cog):
 
             data = get_user_profile(**params)
 
+            if not data:
+                embed = main_messages_style(
+                    "Invalid TIA",
+                    "Note: Not all TIA are supported, check if you typed it correctly",
+                )
+                return await ctx.send(embed=embed)
+
             embed = moodle_profile_style(data)
 
             await ctx.send(embed=embed)
