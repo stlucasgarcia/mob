@@ -32,7 +32,7 @@ class Moodle(Cog):
 
     def __init__(self, client):
         self.client = client
-        self.getData.start()
+        self.updateEvents.start()
         self.moodle = Mdl()
 
     @command(name="get", aliases=["Get", "GET"])
@@ -58,26 +58,44 @@ class Moodle(Cog):
         ]
         events_options = ["events", "all", "everything", "calendar"]
 
+        data = await self.client.pg_con.fetch(
+            "SELECT course, semester, class FROM moodle_profile WHERE discord_id = $1 AND guild_id = $2",
+            ctx.author.id,
+            guild_id,
+        )
+
+        course, semester, clss = data[0]
+
         # Get data for what the user desires
         if option in assignments_options:
             database = await self.client.pg_con.fetch(
-                "SELECT * FROM moodle_events WHERE subject_type = $1 AND guild_id = $2",
+                "SELECT * FROM moodle_events WHERE subject_type = $1 AND guild_id = $2 AND course = $3 AND semester = $4 AND class = $5",
                 "Tarefa para entregar via Moodle",
                 guild_id,
+                course,
+                semester,
+                clss,
             )
             option = "assignments"
 
         elif option in classes_options:
             database = await self.client.pg_con.fetch(
-                "SELECT * FROM moodle_events WHERE subject_type = $1 AND guild_id = $2",
+                "SELECT * FROM moodle_events WHERE subject_type = $1 AND guild_id = $2 AND course = $3 AND semester = $4 AND class = $5",
                 "Aula ao vivo - BigBlueButton",
                 guild_id,
+                course,
+                semester,
+                clss,
             )
             option = "classes"
 
         elif option in events_options:
             database = await self.client.pg_con.fetch(
-                "SELECT * FROM moodle_events WHERE guild_id = $1", guild_id
+                "SELECT * FROM moodle_events WHERE guild_id = $1 AND course = $2 AND semester = $3 AND class = $4",
+                guild_id,
+                course,
+                semester,
+                clss,
             )
             option = "events"
 
@@ -378,99 +396,109 @@ class Moodle(Cog):
     # Gets Moodle data through Moodle API and send it to the chat
     # Loops the GetData function.
     @tasks.loop(minutes=timer)
-    async def getData(self):
-        CSmain = 169890240708870144
-
+    async def updateEvents(self):
         try:
-            tokens_data = await self.client.pg_con.fetch(
-                "SELECT token FROM moodle_profile WHERE discord_id = $1", CSmain
-            )
+            data = await self.client.pg_con.fetch("SELECT * FROM bot_servers")
 
-            token = tokens_data[0]["token"]
+            servers_data = [[elem for elem in list(servers)[7:]] for servers in data]
+            servers_id = [elem["guild_id"] for elem in data]
 
-            decrypted_token = Cryptography.decrypt(token)
-
-            # Get data from the moodle and filter it
-            self.moodle(
-                decrypted_token,
-                self.client.url,
-                "core_calendar_get_calendar_upcoming_view",
-            )
-
-            self.moodle.get(categoryid=2)
-
-            self.moodle.export(
-                db="moodle_events",
-                course="CCP",
-                semester="02",
-                clss="D",
-                discord_id=CSmain,
-                guild_id=748168924465594419,
-            )
-
-            # Check if there's events
-            data = await self.client.pg_con.fetch(
-                "SELECT * FROM moodle_events WHERE discord_id = $1 AND guild_id = $2",
-                CSmain,
-                748168924465594419,
-            )
-
-            loop_channel = await self.client.pg_con.fetch(
-                "SELECT loop_channel, loop_time FROM bot_servers",
-            )
-
-            for item in range(len((loop_channel))):  # Send on different servers
-                if loop_channel[item]["loop_channel"]:
-                    loop_channel = loop_channel[item]["loop_channel"]
-
-                    if data and getData_Counter[0] % 16 == 0:
-                        embed = main_messages_style(
-                            f"Sending the Moodle events update {next(books_list)} {next(happy_faces)}"
+            for i in range(len(servers_data)):
+                for j in range(len(servers_data[i])):
+                    if servers_data[i][j]:
+                        userdata = await self.client.pg_con.fetch(
+                            "SELECT discord_id, course, semester, class, token FROM moodle_profile WHERE tia = $1 AND guild_id = $2",
+                            servers_data[i][j],
+                            servers_id[i],
                         )
 
-                        await asyncio.sleep(0.5)
+                        token = userdata[0]["token"]
 
-                        await self.client.get_channel(loop_channel).send(embed=embed)
+                        decrypted_token = Cryptography.decrypt(token)
 
-                        amount = len(data)
-
-                        for index in range(amount):
-                            assignmentsdata = data_dict(data[index])
-
-                            # Styling the message to improve user experience
-                            color = moodle_color(index, assignmentsdata)
-
-                            embed = check_command_style(
-                                assignmentsdata, str(index + 1), color, None
-                            )[0]
-
-                            await asyncio.sleep(0.3)
-                            await self.client.get_channel(loop_channel).send(
-                                embed=embed
-                            )
-
-                        embed = main_messages_style(
-                            f"There were a total of {amount} events {next(books_list)} see you in 8 hours {next(happy_faces)} ",
-                            "Note: I am only showing events of 14 days ahead",
+                        # Get data from the moodle and filter it
+                        self.moodle(
+                            decrypted_token,
+                            self.client.url,
+                            "core_calendar_get_calendar_upcoming_view",
                         )
+
+                        self.moodle.get(categoryid=2)
+
+                        self.moodle.export(
+                            db="moodle_events",
+                            course=userdata[0]["course"],
+                            semester=userdata[0]["semester"],
+                            clss=userdata[0]["class"],
+                            discord_id=userdata[0]["discord_id"],
+                            guild_id=servers_id[i],
+                        )
+
+        except Exception:
+            pass
+
+    #@updateEvents.after_loop()
+    async def printEvents(self):
+        """Prints the events of the respective subject and class on the desired chat"""
+
+        # Check if there's events
+        data = await self.client.pg_con.fetch(
+            "SELECT * FROM moodle_events WHERE discord_id = $1 AND guild_id = $2",
+            CSmain,
+            748168924465594419,
+        )
+
+        loop_channel = await self.client.pg_con.fetch(
+            "SELECT loop_channel, loop_time FROM bot_servers",
+        )
+
+        for item in range(len((loop_channel))):  # Send on different servers
+            if loop_channel[item]["loop_channel"]:
+                loop_channel = loop_channel[item]["loop_channel"]
+
+                if data and getData_Counter[0] % 16 == 0:
+                    embed = main_messages_style(
+                        f"Sending the Moodle events update {next(books_list)} {next(happy_faces)}"
+                    )
+
+                    await asyncio.sleep(0.5)
+
+                    await self.client.get_channel(loop_channel).send(embed=embed)
+
+                    amount = len(data)
+
+                    for index in range(amount):
+                        assignmentsdata = data_dict(data[index])
+
+                        # Styling the message to improve user experience
+                        color = moodle_color(index, assignmentsdata)
+
+                        embed = check_command_style(
+                            assignmentsdata, str(index + 1), color, None
+                        )[0]
 
                         await asyncio.sleep(0.3)
-
                         await self.client.get_channel(loop_channel).send(embed=embed)
 
-                    if not data and getData_Counter[0] % 16 == 0:
-                        embed = main_messages_style(
-                            "There weren't any scheduled events 😑😮",
-                            "Note: This is really weird, be careful 🤨😶",
-                        )
+                    embed = main_messages_style(
+                        f"There were a total of {amount} events {next(books_list)} see you in 8 hours {next(happy_faces)} ",
+                        "Note: I am only showing events of 14 days ahead",
+                    )
 
-                        await asyncio.sleep(0.5)
-                        await self.client.get_channel(loop_channel).send(embed=embed)
+                    await asyncio.sleep(0.3)
 
-                    getData_Counter[0] += 1
+                    await self.client.get_channel(loop_channel).send(embed=embed)
 
-        except AttributeError:
-            pass
+                if not data and getData_Counter[0] % 16 == 0:
+                    embed = main_messages_style(
+                        "There weren't any scheduled events 😑😮",
+                        "Note: This is really weird, be careful 🤨😶",
+                    )
+
+                    await asyncio.sleep(0.5)
+                    await self.client.get_channel(loop_channel).send(embed=embed)
+
+                getData_Counter[0] += 1
 
     @command(
         name="moodleUpdate",

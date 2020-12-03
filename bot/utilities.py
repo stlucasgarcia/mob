@@ -1,3 +1,5 @@
+import discord
+
 from discord import Embed
 from itertools import cycle
 
@@ -132,3 +134,31 @@ def timeout_message(timeout: float, reaction: bool = False) -> Embed:
     return main_messages_style(
         "Timeout error", f"You only have {int(timeout)} seconds to {state}."
     )
+
+
+def profile_style(
+    member: discord.member.Member, ctx: discord.ext.commands.context.Context, **kwargs
+) -> Embed:
+    """It creates the profile_style embed which is used to show the data to the users"""
+
+    embed = Embed(color=member.color, timestamp=ctx.message.created_at)
+
+    embed.set_thumbnail(url=member.avatar_url)
+
+    embed.set_author(name=f"Profile - {member.display_name}")
+
+    embed.add_field(name="Level", value=f"`{kwargs['user_level']}`")
+    embed.add_field(
+        name="XP", value=f"`{kwargs['user_experience']}/{kwargs['xp_nextlvl']}`"
+    )
+    embed.add_field(name="Reputation", value=f"`{kwargs['rep']}`", inline=False)
+
+    embed.add_field(
+        name=f"Messages Needed for level {kwargs['user_level'] + 1}",
+        value=f"`{kwargs['xp_nextlvl'] - kwargs['user_experience']}`",
+        inline=False,
+    )
+
+    embed.set_footer(text=f"{member}", icon_url=member.avatar_url)
+
+    return embed

@@ -1,11 +1,16 @@
 import discord
 
 from moodleapi.core.security.cryptography import Cryptography
-from moodleapi.core.profile import get_user_profile
+from moodleapi.core.profile import MoodleProfile
 from discord.ext.commands import Cog, command
 
-from utilities import main_messages_style, positive_emojis_list, negative_emojis_list
-from utilities_moodle import moodle_profile_style
+from utilities import (
+    main_messages_style,
+    profile_style,
+    positive_emojis_list,
+    negative_emojis_list,
+)
+from utilities_moodle import moodle_profile_style, moodle_profile_style_page2
 
 
 class Profile(Cog):
@@ -77,6 +82,7 @@ class Profile(Cog):
         member = ctx.author if not member else member
 
         if str(member)[0].isnumeric():
+            print("Entrou")
             user_data = await self.client.pg_con.fetch(
                 "SELECT token FROM moodle_profile WHERE discord_id = $1 AND guild_id = $2",
                 ctx.author.id,
@@ -86,7 +92,7 @@ class Profile(Cog):
             if not user_data:
                 embed = main_messages_style(
                     "You must create a token to use this command",
-                    "Create a token by typing prefix + gettoken",
+                    f"Create a token by typing {self.client.prefix} + gettoken",
                 )
                 await ctx.send(embed=embed)
 
@@ -95,19 +101,25 @@ class Profile(Cog):
             params = {
                 "token": token,
                 "tia": member,
-                "url": "https://eadmoodle.mackenzie.br/webservice/rest/server.php?",
+                "url": self.client.url,
             }
 
-            data = get_user_profile(**params)
+            profile_data = MoodleProfile().get_user_profile(**params)
 
-            if not data:
+            print(profile_data + " Profile Data")
+
+            if not profile_data:
                 embed = main_messages_style(
                     "Invalid TIA",
                     "Note: Not all TIA are supported, check if you typed it correctly",
                 )
                 return await ctx.send(embed=embed)
 
-            embed = moodle_profile_style(data)
+            embed = moodle_profile_style(profile_data)
+
+            await ctx.send(embed=embed)
+
+            embed = moodle_profile_style_page2(profile_data)
 
             await ctx.send(embed=embed)
 
@@ -133,25 +145,14 @@ class Profile(Cog):
                 await ctx.send("Member doesn't have a level")
 
             else:
-                embed = discord.Embed(
-                    color=member.color, timestamp=ctx.message.created_at
-                )
+                user_info = {
+                    "user_level": user_level,
+                    "user_experience": user_experience,
+                    "xp_nextlvl": xp_nextlvl,
+                    "rep": rep,
+                }
 
-                embed.set_thumbnail(url=member.avatar_url)
-
-                embed.set_author(name=f"Profile - {member.display_name}")
-
-                embed.add_field(name="Level", value=f"`{user_level}`")
-                embed.add_field(name="XP", value=f"`{user_experience}/{xp_nextlvl}`")
-                embed.add_field(name="Reputation", value=f"`{rep}`", inline=False)
-
-                embed.add_field(
-                    name=f"Messages Needed for level {user_level + 1}",
-                    value=f"`{xp_nextlvl - user_experience}`",
-                    inline=False,
-                )
-
-                embed.set_footer(text=f"{member}", icon_url=member.avatar_url)
+                embed = profile_style(member, ctx, **user_info)
 
                 await ctx.send(embed=embed)
 

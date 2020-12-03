@@ -12,6 +12,7 @@ from utilities import (
     footer,
     defaultcolor,
 )
+
 from secret1 import moodle_dict
 
 
@@ -95,13 +96,23 @@ class Setup(Cog):
             "setLoopChannel",
         ],
     )
-    @has_permissions(administrator=True)
+    @has_permissions(administrator=False) # Change back
     async def loop_channel(self, ctx):
         """Select the channel to send the getData loop (the moodle events)"""
 
+        data = await self.client.pg_con.fetch(
+            "SELECT loop_channel FROM bot_servers WHERE guild_id = $1",
+            ctx.guild.id,
+        )
+
+        if data[0]["loop_channel"]:
+            channel = f"{data[0]['loop_channel']},{ctx.channel.id}"
+        else:
+            channel = f"{ctx.channel.id}"
+
         await self.client.pg_con.execute(
             "UPDATE bot_servers SET loop_channel = $1 WHERE guild_id = $2",
-            ctx.channel.id,
+            channel,
             ctx.guild.id,
         )
 
@@ -229,23 +240,21 @@ class Setup(Cog):
             "courseset",
         ],
     )
-    @has_permissions(administrator=True)
+    @has_permissions(administrator=False) # Change back
     async def setCourseToken(self, ctx):
         """Creates a subject and assign a token to be used in the getData loop"""
-        # TODO Fix This
 
-        # print("Entrou")
         timeout = 35.0
 
         def check(m):
             return m.author == ctx.author
 
-        embed = main_messages_style("Type the subject you want to add/update")
+        embed = main_messages_style("Type the userid to add/update the token")
         await ctx.send(embed=embed)
 
-        subject = None
+        userid = None
         try:
-            subject = await self.client.wait_for(
+            userid = await self.client.wait_for(
                 "message", timeout=timeout, check=check
             )
         except asyncio.TimeoutError:
@@ -253,28 +262,26 @@ class Setup(Cog):
             return await ctx.author.send(embed=embed)
 
         await ctx.channel.purge(limit=2)
-
-        embed = main_messages_style(
-            f"Type the token you want to address to {subject.content}"
-        )
-        await ctx.send(embed=embed)
-
-        token = None
-        try:
-            token = await self.client.wait_for("message", timeout=timeout, check=check)
-        except asyncio.TimeoutError:
-            embed = timeout_message(timeout)
-            return await ctx.author.send(embed=embed)
-
-        await ctx.channel.purge(limit=2)
-
+        
         guild_id = ctx.guild.id
+        userid = userid.content
+
+        data = await self.client.pg_con.fetch(
+                    "SELECT course, semester, class FROM moodle_profile WHERE tia = $1 AND guild_id = $2",
+                    userid,
+                    guild_id,
+                )
+
+        if not data:
+            embed = main_messages_style("There is no user with this userid")
+            return await ctx.send(embed=embed)
+
+        column = f"{data[0]['course']}{data[0]['semester']}{data[0]['class']}"
 
         try:
             await self.client.pg_con.execute(
-                "UPDATE bot_servers SET $1 = $2 WHERE guild_id = $3",
-                subject.content,
-                token.content,
+                f"UPDATE bot_servers SET {column} = $1 WHERE guild_id = $2",
+                userid,
                 guild_id,
             )
             embed = main_messages_style("Token updated successfully on the database")
@@ -282,15 +289,12 @@ class Setup(Cog):
 
         except Exception:
             await self.client.pg_con.execute(
-                "ALTER TABLE bot_servers ADD $1 varchar(255)",
-                subject.content,
+                f"ALTER TABLE bot_servers ADD COLUMN {column} VARCHAR"
             )
-            # print("Alter table")
 
             await self.client.pg_con.execute(
-                "UPDATE bot_servers SET $1 = $2 WHERE guild_id = $3",
-                subject.content,
-                token.content,
+                f"UPDATE bot_servers SET {column} = $1 WHERE guild_id = $2",
+                userid,
                 guild_id,
             )
 

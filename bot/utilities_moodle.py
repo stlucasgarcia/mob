@@ -5,10 +5,13 @@ import pyshorteners
 
 get_data_timer: list = [30]
 
+# Url shortener
+shorter_url = pyshorteners.Shortener(api_key=bitly_token)
+
 # Dictionary template that we use in most part of Moodle.py
 def data_dict(database):
     """Creates a dict with the respective data"""
-    
+
     assignmentsdata = {
         "fullname": database[5].title(),
         "name": database[6].title(),
@@ -57,9 +60,6 @@ def check_command_style(
     done_list: list = None,
 ):
     """Organizes and styles the user's data which is shown in the check command"""
-
-    # Url shortener
-    shorter_url = pyshorteners.Shortener(api_key=bitly_token)
 
     embed = Embed(
         title=dict["modulename"] + " - " + amount,
@@ -146,7 +146,6 @@ def group_command_style(member: list, amount: int) -> Embed:
 
 def moodle_profile_style(data: dict) -> Embed:
     """Returns the embedded moodle profile message which is used in the profile command"""
-    shorter_url = pyshorteners.Shortener(api_key=bitly_token)
 
     embed = Embed(
         title=data["fullname"].title(),
@@ -166,6 +165,31 @@ def moodle_profile_style(data: dict) -> Embed:
     embed.add_field(name="Email", value=data["email"], inline=True)
 
     embed.add_field(name="Link", value=shorter_url.bitly.short(link), inline=True)
+
+    embed.set_footer(text=footer)
+
+    return embed
+
+
+def moodle_profile_style_page2(data):
+    """Creates the second page of the moodle profile, which contains the courses"""
+
+    print("Entrou page 2")
+    embed = Embed(
+        title=data["fullname"].title(),
+        color=defaultcolor,
+        description=data["description"],
+    )
+
+    embed.set_author(
+        name=f"Moodle Profile - {(data['fullname'].split()[0]).capitalize()} - Page 2",
+    )
+
+    embed.set_thumbnail(url=data["profileimageurl"])
+    print(data["enrolledcourses"])
+
+    # for item in data["enrolledcourses"]:
+    #     embed.add_field(name=data[''], value=data["email"], inline=True)
 
     embed.set_footer(text=footer)
 
