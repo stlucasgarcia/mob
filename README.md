@@ -4,7 +4,7 @@
 
 [![Latest Release][release]][release]
 
-The project's main purpose is helping students to organize themselves through Moodle API built in a Discord Bot with more functionalities.
+The project's main purpose is helping students to organize themselves through Moodle API built in a Discord Bot with more functionalities. IF you wish to use this bot with your Moodle, contact us and we will help you to set it up.
 
 The bot's features include:
 
