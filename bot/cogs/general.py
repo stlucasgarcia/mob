@@ -51,21 +51,18 @@ class General(Cog):
     @command(
         name="printm", aliases=["Print", "PrintM", "print", "Printmessage", "PRINT"]
     )
-    async def printm(self, ctx, name, message, emote=""):
+    async def printm(self, ctx, message: str = None):
         """Print an embed message"""
 
-        embed = main_messages_style(name, message, emote)
-        await ctx.send(embed=embed)
-
+        await ctx.send(embed=main_messages_style(message))
+        
         await ctx.message.add_reaction(next(positive_emojis_list))
-
-    # TODO Fix printm
 
     # Check latency/ping
     @Cog.listener()
     async def on_message(self, ctx):
         """Shows the bot's ping"""
-        
+
         if ctx.author == self.client.user:
             return
 
@@ -84,5 +81,6 @@ class General(Cog):
             print(f"Ping {int(ping)}ms")
 
 
+# TODO FIX MOODLE PROFILE
 def setup(client):
     client.add_cog(General(client))

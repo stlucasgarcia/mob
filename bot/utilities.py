@@ -58,7 +58,7 @@ def main_messages_style(
 
     message = f"**{message}**" if message != "" else message
     embed = Embed(
-        title=name,
+        title=name if name else "",
         description=f"{message} {emote if emote != '' else emote}",
         color=color if color else defaultcolor,
     )
@@ -72,7 +72,7 @@ def main_messages_style(
 
 
 # Template message for help
-def help_message(contents):
+def help_message(contents: list) -> Embed:
     """Returns the help message embedded and styled"""
 
     embed = Embed(

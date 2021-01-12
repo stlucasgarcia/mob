@@ -171,7 +171,7 @@ def moodle_profile_style(data: dict) -> Embed:
     return embed
 
 
-def moodle_profile_style_page2(data):
+def moodle_profile_style_page2(data: dict) -> Embed:
     """Creates the second page of the moodle profile, which contains the courses"""
 
     print("Entrou page 2")

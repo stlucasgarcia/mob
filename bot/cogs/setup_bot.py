@@ -240,7 +240,7 @@ class Setup(Cog):
             "courseset",
         ],
     )
-    @has_permissions(administrator=False) # Change back
+    @has_permissions(administrator=True)
     async def setCourseToken(self, ctx):
         """Creates a subject and assign a token to be used in the getData loop"""
 
