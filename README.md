@@ -43,13 +43,13 @@ pip install -r requirements.txt
 ## ✅ Release History
 
 * 4.5.0
-  * [Moodle Rewrite Update](https://github.com/lsglucas/DiscordMackBot/releases/tag/3.0.0)
+  * [Moodle Rewrite Update](https://github.com/lsglucas/moodle-v/releases/tag/4.5.0)
 * 3.0.0
-  * [Database Update](https://github.com/lsglucas/DiscordMackBot/releases/tag/3.0.0)
+  * [Database Update](https://github.com/lsglucas/moodle-v/releases/tag/3.0.0)
 * 2.0.0
-  * [Assignments Update](https://github.com/lsglucas/DiscordMackBot/releases/tag/2.0.0)
+  * [Assignments Update](https://github.com/lsglucas/moodle-v/releases/tag/2.0.0)
 * 1.0.0
-  * [Project and initial version release](https://github.com/lsglucas/DiscordMackBot/releases/tag/1.0.0)
+  * [Project and initial version release](https://github.com/lsglucas/moodle-v/releases/tag/1.0.0)
 
 ## 👨🏻‍💻 Meta
 
@@ -65,5 +65,5 @@ There is no license, hence you are not allowed to use, modify, merge, publish, d
 
 You are more than welcome to contribute to the project, if you feel like helping us, you must contact any of the project creators ~~(We will try not to bite you)~~
 
-[release]: https://img.shields.io/github/v/release/lsglucas/DiscordMackBot
-[wiki]: https://github.com/lsglucas/DiscordMackBot/wiki
+[release]: https://img.shields.io/github/v/release/lsglucas/moodle-v
+[wiki]: https://github.com/lsglucas/moodle-v/wiki
