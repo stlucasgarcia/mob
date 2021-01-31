@@ -67,7 +67,7 @@ class YTDLSource(discord.PCMVolumeTransformer):
         loop = loop or asyncio.get_event_loop()
 
         data = await loop.run_in_executor(
-            None, lambda: ytdl.extract_info(url, download=download)
+            None, lambda: ytdl.extract_info(url)
         )
 
         if "entries" in data:
@@ -139,7 +139,7 @@ class Music(Cog):
 
         async with ctx.typing():
             player = await YTDLSource.from_url(
-                url, loop=self.client.loop, download=True
+                url, loop=self.client.loop, download=False
             )
 
             ctx.voice_client.play(
