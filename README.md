@@ -4,6 +4,9 @@
 
 [![Latest Release][release]][release]
 
+## ⚠️ This project is being reworked at: [github.com/moodleorganizerbot](https://github.com/moodleorganizerbot/discord-bot) 
+> This is a read-only repository, we are currently reworking the project at the link above, this repository will not receive any updates.
+
 The project's main purpose is helping students to organize themselves through Moodle API built in a Discord Bot with more functionalities. IF you wish to use this bot with your Moodle, contact us and we will help you to set it up.
 
 The bot's features include:
@@ -56,14 +59,6 @@ pip install -r requirements.txt
 Lucas Garcia – [@lsglucass](https://twitter.com/lsglucass) – lsglucas@pm.me
 
 Daniel Kauffmann – [@danieldowombo](https://twitter.com/danieldowombo) – danielvenna2@hotmail.com
-
-## 📑 License  
-
-There is no license, hence you are not allowed to use, modify, merge, publish, distribute, sublicense, and/or sell copies of the software. The reproduction or distribution without written permission of the owners is prohibited. If you are interested in using this software, contact one of the creators.
-
-## 🤝🏻 Contributing
-
-You are more than welcome to contribute to the project, if you feel like helping us, you must contact any of the project creators ~~(We will try not to bite you)~~
 
 [release]: https://img.shields.io/github/v/release/lsglucas/moodle-v
 [wiki]: https://github.com/lsglucas/moodle-v/wiki
