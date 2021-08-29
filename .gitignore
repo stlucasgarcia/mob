@@ -33,3 +33,5 @@ build
 
 # System Files
 *.DS_Store
+
+.env

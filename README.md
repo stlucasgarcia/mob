@@ -43,7 +43,7 @@ pip install -r requirements.txt
   
 ## ✅ Release History
 
-* alpha-1.0.0
+* 0.1.0
   * _coming soon_
 
 ## 👨🏻‍💻 Meta

@@ -44,6 +44,22 @@ class Fun(Cog):
         await ctx.message.add_reaction(next(positive_emojis_list))
 
     @command(
+        name="test",
+    )
+    async def test(self, ctx):
+        """Command to show someones avatar on the chat, you must mention the user"""
+
+        doc = {
+            "guildId": int(ctx.guild.id),
+            "guildName": str(ctx.guild.name),
+            "prefix": "--",
+        }
+        await self.client.pg_con.servers.insert_one(doc)
+
+        # await ctx.send(embed=embed)
+        await ctx.message.add_reaction(next(positive_emojis_list))
+
+    @command(
         name="e&o",
         aliases=[
             "Even_Or_Odd",
