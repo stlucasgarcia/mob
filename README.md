@@ -4,8 +4,7 @@
 
 [![Latest Release][release]][release]
 
-## ⚠️ This project is being reworked at: [github.com/moodleorganizerbot](https://github.com/moodleorganizerbot/discord-bot) 
-> This is a read-only repository, we are currently reworking the project at the link above, this repository will not receive any updates.
+## ⚠️ This project is being reworked 
 
 The project's main purpose is helping students to organize themselves through Moodle API built in a Discord Bot with more functionalities. IF you wish to use this bot with your Moodle, contact us and we will help you to set it up.
 
