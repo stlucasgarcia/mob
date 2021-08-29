@@ -5,6 +5,8 @@
 [![Latest Release][release]][release] [![license][license]][license]
 
 
+## ⚠️ This project is being reworked 
+
 The project's main purpose is helping students to organize themselves through Moodle API built in a Discord Bot with more functionalities. IF you wish to use this bot with your Moodle, contact us and we will help you to set it up.
 
 The bot's features include:
@@ -80,6 +82,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-[release]: https://img.shields.io/github/v/release/moodleorganizerbot/discord-bot
-[wiki]: https://github.com/moodleorganizerbot/discord-bot/wiki
-[license]: https://img.shields.io/github/license/moodleorganizerbot/discord-bot
+[release]: https://img.shields.io/github/v/release/lsglucas/mob
+[wiki]: lsglucas.github.io/mob/
+[license]: https://img.shields.io/github/license/lsglucas/mob
+
