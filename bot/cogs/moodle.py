@@ -1,8 +1,8 @@
 import asyncio
 
-from moodleapi import Mdl
-from moodleapi.core.security import Token, Cryptography
-from moodleapi.core.profile import MoodleProfile
+# from moodleapi import Mdl
+# from moodleapi.core.security import Token, Cryptography
+# from moodleapi.core.profile import MoodleProfile
 
 from discord.ext import tasks
 from discord.ext.commands import command, Cog, cooldown
@@ -33,7 +33,7 @@ class Moodle(Cog):
     def __init__(self, client):
         self.client = client
         self.updateEvents.start()
-        self.moodle = Mdl()
+        self.moodle = print
 
     @command(name="get", aliases=["Get", "GET"])
     async def get(self, ctx, option=""):
@@ -437,7 +437,7 @@ class Moodle(Cog):
         except Exception:
             pass
 
-    #@updateEvents.after_loop()
+    # @updateEvents.after_loop()
     async def printEvents(self):
         """Prints the events of the respective subject and class on the desired chat"""
 

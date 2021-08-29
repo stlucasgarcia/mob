@@ -1,6 +1,6 @@
 import asyncio
 
-from moodleapi.core.export import Export
+# from moodleapi.core.export import Export
 
 from discord.ext import tasks
 from discord.ext.commands import command, Cog
@@ -192,7 +192,7 @@ class Reminder(Cog):
 
                 await ctx.author.send(embed=embed)
 
-                Export("bot_reminder").to_db(data=d)
+                # Export("bot_reminder").to_db(data=d)
 
                 await ctx.message.add_reaction(next(positive_emojis_list))
 
@@ -303,7 +303,7 @@ class Reminder(Cog):
                 None,
             ]
 
-            Export("bot_reminder").to_db(data=data)
+            # Export("bot_reminder").to_db(data=data)
 
             await ctx.message.add_reaction(next(positive_emojis_list))
 
