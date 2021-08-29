@@ -29,9 +29,10 @@ class Setup(Cog):
 
         if prefix is None:
 
-            server_prefix = await self.client.pg_con.fetch(
-                "SELECT prefix FROM bot_servers WHERE guild_id = $1",
-                ctx.guild.id,
+            server_prefix = await self.client.pg_con.servers.find_one(
+                {
+                    "guildId": ctx.guild.id,
+                }
             )
 
             server_prefix = server_prefix[0]["prefix"]
@@ -96,7 +97,7 @@ class Setup(Cog):
             "setLoopChannel",
         ],
     )
-    @has_permissions(administrator=False) # Change back
+    @has_permissions(administrator=False)  # Change back
     async def loop_channel(self, ctx):
         """Select the channel to send the getData loop (the moodle events)"""
 
@@ -254,23 +255,21 @@ class Setup(Cog):
 
         userid = None
         try:
-            userid = await self.client.wait_for(
-                "message", timeout=timeout, check=check
-            )
+            userid = await self.client.wait_for("message", timeout=timeout, check=check)
         except asyncio.TimeoutError:
             embed = timeout_message(timeout)
             return await ctx.author.send(embed=embed)
 
         await ctx.channel.purge(limit=2)
-        
+
         guild_id = ctx.guild.id
         userid = userid.content
 
         data = await self.client.pg_con.fetch(
-                    "SELECT course, semester, class FROM moodle_profile WHERE tia = $1 AND guild_id = $2",
-                    userid,
-                    guild_id,
-                )
+            "SELECT course, semester, class FROM moodle_profile WHERE tia = $1 AND guild_id = $2",
+            userid,
+            guild_id,
+        )
 
         if not data:
             embed = main_messages_style("There is no user with this userid")

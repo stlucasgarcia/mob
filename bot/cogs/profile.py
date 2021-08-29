@@ -1,7 +1,7 @@
 import discord
 
-from moodleapi.core.security.cryptography import Cryptography
-from moodleapi.core.profile import MoodleProfile
+# from moodleapi.core.security.cryptography import Cryptography
+# from moodleapi.core.profile import MoodleProfile
 from discord.ext.commands import Cog, command
 
 from utilities import (
@@ -96,30 +96,30 @@ class Profile(Cog):
                 )
                 await ctx.send(embed=embed)
 
-            token = Cryptography.decrypt(user_data[0]["token"])
+            # token = Cryptography.decrypt(user_data[0]["token"])
 
-            params = {
-                "token": token,
-                "tia": member,
-                "url": self.client.url,
-            }
+            # params = {
+            #     "token": token,
+            #     "tia": member,
+            #     "url": self.client.url,
+            # }
 
-            profile_data = MoodleProfile().get_user_profile(**params)
+            # profile_data = MoodleProfile().get_user_profile(**params)
 
-            print(profile_data + " Profile Data")
+            # print(profile_data + " Profile Data")
 
-            if not profile_data:
-                embed = main_messages_style(
-                    "Invalid TIA",
-                    "Note: Not all TIA are supported, check if you typed it correctly",
-                )
-                return await ctx.send(embed=embed)
+            # if not profile_data:
+            # embed = main_messages_style(
+            # "Invalid TIA",
+            # "Note: Not all TIA are supported, check if you typed it correctly",
+            # )
+            # return await ctx.send(embed=embed)
 
-            embed = moodle_profile_style(profile_data)
+            # embed = moodle_profile_style(profile_data)
 
             await ctx.send(embed=embed)
 
-            embed = moodle_profile_style_page2(profile_data)
+            # embed = moodle_profile_style_page2(profile_data)
 
             await ctx.send(embed=embed)
 

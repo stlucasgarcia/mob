@@ -2,7 +2,8 @@
 
 > A Discord multipurpose bot using Moodle API to get users data inside the Discord environment.
 
-[![Latest Release][release]][release]
+[![Latest Release][release]][release] [![license][license]][license]
+
 
 ## ⚠️ This project is being reworked 
 
@@ -44,14 +45,8 @@ pip install -r requirements.txt
   
 ## ✅ Release History
 
-* 4.5.0
-  * [Moodle Rewrite Update](https://github.com/lsglucas/moodle-v/releases/tag/4.5.0)
-* 3.0.0
-  * [Database Update](https://github.com/lsglucas/moodle-v/releases/tag/3.0.0)
-* 2.0.0
-  * [Assignments Update](https://github.com/lsglucas/moodle-v/releases/tag/2.0.0)
-* 1.0.0
-  * [Project and initial version release](https://github.com/lsglucas/moodle-v/releases/tag/1.0.0)
+* 0.1.0
+  * _coming soon_
 
 ## 👨🏻‍💻 Meta
 
@@ -59,5 +54,35 @@ Lucas Garcia – [@lsglucass](https://twitter.com/lsglucass) – lsglucas@pm.me
 
 Daniel Kauffmann – [@danieldowombo](https://twitter.com/danieldowombo) – danielvenna2@hotmail.com
 
-[release]: https://img.shields.io/github/v/release/lsglucas/moodle-v
-[wiki]: https://github.com/lsglucas/moodle-v/wiki
+## 🤝🏻 Contributing
+
+You are more than welcome to contribute to the project!
+
+## 📑 License  
+
+MIT License
+
+Copyright (c) 2021 Moodle Organizer Bot
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+[release]: https://img.shields.io/github/v/release/lsglucas/mob
+[wiki]: lsglucas.github.io/mob/
+[license]: https://img.shields.io/github/license/lsglucas/mob
+

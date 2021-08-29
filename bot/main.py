@@ -1,29 +1,31 @@
 import os
 import asyncpg
 import discord
+import motor.motor_asyncio
 
 from discord import Intents
 from discord.ext import commands
+from dotenv import dotenv_values
 
 from utilities import main_messages_style, positive_emojis_list
 from utilities_moodle import get_data_timer
 from secret1 import DB_Username, DB_Password, Bot_token
+
+config = dotenv_values(".env")
 
 
 async def get_serverSettings(client, ctx) -> str:
     """Gets the server's prefix, the time in which getdata's will loop and the server's url, it's accessable at any cog"""
 
     try:
-        data = await client.pg_con.fetch(
-            "SELECT prefix, loop_time, moodle_url FROM bot_servers WHERE guild_id = $1",
-            ctx.guild.id,
-        )
-        client.prefix = data[0]["prefix"]
+        data = client.pg_con.server.find_one({"_id": ctx.guild.id})
 
-        client.url = data[0]["moodle_url"]
+        client.prefix = data.get("prefix")
+
+        client.url = data.get("moodle_url")
 
         try:
-            get_data_timer[0] = int(data[0]["loop_time"])
+            get_data_timer[0] = data.get("loop_time")
 
         except TypeError or discord.errors:
             pass
@@ -44,9 +46,8 @@ client = commands.Bot(
 async def create_db_pool():
     """Creates a connection with the database, it's accessible on any cog"""
 
-    client.pg_con = await asyncpg.create_pool(
-        database="DiscordDB", user=DB_Username, password=DB_Password
-    )
+    client.pg_con = motor.motor_asyncio.AsyncIOMotorClient(config["URI"])
+    client.pg_con = client.pg_con["DiscordBot"]
 
 
 # Load and get/initialize all the files .py(cogs) in the folder cogs
@@ -110,13 +111,12 @@ async def on_command_error(ctx, error):
 async def on_guild_join(guild):
     """Add the guild in the database"""
 
-    await client.pg_con.execute(
-        "INSERT INTO bot_servers (guild_id, guild_name, prefix, moodle_url) VALUES ($1, $2, $3, $4)",
-        int(guild.id),
-        str(guild.name),
-        "--",
-        None,
-    )
+    doc = {
+        "guildId": int(guild.id),
+        "guildName": str(guild.name),
+        "prefix": "--",
+    }
+    await client.pg_con.servers.insert_one(doc)
 
 
 @client.event
@@ -139,8 +139,8 @@ async def on_member_join(member):
     """Gives the guild's default role if it exists"""
 
     try:
-        role = await client.pg_con.fetch(
-            "SELECT on_join_role FROM bot_servers WHERE guild_id = $1", member.guild
+        role = await client.pg_con.servers.find_one(
+            {"guildId": member.guild}, {"on_join_role": True}
         )
 
         await member.add_roles(role)
