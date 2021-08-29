@@ -80,6 +80,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-[release]: https://img.shields.io/github/v/release/moodleorganizerbot/discord-bot
-[wiki]: https://github.com/moodleorganizerbot/discord-bot/wiki
-[license]: https://img.shields.io/github/license/moodleorganizerbot/discord-bot
+[release]: https://img.shields.io/github/v/release/lsglucas/mob
+[wiki]: lsglucas.github.io/mob/
+[license]: https://img.shields.io/github/license/lsglucas/mob
