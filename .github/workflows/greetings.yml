@@ -1,0 +1,23 @@
+on: [push]
+
+jobs:
+  debug:
+    name: Debug
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v2
+
+    - name: Set up secret file
+      env:
+        BITLY: ${{ secrets.BITLY_TOKEN }}
+        DISCORD: ${{ secrets.DISCORDTOKEN }}
+        URI: ${{ secrets.URI }}
+      run: |
+        echo $BITLY >> secrets.txt
+        echo $DISCORD >> secrets.txt
+        echo $URI >> secrets.txt
+
+    - name: Run tmate
+      uses: mxschmitt/action-tmate@v2
