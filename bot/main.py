@@ -1,5 +1,4 @@
 import os
-import asyncpg
 import discord
 import motor.motor_asyncio
 
@@ -9,7 +8,6 @@ from dotenv import dotenv_values
 
 from utilities import main_messages_style, positive_emojis_list
 from utilities_moodle import get_data_timer
-from secret1 import DB_Username, DB_Password, Bot_token
 
 config = dotenv_values(".env")
 
@@ -151,4 +149,4 @@ async def on_member_join(member):
 
 client.loop.run_until_complete(create_db_pool())
 
-client.run(Bot_token)
+client.run(config["DISCORD_TOKEN"])

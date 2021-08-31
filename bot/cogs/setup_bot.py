@@ -13,7 +13,7 @@ from utilities import (
     defaultcolor,
 )
 
-from secret1 import moodle_dict
+# from secret1 import moodle_dict
 
 
 class Setup(Cog):
@@ -32,10 +32,11 @@ class Setup(Cog):
             server_prefix = await self.client.pg_con.servers.find_one(
                 {
                     "guildId": ctx.guild.id,
-                }
+                },
+                {"prefix": True, "_id": False},
             )
 
-            server_prefix = server_prefix[0]["prefix"]
+            server_prefix = server_prefix.get("prefix")
 
             embed = main_messages_style(
                 f"The bot's prefix on this server is `{server_prefix}`",
@@ -44,11 +45,12 @@ class Setup(Cog):
             await ctx.send(embed=embed)
 
         else:
-            await self.client.pg_con.execute(
-                "UPDATE bot_servers SET prefix = $1 WHERE guild_id = $2",
-                prefix,
-                ctx.guild.id,
+            result = await self.client.pg_con.servers.update_one(
+                {"guildId": ctx.guild.id},
+                {"$set": {"prefix": prefix}},
             )
+
+            print(result)
 
             embed = main_messages_style(
                 f"The bot's prefix on this server changed to `{prefix}`",
@@ -64,11 +66,24 @@ class Setup(Cog):
         """Admin only command, probably it can be used in case of the server did not register properly on the database"""
 
         try:
-            await self.client.pg_con.execute(
-                "INSERT INTO bot_servers (guild_id, guild_name, prefix) VALUES ($1, $2, $3)",
-                int(ctx.guild.id),
-                str(ctx.message.guild.name),
-                "mack ",
+
+            server = await self.client.pg_con.servers.find_one(
+                {
+                    "guildId": ctx.guild.id,
+                },
+            )
+
+            if server:
+                raise "Server already exists"
+
+            server = {
+                "guildId": int(ctx.guild.id),
+                "guildName": str(ctx.message.guild.name),
+                "prefix": "--",
+            }
+
+            await self.client.pg_con.servers.insert_one(
+                server,
             )
 
             embed = main_messages_style(
@@ -97,24 +112,27 @@ class Setup(Cog):
             "setLoopChannel",
         ],
     )
-    @has_permissions(administrator=False)  # Change back
+    @has_permissions(administrator=True)  # Change back
     async def loop_channel(self, ctx):
         """Select the channel to send the getData loop (the moodle events)"""
 
-        data = await self.client.pg_con.fetch(
-            "SELECT loop_channel FROM bot_servers WHERE guild_id = $1",
-            ctx.guild.id,
+        stored_loop_channel = await self.client.pg_con.servers.find_one(
+            {
+                "guildId": ctx.guild.id,
+            },
+            {"loop_channel": True, "_id": False},
         )
 
-        if data[0]["loop_channel"]:
-            channel = f"{data[0]['loop_channel']},{ctx.channel.id}"
+        print(stored_loop_channel)
+
+        if stored_loop_channel is not ctx.channel.id:
+            channel = f"{stored_loop_channel['loop_channel']},{ctx.channel.id}"
         else:
             channel = f"{ctx.channel.id}"
 
-        await self.client.pg_con.execute(
-            "UPDATE bot_servers SET loop_channel = $1 WHERE guild_id = $2",
-            channel,
-            ctx.guild.id,
+        await self.client.pg_con.servers.update_one(
+            {"guildId": ctx.guild.id},
+            {"$set": {"loop_channel": channel}},
         )
 
         embed = main_messages_style(f"The loop channel is set to `#{ctx.channel.name}`")
@@ -173,12 +191,11 @@ class Setup(Cog):
         url: str = ""
 
         if i == 0:
-            url = moodle_dict["mackenzie"]
+            url = "URL.com"
 
-        await self.client.pg_con.execute(
-            "UPDATE bot_servers SET moodle_url = $1 WHERE guild_id = $2",
-            url,
-            ctx.guild.id,
+        await self.client.pg_con.servers.update_one(
+            {"guildId": ctx.guild.id},
+            {"$set": {"moodle_url": url}},
         )
 
         await ctx.message.add_reaction(next(positive_emojis_list))
@@ -202,10 +219,9 @@ class Setup(Cog):
         else:
             role_id = discord.utils.get(ctx.guild.roles, name=role)
 
-            await self.client.pg_con.execute(
-                "UPDATE bot_servers SET on_join_role = $1 WHERE guild_id = $2",
-                role_id,
-                ctx.guild.id,
+            await self.client.pg_con.servers.update_one(
+                {"guildId": ctx.guild.id},
+                {"$set": {"on_join_role": role_id}},
             )
 
             embed = main_messages_style(f"The on server's join role is set to {role}")
@@ -219,10 +235,9 @@ class Setup(Cog):
     async def loopTime(self, ctx, time):
         """Defines the time in minutes which getData loop will runs"""
 
-        await self.client.pg_con.execute(
-            "UPDATE bot_servers SET loop_time = $1 WHERE guild_id = $2",
-            int(time),
-            ctx.guild.id,
+        await self.client.pg_con.servers.update_one(
+            {"guildId": ctx.guild.id},
+            {"$set": {"loop_time": int(time)}},
         )
 
         embed = main_messages_style(
@@ -265,39 +280,32 @@ class Setup(Cog):
         guild_id = ctx.guild.id
         userid = userid.content
 
-        data = await self.client.pg_con.fetch(
-            "SELECT course, semester, class FROM moodle_profile WHERE tia = $1 AND guild_id = $2",
-            userid,
-            guild_id,
+        moodle_profile = await self.client.pg_con.moodle_profile.find_one(
+            {"guildId": ctx.guild.id, "tia": userid},
+            {
+                "course": True,
+                "_id": False,
+                "semester": True,
+                "class": True,
+            },
         )
 
-        if not data:
+        if not moodle_profile:
             embed = main_messages_style("There is no user with this userid")
             return await ctx.send(embed=embed)
 
-        column = f"{data[0]['course']}{data[0]['semester']}{data[0]['class']}"
+        column = f"{moodle_profile['course']}{moodle_profile['semester']}{moodle_profile['class']}"
 
         try:
-            await self.client.pg_con.execute(
-                f"UPDATE bot_servers SET {column} = $1 WHERE guild_id = $2",
-                userid,
-                guild_id,
+            await self.client.pg_con.servers.update_one(
+                {"guildId": ctx.guild.id},
+                {"$set": {f"{column}": userid}},
             )
             embed = main_messages_style("Token updated successfully on the database")
             await ctx.send(embed=embed)
 
         except Exception:
-            await self.client.pg_con.execute(
-                f"ALTER TABLE bot_servers ADD COLUMN {column} VARCHAR"
-            )
-
-            await self.client.pg_con.execute(
-                f"UPDATE bot_servers SET {column} = $1 WHERE guild_id = $2",
-                userid,
-                guild_id,
-            )
-
-            embed = main_messages_style("Token and subject created successfully")
+            embed = main_messages_style("Something went wrong")
             await ctx.send(embed=embed)
 
 

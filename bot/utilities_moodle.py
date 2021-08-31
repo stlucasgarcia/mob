@@ -1,12 +1,13 @@
 from discord import Embed
 from utilities import thumbnail_url, defaultcolor, footer, emojis_list
-from secret1 import bitly_token
 import pyshorteners
+
+# from secret1 import bitly_token
 
 get_data_timer: list = [30]
 
 # Url shortener
-shorter_url = pyshorteners.Shortener(api_key=bitly_token)
+# shorter_url = pyshorteners.Shortener(api_key=settings["BITLY_TOKEN"])
 
 # Dictionary template that we use in most part of Moodle.py
 def data_dict(database):
