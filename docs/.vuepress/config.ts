@@ -6,6 +6,8 @@ export default defineUserConfig<DefaultThemeOptions>({
 	title: "Mob Docs",
 	description: "Just playing around",
 
+	base: "/mob/",
+
 	themeConfig: {
 		docsRepo: "lsglucas/mob",
 		docsBranch: "feature/docs",
