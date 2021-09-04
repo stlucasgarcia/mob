@@ -1,11 +1,8 @@
-# MoodleV - A Discord bot integrated with the Moodle API
+# Mob - A Discord bot integrated with the Moodle API
 
-> A Discord multipurpose bot using Moodle API to get users data inside the Discord environment.
+> A Discord multipurpose bot using Moodle API to get user's data inside the Discord environment.
 
-[![Latest Release][release]][release] [![license][license]][license]
-
-
-## ⚠️ This project is being reworked 
+[![Latest Release][release]][release] [![license][license]][license] [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 The project's main purpose is helping students to organize themselves through Moodle API built in a Discord Bot with more functionalities. IF you wish to use this bot with your Moodle, contact us and we will help you to set it up.
 
@@ -33,11 +30,11 @@ On Discord, you can use the following commands to get Moodle assignments on a 14
 <prefix> check
 ```
 
-_For more examples and usage, please refer to the [Wiki][wiki]._
+_For more examples and usage, please refer to the [docs][docs]._
 
 ## 💻 Development Setup
 
-For the firsts dependencies, you need to install all requirements in ```requirements.txt``` and you must have PostgreSQL installed in your machine. For now, you need to create the ```DiscordDB``` in your default public Schema, in the future that will be changed.
+You need to install the requirements in the ```requirements.txt``` file, and you must have the `.env` file with the required data.
 
 ```sh
 pip install -r requirements.txt  
@@ -50,39 +47,62 @@ pip install -r requirements.txt
 
 ## 👨🏻‍💻 Meta
 
-Lucas Garcia – [@lsglucass](https://twitter.com/lsglucass) – lsglucas@pm.me
-
-Daniel Kauffmann – [@danieldowombo](https://twitter.com/danieldowombo) – danielvenna2@hotmail.com
+<table>
+  <tr>
+    <td align="center">
+      <a href="https://github.com/danielkauffmann">
+        <img src="https://avatars.githubusercontent.com/u/62577994?v=4" width="150px;" alt="Daniel Kauffmann"/>
+        <br />
+        <a href="https://github.com/danielkauffmann">
+          <b>Daniel Kauffmann</b>
+        </a>
+        <br />
+        <p style="font-size: 2rem">
+          <a href="mailto:vkdaniel@icloud.com">
+            <img src="https://img.icons8.com/fluency/32/000000/mail.png" alt="E-mail"/>
+          </a>
+          <a href="https://www.linkedin.com/in/danielkauffmann">
+            <img src="https://img.icons8.com/color/32/000000/linkedin.png" alt="Linkedin"/>
+          </a>
+          <a href="https://twitter.com/danieldowombo">
+            <img src="https://img.icons8.com/color/32/000000/twitter--v1.png" alt="Twitter"/>
+          </a>
+        </p>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/lsglucas">
+        <img src="https://avatars.githubusercontent.com/u/61513630?v=4" width="150px;" alt="Lucas Garcia"/>
+        <br />
+        <a href="https://github.com/lsglucas">
+          <b>Lucas Garcia</b>
+        </a>
+        <br />
+        <p style="font-size: 2rem">
+          <a href="mailto:lsglucas@pm.me">
+            <img src="https://img.icons8.com/fluency/32/000000/mail.png" alt="E-mail"/>
+          </a>
+          <a href="https://www.linkedin.com/in/lsglucas">
+            <img src="https://img.icons8.com/color/32/000000/linkedin.png" alt="Linkedin"/>
+          </a>
+          <a href="https://twitter.com/lsglucass">
+            <img src="https://img.icons8.com/color/32/000000/twitter--v1.png" alt="Twitter"/>
+          </a>
+        </p>
+      </a>
+    </td>
+  </tr>
+</table>
 
 ## 🤝🏻 Contributing
 
 You are more than welcome to contribute to the project!
+Check for everything you need at [docs](https://lsglucas.github.io/mob/contributing.html)
 
 ## 📑 License  
 
-MIT License
-
-Copyright (c) 2021 Moodle Organizer Bot
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+This project is licensed under the terms of the MIT license.
 
 [release]: https://img.shields.io/github/v/release/lsglucas/mob
-[wiki]: lsglucas.github.io/mob/
+[docs]: lsglucas.github.io/mob/
 [license]: https://img.shields.io/github/license/lsglucas/mob
-
